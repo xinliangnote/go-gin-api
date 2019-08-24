@@ -2,7 +2,7 @@
 
 项目地址：https://github.com/xinliangnote/go-gin-api
 
-文档地址：[go-gin-api 文档](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5B/)
+文档地址：[go-gin-api 文档](https://github.com/xinliangnote/Go/tree/master/03-go-gin-api%20%5B文档%5D/)
 
 实现一个开箱即用的 API 框架的轮子，这个轮子是基于 Gin 框架的基础上开发的。
 
