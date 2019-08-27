@@ -32,6 +32,12 @@
 - [ ] gRPC
 - [ ] ...
 
+## Download
+
+```
+git clone https://github.com/xinliangnote/go-gin-api.git
+```
+
 ## Quick start
 
 #### Requirements
@@ -42,12 +48,6 @@
 ```
 export GO111MODULE=on
 export GOPROXY=https://goproxy.io
-```
-
-#### Installation
-
-```
-go get github.com/xinliangnote/go-gin-api
 ```
 
 #### Build & Run
