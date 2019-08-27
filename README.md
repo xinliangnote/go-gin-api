@@ -1,6 +1,4 @@
-![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B%E6%96%87%E6%A1%A3%5D/images/go-gin-api-logo.png)
-
-![](https://camo.githubusercontent.com/0f4b285c5516603a1c2a085dbfc67a6505155edb/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4c616e67756167652d476f2d626c75652e737667)
+![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B%E6%96%87%E6%A1%A3%5D/images/go-gin-api-logo.png
 
 ## go-gin-api
 
