@@ -4,7 +4,13 @@
 
 文档地址：[go-gin-api 文档](https://github.com/xinliangnote/Go/tree/master/03-go-gin-api%20%5B文档%5D/)
 
-实现一个开箱即用的 API 框架的轮子，这个轮子是基于 Gin 框架的基础上开发的。
+[Go 项目实战]实现一个开箱即用的 API 框架的轮子，这个轮子是基于 Gin 框架的基础上开发的。
+
+本地版本：
+
+```
+go version go1.12.7 darwin/amd64
+```
 
 持续更新... 
 
