@@ -7,23 +7,32 @@ import (
 )
 
 func SetupRouter(engine *gin.Engine) {
+
+	//404
+	engine.NoRoute(func(c *gin.Context) {
+		utilGin := util.Gin{Ctx:c}
+		utilGin.Response(404,"请求方法不存在", nil)
+	})
+
 	engine.GET("/ping", func(c *gin.Context) {
 		utilGin := util.Gin{Ctx:c}
 		utilGin.Response(1,"pong", nil)
 	})
 
-	ProductRouter := engine.Group("")
+	//@todo 记录请求超时的路由
+
+	ProductRouter := engine.Group("/product")
 	{
 		// 新增产品
-		ProductRouter.POST("/product", product.Add)
+		ProductRouter.POST("", product.Add)
 
 		// 更新产品
-		ProductRouter.PUT("/product/:id", product.Edit)
+		ProductRouter.PUT("/:id", product.Edit)
 
 		// 删除产品
-		ProductRouter.DELETE("/product/:id", product.Delete)
+		ProductRouter.DELETE("/:id", product.Delete)
 
 		// 获取产品详情
-		ProductRouter.GET("/product/:id", product.Detail)
+		ProductRouter.GET("/:id", product.Detail)
 	}
 }
