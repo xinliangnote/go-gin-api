@@ -20,9 +20,9 @@
         - [ ] MD5 组合拳
         - [ ] AES 对称加密
         - [ ] RSA 非对称加密
-    - [ ] 日志记录
+    - [x] 日志记录
     - [ ] 异常捕获
-    - [ ] Jaeger 链路追踪
+    - [ ] 链路追踪（Jaeger）
 - [ ] 自定义告警
     - [ ] 邮件（gomail）
     - [ ] 微信
@@ -55,6 +55,14 @@ export GOPROXY=https://goproxy.io
 cd go-gin-api
 
 go run main.go
+
+输出如下，表示 Http Server 启动成功。
+|-----------------------------------|
+|            go-gin-api             |
+|-----------------------------------|
+|  Go Http Server Start Successful  |
+|    Port:9999     Pid:xxxxx        |
+|-----------------------------------|
 ```
 
 #### Test demo

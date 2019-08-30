@@ -27,8 +27,13 @@ func main() {
 		WriteTimeout : config.AppWriteTimeout * time.Second,
 	}
 
-	info := fmt.Sprintf("HTTP server listening %s, Pid is %v ", config.AppPort, os.Getpid())
-	fmt.Println(info)
+	fmt.Println("|-----------------------------------|")
+	fmt.Println("|            go-gin-api             |")
+	fmt.Println("|-----------------------------------|")
+	fmt.Println("|  Go Http Server Start Successful  |")
+	fmt.Println("|    Port" + config.AppPort + "     Pid:" + fmt.Sprintf("%d", os.Getpid()) + "        |")
+	fmt.Println("|-----------------------------------|")
+	fmt.Println("")
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {

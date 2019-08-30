@@ -3,10 +3,13 @@ package route
 import (
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/controller/product"
+	"go-gin-api/app/route/middleware/logger"
 	"go-gin-api/app/util"
 )
 
 func SetupRouter(engine *gin.Engine) {
+
+	engine.Use(logger.SetUp())
 
 	//404
 	engine.NoRoute(func(c *gin.Context) {
