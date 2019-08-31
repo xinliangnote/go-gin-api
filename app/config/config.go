@@ -23,5 +23,5 @@ const (
 	ErrorNotifyUser = "xinliangnote@163.com"
 
 	// 告警开关 1=开通 -1=关闭
-	ErrorNotifyOpen = 1
+	ErrorNotifyOpen = -1
 )
