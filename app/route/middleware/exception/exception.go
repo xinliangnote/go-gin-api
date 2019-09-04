@@ -7,7 +7,6 @@ import (
 	"go-gin-api/app/util"
 	"runtime/debug"
 	"strings"
-	"time"
 )
 
 func SetUp() gin.HandlerFunc {
@@ -15,15 +14,24 @@ func SetUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				subject := fmt.Sprintf("[Panic - %s] 项目出错了！", config.AppName)
-				body := fmt.Sprintf("<b>错误时间：%s\n Runtime：\n</b>%s",time.Now().Format("2006/01/02 - 15:04:05"), string(debug.Stack()))
+				subject := fmt.Sprintf("【重要错误】%s 项目出错了！", config.AppName)
+
+				body := fmt.Sprintf("<b>ErrorMessage: </b> %s \n", err)
+				body += fmt.Sprintf("<b>RequestTime: </b> %s \n", util.GetCurrentDate())
+				body += fmt.Sprintf("<b>RequestURL: </b> %s %s \n", c.Request.Method, c.Request.RequestURI)
+				body += fmt.Sprintf("<b>RequestProto: </b> %s \n", c.Request.Proto)
+				body += fmt.Sprintf("<b>RequestReferer: </b> %s \n", c.Request.Referer())
+				body += fmt.Sprintf("<b>RequestUA: </b> %s \n", c.Request.UserAgent())
+				body += fmt.Sprintf("<b>RequestClientIp: </b> %s \n", c.ClientIP())
+				body += fmt.Sprintf("<b>DebugStack: </b> %s \n", string(debug.Stack()))
+
 				bodyHtml := ""
-				for _,v := range strings.Split(body, "\n") {
+				for _, v := range strings.Split(body, "\n") {
 					bodyHtml += v + "<br>"
 				}
 				_ = util.SendMail(config.ErrorNotifyUser, subject, bodyHtml)
 
-				utilGin := util.Gin{Ctx:c}
+				utilGin := util.Gin{Ctx: c}
 				utilGin.Response(500, "系统异常，请联系管理员！", nil)
 			}
 		}()
