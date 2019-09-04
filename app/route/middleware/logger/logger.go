@@ -37,7 +37,7 @@ func SetUp() gin.HandlerFunc {
 		c.Writer = bodyLogWriter
 
 		// 开始时间
-		startTime := util.GetCurrentMilliTime()
+		startTime := util.GetCurrentMilliUnix()
 
 		// 处理请求
 		c.Next()
@@ -45,7 +45,7 @@ func SetUp() gin.HandlerFunc {
 		responseBody := bodyLogWriter.body.String()
 
 		var responseCode int
-		var responseMsg  string
+		var responseMsg string
 		var responseData interface{}
 
 		if responseBody != "" {
@@ -53,13 +53,13 @@ func SetUp() gin.HandlerFunc {
 			err := json.Unmarshal([]byte(responseBody), &response)
 			if err == nil {
 				responseCode = response.Code
-				responseMsg  = response.Message
+				responseMsg = response.Message
 				responseData = response.Data
 			}
 		}
 
 		// 结束时间
-		endTime := util.GetCurrentMilliTime()
+		endTime := util.GetCurrentMilliUnix()
 
 		if c.Request.Method == "POST" {
 			_ = c.Request.ParseForm()
@@ -68,21 +68,21 @@ func SetUp() gin.HandlerFunc {
 		// 日志格式
 		accessLogMap := make(map[string]interface{})
 
-		accessLogMap["request_time"]      = startTime
-		accessLogMap["request_method"]    = c.Request.Method
-		accessLogMap["request_uri"]       = c.Request.RequestURI
-		accessLogMap["request_proto"]     = c.Request.Proto
-		accessLogMap["request_ua"]        = c.Request.UserAgent()
-		accessLogMap["request_referer"]   = c.Request.Referer()
+		accessLogMap["request_time"] = startTime
+		accessLogMap["request_method"] = c.Request.Method
+		accessLogMap["request_uri"] = c.Request.RequestURI
+		accessLogMap["request_proto"] = c.Request.Proto
+		accessLogMap["request_ua"] = c.Request.UserAgent()
+		accessLogMap["request_referer"] = c.Request.Referer()
 		accessLogMap["request_post_data"] = c.Request.PostForm.Encode()
 		accessLogMap["request_client_ip"] = c.ClientIP()
 
 		accessLogMap["response_time"] = endTime
 		accessLogMap["response_code"] = responseCode
-		accessLogMap["response_msg"]  = responseMsg
+		accessLogMap["response_msg"] = responseMsg
 		accessLogMap["response_data"] = responseData
 
-		accessLogMap["cost_time"] = fmt.Sprintf("%vms", endTime - startTime)
+		accessLogMap["cost_time"] = fmt.Sprintf("%vms", endTime-startTime)
 
 		accessLogJson, _ := util.JsonEncode(accessLogMap)
 
