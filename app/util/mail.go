@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"go-gin-api/app/config"
 	"gopkg.in/gomail.v2"
 	"strings"
@@ -31,7 +32,7 @@ func SendMail(mailTo string, subject string, body string) error {
 
 	err := d.DialAndSend(m)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	return err
 }
