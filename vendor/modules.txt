@@ -12,6 +12,8 @@ github.com/go-playground/locales/currency
 github.com/go-playground/universal-translator
 # github.com/golang/protobuf v1.3.1
 github.com/golang/protobuf/proto
+# github.com/google/uuid v1.1.1
+github.com/google/uuid
 # github.com/json-iterator/go v1.1.6
 github.com/json-iterator/go
 # github.com/leodido/go-urn v1.1.0
