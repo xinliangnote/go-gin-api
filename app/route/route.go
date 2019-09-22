@@ -2,8 +2,10 @@ package route
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-gin-api/app/controller/jaeger_conn"
 	"go-gin-api/app/controller/product"
 	"go-gin-api/app/route/middleware/exception"
+	"go-gin-api/app/route/middleware/jaeger"
 	"go-gin-api/app/route/middleware/logger"
 	"go-gin-api/app/util"
 )
@@ -11,7 +13,7 @@ import (
 func SetupRouter(engine *gin.Engine) {
 
 	//设置路由中间件
-	engine.Use(logger.SetUp(), exception.SetUp())
+	engine.Use(logger.SetUp(), exception.SetUp(), jaeger.SetUp())
 
 	//404
 	engine.NoRoute(func(c *gin.Context) {
@@ -23,6 +25,9 @@ func SetupRouter(engine *gin.Engine) {
 		utilGin := util.Gin{Ctx:c}
 		utilGin.Response(1,"pong", nil)
 	})
+
+	// 测试链路追踪
+	engine.GET("/jaeger_test", jaeger_conn.JaegerTest)
 
 	//@todo 记录请求超时的路由
 

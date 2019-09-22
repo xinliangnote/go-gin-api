@@ -12,6 +12,10 @@ github.com/go-playground/locales/currency
 github.com/go-playground/universal-translator
 # github.com/golang/protobuf v1.3.1
 github.com/golang/protobuf/proto
+github.com/golang/protobuf/ptypes
+github.com/golang/protobuf/ptypes/any
+github.com/golang/protobuf/ptypes/duration
+github.com/golang/protobuf/ptypes/timestamp
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
 # github.com/json-iterator/go v1.1.6
@@ -24,10 +28,84 @@ github.com/mattn/go-isatty
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
+# github.com/opentracing/opentracing-go v1.1.0
+github.com/opentracing/opentracing-go
+github.com/opentracing/opentracing-go/log
+github.com/opentracing/opentracing-go/ext
+# github.com/pkg/errors v0.8.1
+github.com/pkg/errors
+# github.com/uber/jaeger-client-go v2.18.1+incompatible
+github.com/uber/jaeger-client-go
+github.com/uber/jaeger-client-go/config
+github.com/uber/jaeger-client-go/internal/baggage
+github.com/uber/jaeger-client-go/internal/spanlog
+github.com/uber/jaeger-client-go/internal/throttler
+github.com/uber/jaeger-client-go/log
+github.com/uber/jaeger-client-go/thrift
+github.com/uber/jaeger-client-go/thrift-gen/jaeger
+github.com/uber/jaeger-client-go/thrift-gen/sampling
+github.com/uber/jaeger-client-go/thrift-gen/zipkincore
+github.com/uber/jaeger-client-go/utils
+github.com/uber/jaeger-client-go/internal/baggage/remote
+github.com/uber/jaeger-client-go/internal/throttler/remote
+github.com/uber/jaeger-client-go/rpcmetrics
+github.com/uber/jaeger-client-go/transport
+github.com/uber/jaeger-client-go/thrift-gen/agent
+github.com/uber/jaeger-client-go/thrift-gen/baggage
+# github.com/uber/jaeger-lib v2.1.1+incompatible
+github.com/uber/jaeger-lib/metrics
 # github.com/ugorji/go v1.1.4
 github.com/ugorji/go/codec
+# golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
+golang.org/x/net/trace
+golang.org/x/net/internal/timeseries
+golang.org/x/net/http2
+golang.org/x/net/http2/hpack
+golang.org/x/net/http/httpguts
+golang.org/x/net/idna
 # golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223
 golang.org/x/sys/unix
+# golang.org/x/text v0.3.0
+golang.org/x/text/secure/bidirule
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/transform
+# google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
+google.golang.org/genproto/googleapis/rpc/status
+# google.golang.org/grpc v1.23.1
+google.golang.org/grpc
+google.golang.org/grpc/balancer
+google.golang.org/grpc/balancer/roundrobin
+google.golang.org/grpc/codes
+google.golang.org/grpc/connectivity
+google.golang.org/grpc/credentials
+google.golang.org/grpc/encoding
+google.golang.org/grpc/encoding/proto
+google.golang.org/grpc/grpclog
+google.golang.org/grpc/internal
+google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/balancerload
+google.golang.org/grpc/internal/binarylog
+google.golang.org/grpc/internal/channelz
+google.golang.org/grpc/internal/envconfig
+google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/grpcsync
+google.golang.org/grpc/internal/transport
+google.golang.org/grpc/keepalive
+google.golang.org/grpc/metadata
+google.golang.org/grpc/naming
+google.golang.org/grpc/peer
+google.golang.org/grpc/resolver
+google.golang.org/grpc/resolver/dns
+google.golang.org/grpc/resolver/passthrough
+google.golang.org/grpc/serviceconfig
+google.golang.org/grpc/stats
+google.golang.org/grpc/status
+google.golang.org/grpc/tap
+google.golang.org/grpc/balancer/base
+google.golang.org/grpc/credentials/internal
+google.golang.org/grpc/binarylog/grpc_binarylog_v1
+google.golang.org/grpc/internal/syscall
 # gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc
 gopkg.in/alexcesaro/quotedprintable.v3
 # gopkg.in/go-playground/validator.v8 v8.18.2
