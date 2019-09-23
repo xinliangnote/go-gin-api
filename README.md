@@ -66,15 +66,21 @@ go run main.go
 |-----------------------------------|
 ```
 
-#### Test demo
+#### HTTP Demo
 
 ```
 curl -X POST http://127.0.0.1:9999/product
 ```
 
+#### Jaeger 链路追踪 Demo
+
+http://127.0.0.1:9999/jaeger_test
+
 ## Documents
 
-- [中文文档](https://github.com/xinliangnote/Go/tree/master/03-go-gin-api%20%5B文档%5D/)
+- [帮助文档](https://github.com/xinliangnote/Go/tree/master/03-go-gin-api%20%5B文档%5D/)
+
+- [Jaeger 链路追踪 Service 端](https://github.com/xinliangnote/go-jaeger-demo)
 
 ## Learning together
 
