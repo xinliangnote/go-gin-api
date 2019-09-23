@@ -74,12 +74,19 @@ curl -X POST http://127.0.0.1:9999/product
 
 #### Jaeger 链路追踪 Demo
 
+```
 http://127.0.0.1:9999/jaeger_test
+```
+
+## Jaeger 链路追踪效果
+
+![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_2.png)
+
+![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_3.png)
 
 ## Documents
 
 - [帮助文档](https://github.com/xinliangnote/Go/tree/master/03-go-gin-api%20%5B文档%5D/)
-
 - [Jaeger 链路追踪 Service 端](https://github.com/xinliangnote/go-jaeger-demo)
 
 ## Learning together
