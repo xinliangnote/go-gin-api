@@ -19,6 +19,7 @@ const (
 	// 日志文件
 	AppAccessLogName = "log/" + AppName + "-access.log"
 	AppErrorLogName  = "log/" + AppName + "-error.log"
+	AppGrpcLogName   = "log/" + AppName + "-grpc.log"
 
 	// 系统告警邮箱信息
 	SystemEmailUser = "xinliangnote@163.com"

@@ -14,21 +14,27 @@ import (
 func JaegerTest(c *gin.Context) {
 
 	// 调用 gRPC 服务
-	grpcListenClient := listen.NewListenClient(grpc_client.CreateServiceListenConn())
+	conn := grpc_client.CreateServiceListenConn()
+	grpcListenClient := listen.NewListenClient(conn)
 	resListen, _ := grpcListenClient.ListenData(context.Background(), &listen.Request{Name: "listen"})
 
 	// 调用 gRPC 服务
-	grpcSpeakClient := speak.NewSpeakClient(grpc_client.CreateServiceSpeakConn())
+	conn = grpc_client.CreateServiceSpeakConn()
+	grpcSpeakClient := speak.NewSpeakClient(conn)
 	resSpeak, _ := grpcSpeakClient.SpeakData(context.Background(), &speak.Request{Name: "speak"})
 
 	// 调用 gRPC 服务
-	grpcReadClient := read.NewReadClient(grpc_client.CreateServiceReadConn())
+	conn = grpc_client.CreateServiceReadConn()
+	grpcReadClient := read.NewReadClient(conn)
 	resRead, _ := grpcReadClient.ReadData(context.Background(), &read.Request{Name: "read"})
 
 	// 调用 gRPC 服务
-	grpcWriteClient := write.NewWriteClient(grpc_client.CreateServiceWriteConn())
+	conn = grpc_client.CreateServiceWriteConn()
+	grpcWriteClient := write.NewWriteClient(conn)
 	resWrite, _ := grpcWriteClient.WriteData(context.Background(), &write.Request{Name: "write"})
 
+	defer conn.Close()
+	
 	// 调用 HTTP 服务
 	resHttpGet := ""
 	_, err := util.HttpGet("http://localhost:9905/sing")
