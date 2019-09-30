@@ -7,6 +7,7 @@ import (
 	"go-gin-api/app/route/middleware/exception"
 	"go-gin-api/app/route/middleware/jaeger"
 	"go-gin-api/app/route/middleware/logger"
+	signMD5 "go-gin-api/app/route/middleware/sign/md5"
 	"go-gin-api/app/util"
 )
 
@@ -31,7 +32,7 @@ func SetupRouter(engine *gin.Engine) {
 
 	//@todo 记录请求超时的路由
 
-	ProductRouter := engine.Group("/product")
+	ProductRouter := engine.Group("/product").Use(signMD5.SetUp())
 	{
 		// 新增产品
 		ProductRouter.POST("", product.Add)

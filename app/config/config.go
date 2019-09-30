@@ -5,6 +5,13 @@ const (
 	AppPort = ":9999"
 	AppName = "go-gin-api"
 
+	// MD5 密钥
+	AppSignSecret = "4OhYXtDYNYxQsGetqASVOTP37jGt5gGY"
+
+	// MD5 签名超时时间 120s
+	AppSignExpiry = "120"
+
+
 	// 超时时间
 	AppReadTimeout  = 120
 	AppWriteTimeout = 120
