@@ -41,7 +41,7 @@ func createMD5Sign(params url.Values) string {
 	var key []string
 	var str = ""
 	for k := range params {
-		if k != "sn" && k != "ts" && k != "debug" {
+		if k != "sn" && k != "debug" {
 			key = append(key, k)
 		}
 	}
@@ -83,8 +83,10 @@ func verifyMD5Sign(c *gin.Context) (map[string]string, error) {
 	}
 
 	if debug == "1" {
+		currentUnix := util.GetCurrentUnix()
+		req.Add("ts", strconv.FormatInt(currentUnix, 10))
 		res := map[string]string{
-			"ts": strconv.FormatInt(util.GetCurrentUnix(), 10),
+			"ts": strconv.FormatInt(currentUnix, 10),
 			"sn": createMD5Sign(req),
 		}
 		return res, nil
@@ -94,7 +96,7 @@ func verifyMD5Sign(c *gin.Context) (map[string]string, error) {
 
 	// 验证过期时间
 	timestamp := time.Now().Unix()
-	if ts > timestamp || timestamp - ts >= exp {
+	if ts > timestamp || timestamp-ts >= exp {
 		return nil, errors.New("ts Error")
 	}
 
