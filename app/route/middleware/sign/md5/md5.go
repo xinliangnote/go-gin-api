@@ -55,7 +55,7 @@ func createMD5Sign(params url.Values) string {
 	}
 
 	// 自定义签名算法
-	sign := util.MD5(config.AppSignSecret + str + config.AppSignSecret)
+	sign := util.MD5(config.AppMD5SignSecret + str + config.AppMD5SignSecret)
 	return sign
 }
 
@@ -92,7 +92,7 @@ func verifyMD5Sign(c *gin.Context) (map[string]string, error) {
 		return res, nil
 	}
 
-	exp, _ := strconv.ParseInt(config.AppSignExpiry, 10, 64)
+	exp, _ := strconv.ParseInt(config.AppMD5SignExpiry, 10, 64)
 
 	// 验证过期时间
 	timestamp := time.Now().Unix()

@@ -6,11 +6,10 @@ const (
 	AppName = "go-gin-api"
 
 	// MD5 密钥
-	AppSignSecret = "4OhYXtDYNYxQsGetqASVOTP37jGt5gGY"
+	AppMD5SignSecret = "4OhYXtDYNYxQsGetqASVOTP37jGt5gGY"
 
-	// MD5 签名超时时间 120s
-	AppSignExpiry = "120"
-
+	// MD5 超时时间
+	AppMD5SignExpiry = "120"
 
 	// 超时时间
 	AppReadTimeout  = 120
@@ -34,7 +33,7 @@ const (
 	ErrorNotifyOpen = -1
 
 	// Jaeger 配置信息
-	JaegerHostPort  = "127.0.0.1:6831"
+	JaegerHostPort = "127.0.0.1:6831"
 
 	// Jaeger 配置开关 1=开通 -1=关闭
 	JaegerOpen = 1
