@@ -1,15 +1,27 @@
 package config
 
+var (
+	ApiAuthConfig = map[string] map[string]string {
+
+		// 调用方
+		"DEMO" : {
+			"md5" : "IgkibX71IEf382PT",
+			"aes" : "IgkibX71IEf382PT",
+			"rsa" : "rsa/public.pem",
+		},
+	}
+)
+
 const (
 	AppMode = "release" //debug or release
 	AppPort = ":9999"
 	AppName = "go-gin-api"
 
-	// MD5 密钥
-	AppMD5SignSecret = "4OhYXtDYNYxQsGetqASVOTP37jGt5gGY"
+	// 签名超时时间
+	AppSignExpiry = "120"
 
-	// MD5 超时时间
-	AppMD5SignExpiry = "120"
+	// RSA Private File
+	AppRsaPrivateFile = "rsa/private.pem"
 
 	// 超时时间
 	AppReadTimeout  = 120

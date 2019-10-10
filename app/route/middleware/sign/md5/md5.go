@@ -9,8 +9,11 @@ import (
 	"net/url"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
+
+var AppSecret string
 
 // MD5 组合加密
 func SetUp() gin.HandlerFunc {
@@ -18,7 +21,7 @@ func SetUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		utilGin := util.Gin{Ctx: c}
 
-		sign, err := verifyMD5Sign(c)
+		sign, err := verifySign(c)
 
 		if sign != nil {
 			utilGin.Response(-1, "Debug Sign", sign)
@@ -36,8 +39,56 @@ func SetUp() gin.HandlerFunc {
 	}
 }
 
+// 验证签名
+func verifySign(c *gin.Context) (map[string]string, error) {
+	_ = c.Request.ParseForm()
+	req   := c.Request.Form
+	debug := strings.Join(c.Request.Form["debug"], "")
+	ak    := strings.Join(c.Request.Form["ak"], "")
+	sn    := strings.Join(c.Request.Form["sn"], "")
+	ts    := strings.Join(c.Request.Form["ts"], "")
+
+	// 验证来源
+	value, ok := config.ApiAuthConfig[ak]
+	if ok {
+		AppSecret = value["md5"]
+	} else {
+		return nil, errors.New("ak Error")
+	}
+
+	if debug == "1" {
+		currentUnix := util.GetCurrentUnix()
+		req.Set("ts", strconv.FormatInt(currentUnix, 10))
+		res := map[string]string{
+			"ts": strconv.FormatInt(currentUnix, 10),
+			"sn": createSign(req),
+		}
+		return res, nil
+	}
+
+	// 验证过期时间
+	timestamp := time.Now().Unix()
+	exp, _    := strconv.ParseInt(config.AppSignExpiry, 10, 64)
+	tsInt, _  := strconv.ParseInt(ts, 10, 64)
+	if tsInt > timestamp || timestamp - tsInt >= exp {
+		return nil, errors.New("ts Error")
+	}
+
+	// 验证签名
+	if sn == "" || sn != createSign(req) {
+		return nil, errors.New("sn Error")
+	}
+
+	return nil, nil
+}
+
 // 创建签名
-func createMD5Sign(params url.Values) string {
+func createSign(params url.Values) string {
+	// 自定义 MD5 组合
+	return util.MD5(AppSecret + createEncryptStr(params) + AppSecret)
+}
+
+func createEncryptStr(params url.Values) string {
 	var key []string
 	var str = ""
 	for k := range params {
@@ -53,57 +104,5 @@ func createMD5Sign(params url.Values) string {
 			str = str + fmt.Sprintf("&%v=%v", key[i], params.Get(key[i]))
 		}
 	}
-
-	// 自定义签名算法
-	sign := util.MD5(config.AppMD5SignSecret + str + config.AppMD5SignSecret)
-	return sign
-}
-
-// 验证签名
-func verifyMD5Sign(c *gin.Context) (map[string]string, error) {
-	var method = c.Request.Method
-	var ts int64
-	var sn string
-	var req url.Values
-	var debug string
-
-	if method == "GET" {
-		req = c.Request.URL.Query()
-		sn = c.Query("sn")
-		debug = c.Query("debug")
-		ts, _ = strconv.ParseInt(c.Query("ts"), 10, 64)
-	} else if method == "POST" {
-		_ = c.Request.ParseForm()
-		req = c.Request.PostForm
-		sn = c.PostForm("sn")
-		debug = c.PostForm("debug")
-		ts, _ = strconv.ParseInt(c.PostForm("ts"), 10, 64)
-	} else {
-		return nil, errors.New("非法请求")
-	}
-
-	if debug == "1" {
-		currentUnix := util.GetCurrentUnix()
-		req.Add("ts", strconv.FormatInt(currentUnix, 10))
-		res := map[string]string{
-			"ts": strconv.FormatInt(currentUnix, 10),
-			"sn": createMD5Sign(req),
-		}
-		return res, nil
-	}
-
-	exp, _ := strconv.ParseInt(config.AppMD5SignExpiry, 10, 64)
-
-	// 验证过期时间
-	timestamp := time.Now().Unix()
-	if ts > timestamp || timestamp-ts >= exp {
-		return nil, errors.New("ts Error")
-	}
-
-	// 验证签名
-	if sn == "" || sn != createMD5Sign(req) {
-		return nil, errors.New("sn Error")
-	}
-
-	return nil, nil
+	return str
 }
