@@ -23,7 +23,7 @@
     - [x] 日志记录
     - [x] 异常捕获
     - [x] 链路追踪（Jaeger）
-    - [ ] 限流
+    - [x] 限流
 - [ ] 自定义告警
     - [ ] 邮件（gomail）
     - [ ] 微信
@@ -76,22 +76,37 @@ go run main.go
 curl -X POST http://127.0.0.1:9999/product
 ```
 
-#### Jaeger 链路追踪 Demo
+#### Jaeger Demo
+
+访问：
 
 ```
 http://127.0.0.1:9999/jaeger_test
 ```
 
-## Jaeger 链路追踪效果
+服务端测试代码：
+
+- [https://github.com/xinliangnote/go-jaeger-demo](https://github.com/xinliangnote/go-jaeger-demo)
 
 ![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_2.png)
 
 ![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_3.png)
 
-## Documents
+## Dependence
 
-- [帮助文档](https://github.com/xinliangnote/Go/tree/master/03-go-gin-api%20%5B文档%5D/)
-- [Jaeger 链路追踪 Service 端](https://github.com/xinliangnote/go-jaeger-demo)
+- WEB 框架：github.com/gin-gonic/gin
+- 链路追踪：github.com/jaegertracing/jaeger-client-go
+- 限流：golang.org/x/time/rate
+
+## Document
+
+- [1. 使用 go modules 初始化项目](https://mp.weixin.qq.com/s/1XNTEgZ0XGZZdxFOfR5f_A)
+- [2. 规划项目目录和参数验证](https://mp.weixin.qq.com/s/11AuXptWGmL5QfiJArNLnA)
+- [3. 路由中间件 - 日志记录](https://mp.weixin.qq.com/s/eTygPXnrYM2xfrRQyfn8Tg)
+- [4. 路由中间件 - 捕获异常](https://mp.weixin.qq.com/s/SconDXB_x7Gan6T0Awdh9A)
+- [5. 路由中间件 - Jaeger 链路追踪（理论篇）](https://mp.weixin.qq.com/s/28UBEsLOAHDv530ePilKQA)
+- [6. 路由中间件 - Jaeger 链路追踪（实战篇）](https://mp.weixin.qq.com/s/Ea28475_UTNaM9RNfgPqJA)
+- [7. 路由中间件 - 签名验证](https://mp.weixin.qq.com/s/0cozELotcpX3Gd6WPJiBbQ)
 
 ## Learning together
 
