@@ -93,6 +93,51 @@ http://127.0.0.1:9999/jaeger_test
 
 ![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_3.png)
 
+#### pprof 
+
+```go
+http://127.0.0.1:9999/debug/pprof
+```
+
+说明文档：
+
+```go
+// 查看 CPU 信息
+go tool pprof 127.0.0.1:9999/debug/pprof/profile
+...
+(pprof) 
+
+//输入 web，生成 svg 文件。
+//输入 png，生成 png 文件。
+//输入 top，查看排名前 20 的信息。
+//查看更多命令，请执行 pprof help。
+```
+
+其他同理，比如：
+
+```go
+// 查看 内存 信息
+go tool pprof 127.0.0.1:9999/debug/pprof/heap
+
+// 查看 协程 信息
+go tool pprof 127.0.0.1:9999/debug/pprof/goroutine
+
+// 查看 锁 信息
+go tool pprof 127.0.0.1:9999/debug/pprof/mutex
+```
+如果还想查看火焰图，请执行如下命令：
+
+```go
+// 1.下载 pprof 工具
+go get -u github.com/google/pprof
+
+// 2.启动可视化界面
+pprof -http=:9998 xxx.cpu.prof
+
+// 3.查看可视化界面
+http://127.0.0.1:9998/ui/
+```
+
 ## Dependence
 
 - WEB 框架：github.com/gin-gonic/gin
