@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/config"
 	"go-gin-api/app/route"
@@ -16,6 +17,9 @@ import (
 func main() {
 	gin.SetMode(config.AppMode)
 	engine := gin.New()
+
+	// 性能分析 - 正式环境不要使用！！！
+	pprof.Register(engine)
 
 	// 设置路由
 	route.SetupRouter(engine)

@@ -1,3 +1,5 @@
+# github.com/gin-contrib/pprof v1.2.1
+github.com/gin-contrib/pprof
 # github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3
 github.com/gin-contrib/sse
 # github.com/gin-gonic/gin v1.4.0
