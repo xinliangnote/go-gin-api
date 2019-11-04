@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util"
+	"go-gin-api/app/util/aes"
+	"go-gin-api/app/util/response"
+	timeUtil "go-gin-api/app/util/time"
 	"net/url"
 	"sort"
 	"strconv"
@@ -19,7 +21,7 @@ var AppSecret string
 func SetUp() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		utilGin := util.Gin{Ctx: c}
+		utilGin := response.Gin{Ctx: c}
 
 		sign, err := verifySign(c)
 
@@ -57,7 +59,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 	}
 
 	if debug == "1" {
-		currentUnix := util.GetCurrentUnix()
+		currentUnix := timeUtil.GetCurrentUnix()
 		req.Set("ts", strconv.FormatInt(currentUnix, 10))
 
 		sn, err := createSign(req)
@@ -85,7 +87,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 		return nil, errors.New("sn Error")
 	}
 
-	decryptStr, decryptErr := util.AesDecrypt(sn, []byte(AppSecret), AppSecret)
+	decryptStr, decryptErr := aes.AesDecrypt(sn, []byte(AppSecret), AppSecret)
 	if decryptErr != nil {
 		return nil, errors.New(decryptErr.Error())
 	}
@@ -97,7 +99,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 
 // 创建签名
 func createSign(params url.Values) (string, error) {
-	return util.AesEncrypt(createEncryptStr(params), []byte(AppSecret), AppSecret)
+	return aes.AesEncrypt(createEncryptStr(params), []byte(AppSecret), AppSecret)
 }
 
 func createEncryptStr(params url.Values) string {

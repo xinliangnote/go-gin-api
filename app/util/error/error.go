@@ -1,9 +1,11 @@
-package util
+package error
 
 import (
 	"fmt"
 	"go-gin-api/app/config"
 	"go-gin-api/app/route/middleware/exception"
+	"go-gin-api/app/util/json"
+	time2 "go-gin-api/app/util/time"
 	"log"
 	"os"
 	"runtime/debug"
@@ -53,7 +55,7 @@ func  alarm(level string, str string) {
 		subject := fmt.Sprintf("【系统告警】%s 项目出错了！", config.AppName)
 
 		body := strings.ReplaceAll(exception.MailTemplate, "{ErrorMsg}", fmt.Sprintf("%s", str))
-		body  = strings.ReplaceAll(body, "{RequestTime}", GetCurrentDate())
+		body  = strings.ReplaceAll(body, "{RequestTime}", time2.GetCurrentDate())
 		body  = strings.ReplaceAll(body, "{RequestURL}", "--")
 		body  = strings.ReplaceAll(body, "{RequestUA}", "--")
 		body  = strings.ReplaceAll(body, "{RequestIP}", "--")
@@ -78,7 +80,7 @@ func  alarm(level string, str string) {
 			errorLogMap["time"] = time.Now().Format("2006/01/02 - 15:04:05")
 			errorLogMap["info"] = str
 
-			errorLogJson, _ := JsonEncode(errorLogMap)
+			errorLogJson, _ := json.JsonEncode(errorLogMap)
 			_, _ = f.WriteString(errorLogJson + "\n")
 		}
 	}

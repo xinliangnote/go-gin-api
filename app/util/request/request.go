@@ -1,4 +1,4 @@
-package util
+package request
 
 import (
 	"crypto/tls"

@@ -3,7 +3,10 @@ package test
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go-gin-api/app/util"
+	"go-gin-api/app/util/aes"
+	"go-gin-api/app/util/md5"
+	"go-gin-api/app/util/response"
+	"go-gin-api/app/util/rsa"
 	"time"
 )
 
@@ -14,12 +17,12 @@ func Md5Test(c *gin.Context) {
 	count      := 1000000
 	for i := 0; i < count; i++ {
 		// 生成签名
-		util.MD5(appSecret + encryptStr + appSecret)
+		md5.MD5(appSecret + encryptStr + appSecret)
 
 		// 验证签名
-		util.MD5(appSecret + encryptStr + appSecret)
+		md5.MD5(appSecret + encryptStr + appSecret)
 	}
-	utilGin := util.Gin{Ctx: c}
+	utilGin := response.Gin{Ctx: c}
 	utilGin.Response(1, fmt.Sprintf("%v次 - %v", count, time.Since(startTime)), nil)
 }
 
@@ -30,12 +33,12 @@ func AesTest(c *gin.Context) {
 	count      := 1000000
 	for i := 0; i < count; i++ {
 		// 生成签名
-		sn, _ := util.AesEncrypt(encryptStr, []byte(appSecret), appSecret)
+		sn, _ := aes.AesEncrypt(encryptStr, []byte(appSecret), appSecret)
 
 		// 验证签名
-		util.AesDecrypt(sn, []byte(appSecret), appSecret)
+		aes.AesDecrypt(sn, []byte(appSecret), appSecret)
 	}
-	utilGin := util.Gin{Ctx: c}
+	utilGin := response.Gin{Ctx: c}
 	utilGin.Response(1, fmt.Sprintf("%v次 - %v", count, time.Since(startTime)), nil)
 }
 
@@ -45,11 +48,11 @@ func RsaTest(c *gin.Context) {
 	count      := 500
 	for i := 0; i < count; i++ {
 		// 生成签名
-		sn, _ := util.RsaPublicEncrypt(encryptStr, "rsa/public.pem")
+		sn, _ := rsa.RsaPublicEncrypt(encryptStr, "rsa/public.pem")
 
 		// 验证签名
-		util.RsaPrivateDecrypt(sn, "rsa/private.pem")
+		rsa.RsaPrivateDecrypt(sn, "rsa/private.pem")
 	}
-	utilGin := util.Gin{Ctx: c}
+	utilGin := response.Gin{Ctx: c}
 	utilGin.Response(1, fmt.Sprintf("%v次 - %v", count, time.Since(startTime)), nil)
 }

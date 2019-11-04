@@ -7,8 +7,9 @@ import (
 	"go-gin-api/app/model/proto/read"
 	"go-gin-api/app/model/proto/speak"
 	"go-gin-api/app/model/proto/write"
-	"go-gin-api/app/util"
 	"go-gin-api/app/util/grpc_client"
+	"go-gin-api/app/util/request"
+	"go-gin-api/app/util/response"
 )
 
 func JaegerTest(c *gin.Context) {
@@ -37,7 +38,7 @@ func JaegerTest(c *gin.Context) {
 
 	// 调用 HTTP 服务
 	resHttpGet := ""
-	_, err := util.HttpGet("http://localhost:9905/sing", c)
+	_, err := request.HttpGet("http://localhost:9905/sing", c)
 	if err == nil {
 		resHttpGet = "[HttpGetOk]"
 	}
@@ -51,6 +52,6 @@ func JaegerTest(c *gin.Context) {
 		   resHttpGet
 
 
-	utilGin := util.Gin{Ctx:c}
+	utilGin := response.Gin{Ctx:c}
 	utilGin.Response(1, msg, nil)
 }

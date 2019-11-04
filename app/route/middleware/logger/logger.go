@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util"
+	jsonUtil "go-gin-api/app/util/json"
+	"go-gin-api/app/util/response"
+	"go-gin-api/app/util/time"
 	"log"
 	"os"
 )
@@ -37,7 +39,7 @@ func SetUp() gin.HandlerFunc {
 		c.Writer = bodyLogWriter
 
 		// 开始时间
-		startTime := util.GetCurrentMilliUnix()
+		startTime := time.GetCurrentMilliUnix()
 
 		// 处理请求
 		c.Next()
@@ -49,17 +51,17 @@ func SetUp() gin.HandlerFunc {
 		var responseData interface{}
 
 		if responseBody != "" {
-			response := util.Response{}
-			err := json.Unmarshal([]byte(responseBody), &response)
+			res := response.Response{}
+			err := json.Unmarshal([]byte(responseBody), &res)
 			if err == nil {
-				responseCode = response.Code
-				responseMsg = response.Message
-				responseData = response.Data
+				responseCode = res.Code
+				responseMsg = res.Message
+				responseData = res.Data
 			}
 		}
 
 		// 结束时间
-		endTime := util.GetCurrentMilliUnix()
+		endTime := time.GetCurrentMilliUnix()
 
 		if c.Request.Method == "POST" {
 			_ = c.Request.ParseForm()
@@ -84,7 +86,7 @@ func SetUp() gin.HandlerFunc {
 
 		accessLogMap["cost_time"] = fmt.Sprintf("%vms", endTime-startTime)
 
-		accessLogJson, _ := util.JsonEncode(accessLogMap)
+		accessLogJson, _ := jsonUtil.JsonEncode(accessLogMap)
 
 		accessChannel <- accessLogJson
 	}

@@ -5,16 +5,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/controller/param_bind"
 	"go-gin-api/app/controller/param_verify"
-	"go-gin-api/app/util"
+	"go-gin-api/app/util/bind"
+	"go-gin-api/app/util/response"
 	"gopkg.in/go-playground/validator.v9"
 )
 
 // 新增
 func Add(c *gin.Context) {
-	utilGin := util.Gin{Ctx:c}
+	utilGin := response.Gin{Ctx: c}
 
 	// 参数绑定
-	s, e := util.Bind(&param_bind.ProductAdd{}, c)
+	s, e := bind.Bind(&param_bind.ProductAdd{}, c)
 	if e != nil {
 		utilGin.Response(-1, e.Error(), nil)
 		return

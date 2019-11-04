@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util"
+	"go-gin-api/app/util/response"
+	"go-gin-api/app/util/rsa"
+	timeUtil "go-gin-api/app/util/time"
 	"net/url"
 	"sort"
 	"strconv"
@@ -19,7 +21,7 @@ var AppSecret string
 func SetUp() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		utilGin := util.Gin{Ctx: c}
+		utilGin := response.Gin{Ctx: c}
 
 		sign, err := verifySign(c)
 
@@ -57,7 +59,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 	}
 
 	if debug == "1" {
-		currentUnix := util.GetCurrentUnix()
+		currentUnix := timeUtil.GetCurrentUnix()
 		req.Set("ts", strconv.FormatInt(currentUnix, 10))
 
 		sn, err := createSign(req)
@@ -85,7 +87,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 		return nil, errors.New("sn Error")
 	}
 
-	decryptStr, decryptErr := util.RsaPrivateDecrypt(sn, config.AppRsaPrivateFile)
+	decryptStr, decryptErr := rsa.RsaPrivateDecrypt(sn, config.AppRsaPrivateFile)
 	if decryptErr != nil {
 		return nil, errors.New(decryptErr.Error())
 	}
@@ -97,7 +99,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 
 // 创建签名
 func createSign(params url.Values) (string, error) {
-	return util.RsaPublicEncrypt(createEncryptStr(params), AppSecret)
+	return rsa.RsaPublicEncrypt(createEncryptStr(params), AppSecret)
 }
 
 func createEncryptStr(params url.Values) string {

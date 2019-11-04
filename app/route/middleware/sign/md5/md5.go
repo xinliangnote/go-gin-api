@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util"
+	"go-gin-api/app/util/md5"
+	"go-gin-api/app/util/response"
+	timeUtil "go-gin-api/app/util/time"
 	"net/url"
 	"sort"
 	"strconv"
@@ -19,7 +21,7 @@ var AppSecret string
 func SetUp() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
-		utilGin := util.Gin{Ctx: c}
+		utilGin := response.Gin{Ctx: c}
 
 		sign, err := verifySign(c)
 
@@ -57,7 +59,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 	}
 
 	if debug == "1" {
-		currentUnix := util.GetCurrentUnix()
+		currentUnix := timeUtil.GetCurrentUnix()
 		req.Set("ts", strconv.FormatInt(currentUnix, 10))
 		res := map[string]string{
 			"ts": strconv.FormatInt(currentUnix, 10),
@@ -85,7 +87,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 // 创建签名
 func createSign(params url.Values) string {
 	// 自定义 MD5 组合
-	return util.MD5(AppSecret + createEncryptStr(params) + AppSecret)
+	return md5.MD5(AppSecret + createEncryptStr(params) + AppSecret)
 }
 
 func createEncryptStr(params url.Values) string {

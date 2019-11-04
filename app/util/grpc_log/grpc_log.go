@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util"
+	"go-gin-api/app/util/json"
+	"go-gin-api/app/util/time"
 	"google.golang.org/grpc"
 	"log"
 	"os"
@@ -21,12 +22,12 @@ func ClientInterceptor() grpc.UnaryClientInterceptor {
 		invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 
 		// 开始时间
-		startTime := util.GetCurrentMilliUnix()
+		startTime := time.GetCurrentMilliUnix()
 
 		err := invoker(ctx, method, req, reply, cc, opts...)
 
 		// 结束时间
-		endTime := util.GetCurrentMilliUnix()
+		endTime := time.GetCurrentMilliUnix()
 
 		// 日志格式
 		grpcLogMap := make(map[string]interface{})
@@ -40,7 +41,7 @@ func ClientInterceptor() grpc.UnaryClientInterceptor {
 
 		grpcLogMap["cost_time"] = fmt.Sprintf("%vms", endTime-startTime)
 
-		grpcLogJson, _ := util.JsonEncode(grpcLogMap)
+		grpcLogJson, _ := json.JsonEncode(grpcLogMap)
 
 		grpcChannel <- grpcLogJson
 
