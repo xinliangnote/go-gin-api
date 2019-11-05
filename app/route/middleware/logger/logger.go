@@ -86,8 +86,7 @@ func SetUp() gin.HandlerFunc {
 
 		accessLogMap["cost_time"] = fmt.Sprintf("%vms", endTime-startTime)
 
-		accessLogJson, _ := jsonUtil.JsonEncode(accessLogMap)
-
+		accessLogJson, _ := jsonUtil.Encode(accessLogMap)
 		accessChannel <- accessLogJson
 	}
 }

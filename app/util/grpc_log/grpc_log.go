@@ -41,7 +41,7 @@ func ClientInterceptor() grpc.UnaryClientInterceptor {
 
 		grpcLogMap["cost_time"] = fmt.Sprintf("%vms", endTime-startTime)
 
-		grpcLogJson, _ := json.JsonEncode(grpcLogMap)
+		grpcLogJson, _ := json.Encode(grpcLogMap)
 
 		grpcChannel <- grpcLogJson
 

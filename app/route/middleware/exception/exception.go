@@ -31,7 +31,16 @@ func SetUp() gin.HandlerFunc {
 				body  = strings.ReplaceAll(body, "{RequestIP}", c.ClientIP())
 				body  = strings.ReplaceAll(body, "{DebugStack}", DebugStack)
 
-				_ = mail.SendMail(config.ErrorNotifyUser, subject, body)
+				options := &mail.Options{
+					MailHost : config.SystemEmailHost,
+					MailPort : config.SystemEmailPort,
+					MailUser : config.SystemEmailUser,
+					MailPass : config.SystemEmailPass,
+					MailTo   : config.ErrorNotifyUser,
+					Subject  : subject,
+					Body     : body,
+				}
+				_ = mail.Send(options)
 
 				utilGin := response.Gin{Ctx: c}
 				utilGin.Response(500, "系统异常，请联系管理员！", nil)
