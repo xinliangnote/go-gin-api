@@ -3,9 +3,9 @@ package grpc_log
 import (
 	"context"
 	"fmt"
+	"github.com/xinliangnote/go-util/json"
+	"github.com/xinliangnote/go-util/time"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util/json"
-	"go-gin-api/app/util/time"
 	"google.golang.org/grpc"
 	"log"
 	"os"

@@ -60,6 +60,14 @@ github.com/uber/jaeger-client-go/thrift-gen/baggage
 github.com/uber/jaeger-lib/metrics
 # github.com/ugorji/go v1.1.4
 github.com/ugorji/go/codec
+# github.com/xinliangnote/go-util v0.0.0-20191109055458-c8d858c8d8b9
+github.com/xinliangnote/go-util/aes
+github.com/xinliangnote/go-util/md5
+github.com/xinliangnote/go-util/rsa
+github.com/xinliangnote/go-util/mail
+github.com/xinliangnote/go-util/time
+github.com/xinliangnote/go-util/json
+github.com/xinliangnote/go-util/uuid
 # golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
 golang.org/x/net/trace
 golang.org/x/net/internal/timeseries

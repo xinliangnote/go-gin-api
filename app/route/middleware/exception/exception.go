@@ -3,10 +3,10 @@ package exception
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xinliangnote/go-util/mail"
+	"github.com/xinliangnote/go-util/time"
 	"go-gin-api/app/config"
-	"go-gin-api/app/util/mail"
 	"go-gin-api/app/util/response"
-	"go-gin-api/app/util/time"
 	"runtime/debug"
 	"strings"
 )

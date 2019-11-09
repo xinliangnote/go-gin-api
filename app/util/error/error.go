@@ -2,11 +2,11 @@ package error
 
 import (
 	"fmt"
+	"github.com/xinliangnote/go-util/json"
+	"github.com/xinliangnote/go-util/mail"
+	timeUtil "github.com/xinliangnote/go-util/time"
 	"go-gin-api/app/config"
 	"go-gin-api/app/route/middleware/exception"
-	"go-gin-api/app/util/json"
-	"go-gin-api/app/util/mail"
-	timeUtil "go-gin-api/app/util/time"
 	"log"
 	"os"
 	"runtime/debug"

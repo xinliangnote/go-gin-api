@@ -2,7 +2,7 @@ package requestid
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-gin-api/app/util/uuid"
+	"github.com/xinliangnote/go-util/uuid"
 )
 
 func SetUp() gin.HandlerFunc {

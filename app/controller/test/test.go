@@ -3,10 +3,10 @@ package test
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go-gin-api/app/util/aes"
-	"go-gin-api/app/util/md5"
+	"github.com/xinliangnote/go-util/aes"
+	"github.com/xinliangnote/go-util/md5"
+	"github.com/xinliangnote/go-util/rsa"
 	"go-gin-api/app/util/response"
-	"go-gin-api/app/util/rsa"
 	"time"
 )
 
