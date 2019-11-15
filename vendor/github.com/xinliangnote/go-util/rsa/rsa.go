@@ -10,7 +10,7 @@ import (
 )
 
 // 公钥加密
-func RsaPublicEncrypt(encryptStr string, path string) (string, error) {
+func PublicEncrypt(encryptStr string, path string) (string, error) {
 	// 打开文件
 	file, err := os.Open(path)
 	if err != nil {
@@ -46,7 +46,7 @@ func RsaPublicEncrypt(encryptStr string, path string) (string, error) {
 }
 
 // 私钥解密
-func RsaPrivateDecrypt(decryptStr string, path string) (string, error) {
+func PrivateDecrypt(decryptStr string, path string) (string, error) {
 	// 打开文件
 	file, err := os.Open(path)
 	if err != nil {

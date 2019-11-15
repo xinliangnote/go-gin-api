@@ -87,7 +87,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 		return nil, errors.New("sn Error")
 	}
 
-	decryptStr, decryptErr := aes.AesDecrypt(sn, []byte(AppSecret), AppSecret)
+	decryptStr, decryptErr := aes.Decrypt(sn, []byte(AppSecret), AppSecret)
 	if decryptErr != nil {
 		return nil, errors.New(decryptErr.Error())
 	}
@@ -99,7 +99,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 
 // 创建签名
 func createSign(params url.Values) (string, error) {
-	return aes.AesEncrypt(createEncryptStr(params), []byte(AppSecret), AppSecret)
+	return aes.Encrypt(createEncryptStr(params), []byte(AppSecret), AppSecret)
 }
 
 func createEncryptStr(params url.Values) string {

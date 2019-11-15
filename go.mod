@@ -16,7 +16,7 @@ require (
 	github.com/uber-go/atomic v1.4.0 // indirect
 	github.com/uber/jaeger-client-go v2.18.1+incompatible
 	github.com/uber/jaeger-lib v2.1.1+incompatible // indirect
-	github.com/xinliangnote/go-util v0.0.0-20191109055458-c8d858c8d8b9
+	github.com/xinliangnote/go-util v0.0.0-20191115235314-e7d1576d41db
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0
 	google.golang.org/grpc v1.23.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect

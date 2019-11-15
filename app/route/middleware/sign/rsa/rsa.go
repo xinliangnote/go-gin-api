@@ -87,7 +87,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 		return nil, errors.New("sn Error")
 	}
 
-	decryptStr, decryptErr := rsa.RsaPrivateDecrypt(sn, config.AppRsaPrivateFile)
+	decryptStr, decryptErr := rsa.PrivateDecrypt(sn, config.AppRsaPrivateFile)
 	if decryptErr != nil {
 		return nil, errors.New(decryptErr.Error())
 	}
@@ -99,7 +99,7 @@ func verifySign(c *gin.Context) (map[string]string, error) {
 
 // 创建签名
 func createSign(params url.Values) (string, error) {
-	return rsa.RsaPublicEncrypt(createEncryptStr(params), AppSecret)
+	return rsa.PublicEncrypt(createEncryptStr(params), AppSecret)
 }
 
 func createEncryptStr(params url.Values) string {
