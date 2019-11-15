@@ -143,6 +143,7 @@ http://127.0.0.1:9998/ui/
 - WEB 框架：github.com/gin-gonic/gin
 - 链路追踪：github.com/jaegertracing/jaeger-client-go
 - 限流：golang.org/x/time/rate
+- 工具包：github.com/xinliangnote/go-util
 
 ## Document
 
