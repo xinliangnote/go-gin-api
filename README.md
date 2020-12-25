@@ -1,4 +1,11 @@
-![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B%E6%96%87%E6%A1%A3%5D/images/go-gin-api-logo.png)
+```
+ ██████╗  ██████╗        ██████╗ ██╗███╗   ██╗       █████╗ ██████╗ ██╗
+██╔════╝ ██╔═══██╗      ██╔════╝ ██║████╗  ██║      ██╔══██╗██╔══██╗██║
+██║  ███╗██║   ██║█████╗██║  ███╗██║██╔██╗ ██║█████╗███████║██████╔╝██║
+██║   ██║██║   ██║╚════╝██║   ██║██║██║╚██╗██║╚════╝██╔══██║██╔═══╝ ██║
+╚██████╔╝╚██████╔╝      ╚██████╔╝██║██║ ╚████║      ██║  ██║██║     ██║
+ ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
+```
 
 ## go-gin-api
 
@@ -37,12 +44,6 @@
 - [ ] gRPC
 - [ ] ...
 
-## Download
-
-```
-git clone https://github.com/xinliangnote/go-gin-api.git
-```
-
 ## Quick start
 
 #### Requirements
@@ -61,20 +62,12 @@ export GOPROXY=https://goproxy.io
 cd go-gin-api
 
 go run main.go
-
-输出如下，表示 Http Server 启动成功。
-|-----------------------------------|
-|            go-gin-api             |
-|-----------------------------------|
-|  Go Http Server Start Successful  |
-|    Port:9999     Pid:xxxxx        |
-|-----------------------------------|
 ```
 
 #### HTTP Demo
 
 ```
-curl -X POST http://127.0.0.1:9999/product
+curl -X POST http://127.0.0.1:9999/demo/user
 ```
 
 #### Jaeger Demo
@@ -138,22 +131,9 @@ pprof -http=:9998 xxx.cpu.prof
 http://127.0.0.1:9998/ui/
 ```
 
-## Dependence
+## Special Thanks
 
-- WEB 框架：github.com/gin-gonic/gin
-- 链路追踪：github.com/jaegertracing/jaeger-client-go
-- 限流：golang.org/x/time/rate
-- 工具包：github.com/xinliangnote/go-util
-
-## Document
-
-- [1. 使用 go modules 初始化项目](https://mp.weixin.qq.com/s/1XNTEgZ0XGZZdxFOfR5f_A)
-- [2. 规划项目目录和参数验证](https://mp.weixin.qq.com/s/11AuXptWGmL5QfiJArNLnA)
-- [3. 路由中间件 - 日志记录](https://mp.weixin.qq.com/s/eTygPXnrYM2xfrRQyfn8Tg)
-- [4. 路由中间件 - 捕获异常](https://mp.weixin.qq.com/s/SconDXB_x7Gan6T0Awdh9A)
-- [5. 路由中间件 - Jaeger 链路追踪（理论篇）](https://mp.weixin.qq.com/s/28UBEsLOAHDv530ePilKQA)
-- [6. 路由中间件 - Jaeger 链路追踪（实战篇）](https://mp.weixin.qq.com/s/Ea28475_UTNaM9RNfgPqJA)
-- [7. 路由中间件 - 签名验证](https://mp.weixin.qq.com/s/0cozELotcpX3Gd6WPJiBbQ)
+[@koketama](https://github.com/koketama)
 
 ## Learning together
 

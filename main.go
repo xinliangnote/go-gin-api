@@ -3,59 +3,51 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/gin-contrib/pprof"
-	"github.com/gin-gonic/gin"
-	"go-gin-api/app/config"
-	"go-gin-api/app/route"
-	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"time"
+
+	"github.com/xinliangnote/go-gin-api/internal/api/router"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/configs"
+	"github.com/xinliangnote/go-gin-api/pkg/logger"
+	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
+
+	"go.uber.org/zap"
 )
 
 func main() {
-	gin.SetMode(config.AppMode)
-	engine := gin.New()
-
-	// 性能分析 - 正式环境不要使用！！！
-	pprof.Register(engine)
-
-	// 设置路由
-	route.SetupRouter(engine)
-
-	server := &http.Server{
-		Addr         : config.AppPort,
-		Handler      : engine,
-		ReadTimeout  : config.AppReadTimeout * time.Second,
-		WriteTimeout : config.AppWriteTimeout * time.Second,
+	loggers, err := logger.NewJSONLogger(
+		logger.WithField("domain", configs.ProjectName()),
+		logger.WithTimeLayout("2006-01-02 15:04:05"),
+		logger.WithFileP(fmt.Sprintf("./logs/%s.log", configs.ProjectName())),
+	)
+	if err != nil {
+		panic(err)
 	}
 
-	fmt.Println("|-----------------------------------|")
-	fmt.Println("|            go-gin-api             |")
-	fmt.Println("|-----------------------------------|")
-	fmt.Println("|  Go Http Server Start Successful  |")
-	fmt.Println("|    Port" + config.AppPort + "     Pid:" + fmt.Sprintf("%d", os.Getpid()) + "        |")
-	fmt.Println("|-----------------------------------|")
-	fmt.Println("")
+	mux, err := router.NewHTTPMux(loggers)
+	if err != nil {
+		panic(err)
+	}
+
+	server := &http.Server{
+		Addr:    ":9999",
+		Handler: mux,
+	}
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("HTTP server listen: %s\n", err)
+			loggers.Fatal("http server startup err", zap.Error(err))
 		}
 	}()
 
-	// 等待中断信号以优雅地关闭服务器（设置 5 秒的超时时间）
-	signalChan := make(chan os.Signal)
-	signal.Notify(signalChan, os.Interrupt)
-	sig := <-signalChan
-	log.Println("Get Signal:", sig)
-	log.Println("Shutdown Server ...")
+	shutdown.NewHook().Close(func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
-	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal("Server Shutdown:", err)
-	}
-	log.Println("Server exiting")
+		if err := server.Shutdown(ctx); err != nil {
+			loggers.Fatal("shutdown err", zap.Error(err))
+		} else {
+			loggers.Info("shutdown success")
+		}
+	})
 }
