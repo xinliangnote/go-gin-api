@@ -262,17 +262,20 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				}
 			}
 
-			if x := context.Journal(); x != nil {
-				context.SetHeader(journal.JournalHeader, x.ID())
+			if ctx.Writer.Status() == http.StatusNotFound {
+				return
 			}
 
 			response := context.GetPayload()
-			if response != nil {
-				ctx.JSON(http.StatusOK, response)
+			if x := context.Journal(); x != nil {
+				context.SetHeader(journal.JournalHeader, x.ID())
+				response.WithID(x.ID())
+			} else {
+				response.WithID("")
 			}
 
-			if ctx.Writer.Status() == http.StatusNotFound {
-				return
+			if response != nil {
+				ctx.JSON(http.StatusOK, response)
 			}
 
 			var j *journal.Journal

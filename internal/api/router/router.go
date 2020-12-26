@@ -38,23 +38,14 @@ func NewHTTPMux(logger *zap.Logger) (core.Mux, error) {
 		d.GET("get/:name", demoHandler.Get(), core.DisableJournal)
 		d.POST("post", demoHandler.Post(), core.DisableJournal)
 
+		// 测试加密性能
+		d.GET("/rsa/test", demoHandler.RsaTest())
+		d.GET("/aes/test", demoHandler.AesTest())
+		d.GET("/md5/test", demoHandler.MD5Test())
 	}
 
 	// 测试链路追踪
 	//mux.GET("/jaeger_test", jaeger_conn.JaegerTest)
-
-	// 测试加密性能
-	//TestRouter := mux.Group("/test")
-	//{
-	//	// 测试 MD5 组合 的性能
-	//	TestRouter.GET("/md5", core.Handle(test.Md5Test))
-	//
-	//	// 测试 AES 的性能
-	//	TestRouter.GET("/aes", core.Handle(test.AesTest))
-	//
-	//	// 测试 RSA 的性能
-	//	TestRouter.GET("/rsa", core.Handle(test.RsaTest))
-	//}
 
 	return mux, nil
 }

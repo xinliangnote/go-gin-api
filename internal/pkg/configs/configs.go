@@ -14,9 +14,15 @@ type Config struct {
 		Port int    `mapstructure:"port"`
 	} `mapstructure:"db"`
 
-	Signature struct {
-		Secrets map[string]string `mapstructure:"secrets"`
-	} `mapstructure:"signature"`
+	Aes struct {
+		Key string `mapstructure:"key"`
+		Iv  string `mapstructure:"iv"`
+	} `mapstructure:"aes"`
+
+	Rsa struct {
+		Private string `mapstructure:"private"`
+		Public  string `mapstructure:"public"`
+	} `mapstructure:"rsa"`
 }
 
 func init() {
