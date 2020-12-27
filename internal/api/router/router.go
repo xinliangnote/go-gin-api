@@ -17,6 +17,7 @@ func NewHTTPMux(logger *zap.Logger) (core.Mux, error) {
 
 	mux, err := core.New(logger,
 		core.WithEnableCors(),
+		core.WithEnableRate(),
 		core.WithDisablePProf(),
 		core.WithPanicNotify(notify.Email),
 	)

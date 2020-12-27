@@ -14,11 +14,13 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	cors "github.com/rs/cors/wrapper/gin"
 	"go.uber.org/zap"
+	"golang.org/x/time/rate"
 )
 
-const _CLI_UI_ = `
+const _UI = `
  ██████╗  ██████╗        ██████╗ ██╗███╗   ██╗       █████╗ ██████╗ ██╗
 ██╔════╝ ██╔═══██╗      ██╔════╝ ██║████╗  ██║      ██╔══██╗██╔══██╗██║
 ██║  ███╗██║   ██║█████╗██║  ███╗██║██╔██╗ ██║█████╗███████║██████╔╝██║
@@ -27,6 +29,8 @@ const _CLI_UI_ = `
  ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
 `
 
+const _MaxBurstSize = 100
+
 type Option func(*option)
 
 type option struct {
@@ -34,14 +38,24 @@ type option struct {
 	disablePrometheus bool
 	panicNotify       OnPanicNotify
 	enableCors        bool
+	enableRate        bool
 }
 
 // OnPanicNotify 发生panic时通知用
 type OnPanicNotify func(ctx Context, err interface{}, stackInfo string)
 
-// DisableJournal 标识某些请求不记录journal
-func DisableJournal(ctx Context) {
-	ctx.disableJournal()
+// WithDisablePProf 禁用 pprof
+func WithDisablePProf() Option {
+	return func(opt *option) {
+		opt.disablePProf = true
+	}
+}
+
+// WithDisableproPrometheus 禁用prometheus
+func WithDisableproPrometheus() Option {
+	return func(opt *option) {
+		opt.disablePrometheus = true
+	}
 }
 
 // WithPanicNotify 设置panic时的通知回调
@@ -51,18 +65,22 @@ func WithPanicNotify(notify OnPanicNotify) Option {
 	}
 }
 
-// WithDisablePProf 禁用 pprof
-func WithDisablePProf() Option {
-	return func(opt *option) {
-		opt.disablePProf = true
-	}
-}
-
 // WithEnableCors 开启CORS
 func WithEnableCors() Option {
 	return func(opt *option) {
 		opt.enableCors = true
 	}
+}
+
+func WithEnableRate() Option {
+	return func(opt *option) {
+		opt.enableRate = true
+	}
+}
+
+// DisableJournal 标识某些请求不记录journal
+func DisableJournal(ctx Context) {
+	ctx.disableJournal()
 }
 
 // RouterGroup 包装gin的RouterGroup
@@ -176,7 +194,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 		engine: gin.New(),
 	}
 
-	fmt.Println(color.Blue(_CLI_UI_))
+	fmt.Println(color.Blue(_UI))
 
 	// withoutLogPaths 这些请求，默认不记录日志
 	withoutJournalPaths := map[string]bool{
@@ -204,6 +222,10 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	if !opt.disablePProf {
 		pprof.Register(engine) // register pprof to gin
+	}
+
+	if !opt.disablePrometheus {
+		mux.engine.GET("/metrics", gin.WrapH(promhttp.Handler())) // register prometheus
 	}
 
 	if opt.enableCors {
@@ -255,7 +277,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			if err := recover(); err != nil {
 				stackInfo := string(debug.Stack())
 				logger.Error("got panic", zap.String("panic", fmt.Sprintf("%+v", err)), zap.String("stack", stackInfo))
-				ctx.JSON(http.StatusOK, errno.ErrServer)
+				context.SetPayload(errno.ErrServer)
 
 				if notify := opt.panicNotify; notify != nil {
 					notify(context, err, stackInfo)
@@ -309,6 +331,21 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 		ctx.Next()
 	})
+
+	if opt.enableRate {
+		limiter := rate.NewLimiter(rate.Every(time.Second*1), _MaxBurstSize)
+		mux.engine.Use(func(ctx *gin.Context) {
+			context := newContext(ctx)
+			defer releaseContext(context)
+
+			if !limiter.Allow() {
+				context.SetPayload(errno.ErrManyRequest)
+				ctx.Abort()
+				return
+			}
+			ctx.Next()
+		})
+	}
 
 	mux.engine.NoMethod(wrapHandlers(DisableJournal)...)
 	mux.engine.NoRoute(wrapHandlers(DisableJournal)...)

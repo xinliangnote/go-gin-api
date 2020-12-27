@@ -7,10 +7,10 @@ require (
 	github.com/gin-contrib/pprof v1.2.1
 	github.com/gin-gonic/gin v1.4.0
 	github.com/golang/protobuf v1.3.2
-	github.com/google/uuid v1.1.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.9.1
+	github.com/prometheus/client_golang v0.9.3
 	github.com/rs/cors v1.7.0
 	github.com/spf13/viper v1.7.1
 	github.com/tidwall/gjson v1.6.6
