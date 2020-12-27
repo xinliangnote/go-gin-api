@@ -18,7 +18,6 @@ func NewHTTPMux(logger *zap.Logger) (core.Mux, error) {
 	mux, err := core.New(logger,
 		core.WithEnableCors(),
 		core.WithEnableRate(),
-		core.WithDisablePProf(),
 		core.WithPanicNotify(notify.Email),
 	)
 
@@ -33,7 +32,7 @@ func NewHTTPMux(logger *zap.Logger) (core.Mux, error) {
 
 	d := mux.Group("/demo")
 	{
-		d.GET("user", demoHandler.User())
+		d.GET("user/:name", demoHandler.User())
 
 		// 模拟数据
 		d.GET("get/:name", demoHandler.Get(), core.DisableJournal)

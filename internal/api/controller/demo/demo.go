@@ -86,14 +86,38 @@ func (d *Demo) Post() core.HandlerFunc {
 	}
 }
 
+type request struct {
+	Name string `uri:"name"`
+}
+
+type response []struct {
+	Name string `json:"name"` //用户名
+	Job  string `json:"job"`  //工作
+}
+
+// Get 获取用户信息
+// @Summary 获取用户信息
+// @Description 获取用户信息
+// @Tags Demo
+// @Accept  json
+// @Produce  json
+// @Param name path string true "用户名"
+// @Success 200 {object} response "用户信息"
+// @Router /demo/user/{name} [get]
 func (d *Demo) User() core.HandlerFunc {
-
-	type response []struct {
-		Name string `json:"name"`
-	}
-
 	return func(c core.Context) {
-		body1, err1 := httpclient.Get("http://127.0.0.1:9999/demo/get/Tom", nil,
+		req := new(request)
+		if err := c.ShouldBindURI(req); err != nil {
+			c.SetPayload(errno.ErrParam)
+			return
+		}
+
+		if req.Name != "Tom" {
+			c.SetPayload(errno.ErrUser)
+			return
+		}
+
+		body1, err1 := httpclient.Get("http://127.0.0.1:9999/demo/get/"+req.Name, nil,
 			httpclient.WithTTL(time.Second*2),
 			httpclient.WithJournal(c.Journal()),
 			httpclient.WithLogger(c.Logger()),
@@ -114,8 +138,14 @@ func (d *Demo) User() core.HandlerFunc {
 		}
 
 		data := &response{
-			{Name: jsonparse.Get(string(body1), "data.name").(string)},
-			{Name: jsonparse.Get(string(body2), "data.name").(string)},
+			{
+				Name: jsonparse.Get(string(body1), "data.name").(string),
+				Job:  jsonparse.Get(string(body1), "data.job").(string),
+			},
+			{
+				Name: jsonparse.Get(string(body2), "data.name").(string),
+				Job:  jsonparse.Get(string(body2), "data.job").(string),
+			},
 		}
 
 		c.SetPayload(errno.OK.WithData(data))
@@ -123,7 +153,6 @@ func (d *Demo) User() core.HandlerFunc {
 }
 
 func (d *Demo) RsaTest() core.HandlerFunc {
-
 	return func(c core.Context) {
 		startTime := time.Now()
 		encryptStr := "param_1=xxx&param_2=xxx&ak=xxx&ts=1111111111"

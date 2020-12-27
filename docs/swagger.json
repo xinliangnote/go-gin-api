@@ -1,0 +1,55 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "go-gin-api docs api",
+        "contact": {}
+    },
+    "host": "localhost:9999",
+    "paths": {
+        "/demo/user/{name}": {
+            "get": {
+                "description": "获取用户信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "获取用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户信息",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "job": {
+                                        "description": "工作",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "用户名",
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

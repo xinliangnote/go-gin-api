@@ -14,6 +14,16 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title go-gin-api docs api
+// @version
+// @description
+
+// @contact.name
+// @contact.url
+// @contact.email
+
+// @host localhost:9999
+// @BasePath
 func main() {
 	loggers, err := logger.NewJSONLogger(
 		logger.WithField("domain", configs.ProjectName()),

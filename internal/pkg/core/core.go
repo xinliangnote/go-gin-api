@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	_ "github.com/xinliangnote/go-gin-api/docs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/journal"
 	"github.com/xinliangnote/go-gin-api/pkg/color"
@@ -16,6 +17,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	cors "github.com/rs/cors/wrapper/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 )
@@ -35,6 +38,7 @@ type Option func(*option)
 
 type option struct {
 	disablePProf      bool
+	disableSwagger    bool
 	disablePrometheus bool
 	panicNotify       OnPanicNotify
 	enableCors        bool
@@ -48,6 +52,13 @@ type OnPanicNotify func(ctx Context, err interface{}, stackInfo string)
 func WithDisablePProf() Option {
 	return func(opt *option) {
 		opt.disablePProf = true
+	}
+}
+
+// WithDisableSwagger 禁用 swagger
+func WithDisableSwagger() Option {
+	return func(opt *option) {
+		opt.disableSwagger = true
 	}
 }
 
@@ -222,6 +233,10 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	if !opt.disablePProf {
 		pprof.Register(engine) // register pprof to gin
+	}
+
+	if !opt.disableSwagger {
+		mux.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
 	}
 
 	if !opt.disablePrometheus {
