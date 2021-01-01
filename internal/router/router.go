@@ -37,10 +37,10 @@ func NewHTTPMux(logger *zap.Logger) (core.Mux, error) {
 
 	d := mux.Group("/demo", core.WrapAuthHandler(middleware.AuthHandler)) //使用 auth 验证
 	{
-		d.GET("user/:name", demoHandler.User(), core.DisableJournal)
+		d.GET("user/:name", demoHandler.User())
 
 		// 模拟数据
-		d.GET("get/:name", demoHandler.Get())
+		d.GET("get/:name", demoHandler.Get(), core.DisableJournal)
 		d.POST("post", demoHandler.Post(), core.DisableJournal)
 
 		// 测试加密性能
