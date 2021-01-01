@@ -1,19 +1,31 @@
-[mail]
-host = 'smtp.163.com'
-port = 465
-user = ""
-pass = ""
-to   = ""
+package rsa
 
-[jwt]
-secret = 'i1ydX9RtHyuJTrw7frcu'
+import (
+	"testing"
+)
 
-[aes]
-key = 'IgkibX71IEf382PT'
-iv = 'IgkibX71IEf382PT'
+func TestEncrypt(t *testing.T) {
+	publicKey := `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1O3p0JN0/RrP7eY3f81i
+zPf16FS0WMNGCJkd+y5c6yBzUvN0IEeoxiIWIBhoMKH0pzlzBg0rfttojSodOgNo
+m/UCAzAYEgdIsNee5LSN/7e0T2/QvsIAHINuA8gI8fGoGiSA2TEzpUo6aVXwhZT3
+4GGRdrSJ+m4iVk/Kt95tavBNk+NDVSeb5xAjxBchT5BjAMMlE0ffGZb0MMjjO5+e
+9Tn8f99M2VMqpzXHXZzv1ABmqufzS20iWcSvnjhWcJ9hiKwO8Z30GgJyACmml+HM
+xLYEFN9h2MWYgxLm9Z0rLMrWwMM+E2rCs8tsxAD5sO9RZMJPl1C0FIsMR53ngqbz
+owIDAQAB
+-----END PUBLIC KEY-----`
 
-[rsa]
-private = '-----BEGIN RSA PRIVATE KEY-----
+	rsaPublic := NewPublic(publicKey)
+	str, err := rsaPublic.Encrypt("123456")
+	if err != nil {
+		t.Error("rsa public encrypt error", err)
+		return
+	}
+	t.Log(str)
+}
+
+func TestDecrypt(t *testing.T) {
+	privateKey := `-----BEGIN RSA PRIVATE KEY-----
 MIIEpgIBAAKCAQEA1O3p0JN0/RrP7eY3f81izPf16FS0WMNGCJkd+y5c6yBzUvN0
 IEeoxiIWIBhoMKH0pzlzBg0rfttojSodOgNom/UCAzAYEgdIsNee5LSN/7e0T2/Q
 vsIAHINuA8gI8fGoGiSA2TEzpUo6aVXwhZT34GGRdrSJ+m4iVk/Kt95tavBNk+ND
@@ -39,15 +51,14 @@ tN5Pb9To9gJTqpZRD+/cLOeFRrHBBjMK1z7fPKS/fN2B+JFVq7nD827t3+J0In4F
 4FT0odMDAoGBAJk3ELB/FHY8xzZ4jF1wG/a1CK681Xm6SuU5KIELDSAUNoou6OPG
 mS8gU20MMPAeV2z7khyDcSxlHsUyL73eLeaakbQov9NMW7cc99XX4wnP4W7FRpmr
 QbHmKuHIRFHCFv+XX8c0aK2mDZMUlzJdy4FgD/YCEZ7kZMZKyvZW/ZuV
------END RSA PRIVATE KEY-----'
+-----END RSA PRIVATE KEY-----`
+	decryptStr := "KTKXckjkCLI6Vk_y_XROnY-a6nJpllruL-CX-v_2AFxfghA2tZ2nkQyS6d1-IIYMlgwm4ivwlzy-phLtaN9BB03htA5D9rwjA_JwYtqAG4iwuvgaDl2SiZ_H2ACv-aV1kNRgnyjh14hs0JiSt5VHEiJ3D2xYzOCKwtEzoo0WczJ-MYb3u_-bfcnm9YtvgtG5-y3Jy7WYr-IwXdBKqPO0E-jzrtY7m3Q1yC4znHdzjNpxCj0I6YRx4CZ362b706qNX7sl3E5KTJeSmYrsurB-SxQT1CaqGzVt7mshx1v2qGnv5NBNXpj7ZPKWGJbgaCUxcuxd1Mg0o81HnfbsGuSlFQ=="
 
-public = '-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1O3p0JN0/RrP7eY3f81i
-zPf16FS0WMNGCJkd+y5c6yBzUvN0IEeoxiIWIBhoMKH0pzlzBg0rfttojSodOgNo
-m/UCAzAYEgdIsNee5LSN/7e0T2/QvsIAHINuA8gI8fGoGiSA2TEzpUo6aVXwhZT3
-4GGRdrSJ+m4iVk/Kt95tavBNk+NDVSeb5xAjxBchT5BjAMMlE0ffGZb0MMjjO5+e
-9Tn8f99M2VMqpzXHXZzv1ABmqufzS20iWcSvnjhWcJ9hiKwO8Z30GgJyACmml+HM
-xLYEFN9h2MWYgxLm9Z0rLMrWwMM+E2rCs8tsxAD5sO9RZMJPl1C0FIsMR53ngqbz
-owIDAQAB
------END PUBLIC KEY-----'
-
+	rsaPrivate := NewPrivate(privateKey)
+	str, err := rsaPrivate.Decrypt(decryptStr)
+	if err != nil {
+		t.Error("rsa private decrypt error", err)
+		return
+	}
+	t.Log(str)
+}

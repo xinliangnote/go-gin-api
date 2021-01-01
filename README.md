@@ -5,38 +5,41 @@
 ██║   ██║██║   ██║╚════╝██║   ██║██║██║╚██╗██║╚════╝██╔══██║██╔═══╝ ██║
 ╚██████╔╝╚██████╔╝      ╚██████╔╝██║██║ ╚████║      ██║  ██║██║     ██║
  ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
+
+* [register cors]
+* [register rate]
+* [register panic notify]
+* [register pprof]
+* [register swagger]
+* [register prometheus]
 ```
 
 ## go-gin-api
 
-基于 [Gin](https://github.com/gin-gonic/gin) 进行模块化设计的 API 框架，封装了常用的功能，使用简单，致力于进行快速的业务研发。
+基于 [Gin](https://github.com/gin-gonic/gin) 进行模块化设计的 API 框架，封装了常用的功能，使用简单，致力于进行快速的业务研发，同时增加了更多限制，以约束项目组开发成员、规避混乱无序和自由随意。
+
+供参考学习，线上使用请谨慎！
+
+**查看 Jaeger 链路追踪代码，请查看 [v1.0版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，文档 [jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 点这里**。
 
 持续更新... 
 
 ## Features
 
-- [x] 使用 go modules 初始化项目
-- [x] 安装 Gin 框架
-- [x] 性能分析工具（pprof）
-- [x] 支持优雅地重启或停止
-- [x] 规划项目目录
-- [x] 参数验证（validator.v9）
-    - [x] 模型绑定和验证
-    - [x] 自定义验证器
-- [x] 路由中间件
-    - [x] 签名验证
-        - [x] MD5 组合加密
-        - [x] AES 对称加密
-        - [x] RSA 非对称加密
-    - [x] 日志记录
-    - [x] 异常捕获
-    - [x] 链路追踪（Jaeger）
-    - [x] 限流
-- [x] 自定义告警
-    - [x] 邮件（gomail）
-    - [ ] 微信
-    - [ ] 短信
-    - [ ] 钉钉
+- [x] 包管理工具 [Go Modules](https://github.com/golang/go/wiki/Modules)
+- [x] [Gin](https://github.com/gin-gonic/gin) 支持优雅关闭
+- [x] 配置文件解析库 [Viper](https://github.com/spf13/viper)
+- [x] 文档使用 [Swagger](https://swagger.io/) 生成
+- [x] 性能分析使用 [pprof](github.com/gin-contrib/pprof)
+- [x] 集成
+    - [x] [JWT](https://jwt.io/) 身份认证
+    - [x] [zap](go.uber.org/zap) 日志记录
+    - [x] [rate](golang.org/x/time/rate) 限流
+    - [x] 异常捕获并邮件告警
+    - [x] 每个请求具备链路ID
+    - [x] 统一定义错误码
+    - [x] 支持 FAT、UAT、PRO 环境
+    - [x] MD5、AES 对称加密、RSA 非对称加密
 - [ ] 存储
     - [ ] MySQL
     - [ ] Redis
@@ -64,27 +67,15 @@ cd go-gin-api
 go run main.go
 ```
 
-#### HTTP Demo
+#### swagger
 
+```go
+http://127.0.0.1:9999/swagger/index.html
+
+// 生成文档
+$ go get -u github.com/swaggo/swag/cmd/swag
+$ swag init
 ```
-curl -X POST http://127.0.0.1:9999/demo/user
-```
-
-#### Jaeger Demo
-
-访问：
-
-```
-http://127.0.0.1:9999/jaeger_test
-```
-
-服务端测试代码：
-
-- [https://github.com/xinliangnote/go-jaeger-demo](https://github.com/xinliangnote/go-jaeger-demo)
-
-![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_2.png)
-
-![](https://github.com/xinliangnote/Go/blob/master/03-go-gin-api%20%5B文档%5D/images/jaeger_demo_3.png)
 
 #### pprof 
 

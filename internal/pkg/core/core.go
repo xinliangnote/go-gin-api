@@ -19,6 +19,7 @@ import (
 	cors "github.com/rs/cors/wrapper/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 )
@@ -41,12 +42,17 @@ type option struct {
 	disableSwagger    bool
 	disablePrometheus bool
 	panicNotify       OnPanicNotify
+	recordMetrics     RecordMetrics
 	enableCors        bool
 	enableRate        bool
 }
 
 // OnPanicNotify 发生panic时通知用
 type OnPanicNotify func(ctx Context, err interface{}, stackInfo string)
+
+// RecordMetrics 记录prometheus指标用
+// 如果使用AliasForRecordMetrics配置了别名，uri将被替换为别名。
+type RecordMetrics func(method, uri string, success bool, httpCode, businessCode int, costSeconds float64)
 
 // WithDisablePProf 禁用 pprof
 func WithDisablePProf() Option {
@@ -73,6 +79,14 @@ func WithDisableproPrometheus() Option {
 func WithPanicNotify(notify OnPanicNotify) Option {
 	return func(opt *option) {
 		opt.panicNotify = notify
+		fmt.Println(color.Green("* [register panic notify]"))
+	}
+}
+
+// WithRecordMetrics 设置记录prometheus记录指标回调
+func WithRecordMetrics(record RecordMetrics) Option {
+	return func(opt *option) {
+		opt.recordMetrics = record
 	}
 }
 
@@ -80,18 +94,41 @@ func WithPanicNotify(notify OnPanicNotify) Option {
 func WithEnableCors() Option {
 	return func(opt *option) {
 		opt.enableCors = true
+		fmt.Println(color.Green("* [register cors]"))
 	}
 }
 
 func WithEnableRate() Option {
 	return func(opt *option) {
 		opt.enableRate = true
+		fmt.Println(color.Green("* [register rate]"))
 	}
 }
 
 // DisableJournal 标识某些请求不记录journal
 func DisableJournal(ctx Context) {
 	ctx.disableJournal()
+}
+
+// AliasForRecordMetrics 对请求uri起个别名，用于prometheus记录指标。
+// 如：Get /user/:username 这样的uri，因为username会有非常多的情况，这样记录prometheus指标会非常的不有好。
+func AliasForRecordMetrics(path string) HandlerFunc {
+	return func(ctx Context) {
+		ctx.setAlias(path)
+	}
+}
+
+// WrapAuthHandler 用来处理 Auth 的入口，在之后的handler中只需 ctx.UserID() ctx.UserName() 即可。
+func WrapAuthHandler(handler func(Context) (userID int, userName string, err errno.Error)) HandlerFunc {
+	return func(ctx Context) {
+		userID, userName, err := handler(ctx)
+		if err != nil {
+			ctx.AbortWithError(err)
+			return
+		}
+		ctx.setUserID(userID)
+		ctx.setUserName(userName)
+	}
 }
 
 // RouterGroup 包装gin的RouterGroup
@@ -199,8 +236,6 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	gin.SetMode(gin.ReleaseMode)
 	gin.DisableBindValidation()
-	engine := gin.New()
-
 	mux := &mux{
 		engine: gin.New(),
 	}
@@ -232,15 +267,18 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	}
 
 	if !opt.disablePProf {
-		pprof.Register(engine) // register pprof to gin
+		pprof.Register(mux.engine) // register pprof to gin
+		fmt.Println(color.Green("* [register pprof]"))
 	}
 
 	if !opt.disableSwagger {
 		mux.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
+		fmt.Println(color.Green("* [register swagger]"))
 	}
 
 	if !opt.disablePrometheus {
 		mux.engine.GET("/metrics", gin.WrapH(promhttp.Handler())) // register prometheus
+		fmt.Println(color.Green("* [register prometheus]"))
 	}
 
 	if opt.enableCors {
@@ -303,16 +341,46 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				return
 			}
 
-			response := context.GetPayload()
-			if x := context.Journal(); x != nil {
-				context.SetHeader(journal.JournalHeader, x.ID())
-				response.WithID(x.ID())
+			var (
+				response errno.Error
+				abortErr error
+			)
+
+			if ctx.IsAborted() {
+				for i := range ctx.Errors { // gin error
+					multierr.AppendInto(&abortErr, ctx.Errors[i])
+				}
+
+				if err := context.abortError(); err != nil { // customer err
+					multierr.AppendInto(&abortErr, errors.New(err.GetMsg()))
+					response = err
+				}
 			} else {
-				response.WithID("")
+				response = context.GetPayload()
 			}
 
 			if response != nil {
+				if x := context.Journal(); x != nil {
+					context.SetHeader(journal.JournalHeader, x.ID())
+					response.WithID(x.ID())
+				} else {
+					response.WithID("")
+				}
 				ctx.JSON(http.StatusOK, response)
+			}
+
+			if opt.recordMetrics != nil {
+				uri := context.URI()
+				if alias := context.Alias(); alias != "" {
+					uri = alias
+				}
+
+				businessCode := 0
+				if response != nil {
+					businessCode = response.GetCode()
+				}
+
+				opt.recordMetrics(context.Method(), uri, !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK, ctx.Writer.Status(), businessCode, time.Since(ts).Seconds())
 			}
 
 			var j *journal.Journal

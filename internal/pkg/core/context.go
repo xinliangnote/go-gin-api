@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/errno"
@@ -20,10 +21,14 @@ type HandlerFunc func(c Context)
 type Journal = journal.T
 
 const (
-	_JournalName = "_journal_"
-	_LoggerName  = "_logger_"
-	_BodyName    = "_body_"
-	_PayloadName = "_payload_"
+	_Alias          = "_alias_"
+	_JournalName    = "_journal_"
+	_LoggerName     = "_logger_"
+	_BodyName       = "_body_"
+	_PayloadName    = "_payload_"
+	_UserID         = "_user_id_"
+	_UserName       = "_user_name_"
+	_AbortErrorName = "_abort_error_"
 )
 
 var contextPool = &sync.Pool{
@@ -87,14 +92,22 @@ type Context interface {
 	GetHeader(key string) string
 	SetHeader(key, value string)
 
+	UserID() int
+	setUserID(userID int)
+
+	UserName() string
+	setUserName(userName string)
+
+	AbortWithError(err errno.Error)
+	abortError() errno.Error
+
+	Alias() string
+	setAlias(path string)
+
 	RawData() []byte
-
 	Method() string
-
 	Host() string
-
 	Path() string
-
 	URI() string
 }
 
@@ -206,6 +219,59 @@ func (c *context) GetHeader(key string) string {
 
 func (c *context) SetHeader(key, value string) {
 	c.ctx.Header(key, value)
+}
+
+func (c *context) UserID() int {
+	val, ok := c.ctx.Get(_UserID)
+	if !ok {
+		return 0
+	}
+
+	return val.(int)
+}
+
+func (c *context) setUserID(userID int) {
+	c.ctx.Set(_UserID, userID)
+}
+
+func (c *context) UserName() string {
+	val, ok := c.ctx.Get(_UserName)
+	if !ok {
+		return ""
+	}
+
+	return val.(string)
+}
+
+func (c *context) setUserName(userName string) {
+	c.ctx.Set(_UserName, userName)
+}
+
+func (c *context) AbortWithError(err errno.Error) {
+	if err != nil {
+		c.ctx.AbortWithStatus(http.StatusInternalServerError)
+		c.ctx.Set(_AbortErrorName, err)
+	}
+}
+
+func (c *context) abortError() errno.Error {
+	err, _ := c.ctx.Get(_AbortErrorName)
+	return err.(errno.Error)
+}
+
+func (c *context) Alias() string {
+	path, ok := c.ctx.Get(_Alias)
+	if !ok {
+		return ""
+	}
+
+	return path.(string)
+}
+
+func (c *context) setAlias(path string) {
+	if path = strings.TrimSpace(path); path != "" {
+		c.ctx.Set(_Alias, path)
+	}
 }
 
 func (c *context) RawData() []byte {

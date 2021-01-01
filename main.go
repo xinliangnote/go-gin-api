@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/router"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/configs"
+	"github.com/xinliangnote/go-gin-api/internal/router"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
 
@@ -22,7 +22,7 @@ import (
 // @contact.url
 // @contact.email
 
-// @host localhost:9999
+// @host 127.0.0.1:9999
 // @BasePath
 func main() {
 	loggers, err := logger.NewJSONLogger(
@@ -33,6 +33,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer loggers.Sync()
 
 	mux, err := router.NewHTTPMux(loggers)
 	if err != nil {

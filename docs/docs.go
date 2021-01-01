@@ -40,9 +40,16 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "用户名",
+                        "description": "用户名(Tom)",
                         "name": "name",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -68,6 +75,64 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/user/login": {
+            "post": {
+                "description": "登录获取 Authorization 码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "登录获取 Authorization 码",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "loginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/demo.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "签名信息",
+                        "schema": {
+                            "$ref": "#/definitions/demo.loginResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "demo.loginRequest": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "用户ID（\u003e0）",
+                    "type": "integer"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "demo.loginResponse": {
+            "type": "object",
+            "properties": {
+                "authorization": {
+                    "description": "签名",
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -84,7 +149,7 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "",
-	Host:        "localhost:9999",
+	Host:        "127.0.0.1:9999",
 	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "go-gin-api docs api",

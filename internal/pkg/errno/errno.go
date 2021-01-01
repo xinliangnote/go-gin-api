@@ -13,6 +13,10 @@ type Error interface {
 	WithData(data interface{}) Error
 	// WithID 设置当前请求的唯一ID
 	WithID(id string) Error
+	// GetCode 获取 Code
+	GetCode() int
+	// GetMsg 获取 Msg
+	GetMsg() string
 	// ToString 返回 JSON 格式的错误详情
 	ToString() string
 }
@@ -42,6 +46,14 @@ func (e *err) WithData(data interface{}) Error {
 func (e *err) WithID(id string) Error {
 	e.ID = id
 	return e
+}
+
+func (e *err) GetCode() int {
+	return e.Code
+}
+
+func (e *err) GetMsg() string {
+	return e.Msg
 }
 
 // ToString 返回 JSON 格式的错误详情

@@ -101,7 +101,8 @@ type response []struct {
 // @Tags Demo
 // @Accept  json
 // @Produce  json
-// @Param name path string true "用户名"
+// @Param name path string true "用户名(Tom)"
+// @Param Authorization header string true "签名"
 // @Success 200 {object} response "用户信息"
 // @Router /demo/user/{name} [get]
 func (d *Demo) User() core.HandlerFunc {
@@ -121,6 +122,7 @@ func (d *Demo) User() core.HandlerFunc {
 			httpclient.WithTTL(time.Second*2),
 			httpclient.WithJournal(c.Journal()),
 			httpclient.WithLogger(c.Logger()),
+			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
 		)
 		if err1 != nil {
 			d.logger.Error("get [demo/get] err", zap.Error(err1))
@@ -132,22 +134,25 @@ func (d *Demo) User() core.HandlerFunc {
 			httpclient.WithTTL(time.Second*2),
 			httpclient.WithJournal(c.Journal()),
 			httpclient.WithLogger(c.Logger()),
+			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
 		)
 		if err2 != nil {
 			d.logger.Error("post [demo/post] err", zap.Error(err2))
 		}
 
-		data := &response{
-			{
-				Name: jsonparse.Get(string(body1), "data.name").(string),
-				Job:  jsonparse.Get(string(body1), "data.job").(string),
-			},
-			{
-				Name: jsonparse.Get(string(body2), "data.name").(string),
-				Job:  jsonparse.Get(string(body2), "data.job").(string),
-			},
+		data := &response{}
+		if err1 == nil && err2 == nil {
+			data = &response{
+				{
+					Name: jsonparse.Get(string(body1), "data.name").(string),
+					Job:  jsonparse.Get(string(body1), "data.job").(string),
+				},
+				{
+					Name: jsonparse.Get(string(body2), "data.name").(string),
+					Job:  jsonparse.Get(string(body2), "data.job").(string),
+				},
+			}
 		}
-
 		c.SetPayload(errno.OK.WithData(data))
 	}
 }
@@ -158,9 +163,9 @@ func (d *Demo) RsaTest() core.HandlerFunc {
 		encryptStr := "param_1=xxx&param_2=xxx&ak=xxx&ts=1111111111"
 		count := 500
 
-		cfg := configs.Get()
-		rsaPublic := rsa.NewPublic(cfg.Rsa.Public)
-		rsaPrivate := rsa.NewPrivate(cfg.Rsa.Private)
+		cfg := configs.Get().Rsa
+		rsaPublic := rsa.NewPublic(cfg.Public)
+		rsaPrivate := rsa.NewPrivate(cfg.Private)
 
 		for i := 0; i < count; i++ {
 			// 生成签名
@@ -187,8 +192,8 @@ func (d *Demo) AesTest() core.HandlerFunc {
 		encryptStr := "param_1=xxx&param_2=xxx&ak=xxx&ts=1111111111"
 		count := 1000000
 
-		cfg := configs.Get()
-		aes := aes.New(cfg.Aes.Key, cfg.Aes.Iv)
+		cfg := configs.Get().Aes
+		aes := aes.New(cfg.Key, cfg.Iv)
 		for i := 0; i < count; i++ {
 			// 生成签名
 			sn, err := aes.Encrypt(encryptStr)

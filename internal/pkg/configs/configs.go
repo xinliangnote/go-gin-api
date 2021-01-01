@@ -9,10 +9,17 @@ import (
 var config = new(Config)
 
 type Config struct {
-	DB struct {
+	Mail struct {
 		Host string `mapstructure:"host"`
 		Port int    `mapstructure:"port"`
-	} `mapstructure:"db"`
+		User string `mapstructure:"user"`
+		Pass string `mapstructure:"pass"`
+		To   string `mapstructure:"to"`
+	} `mapstructure:"mail"`
+
+	JWT struct {
+		Secret string `mapstructure:"secret"`
+	} `mapstructure:"jwt"`
 
 	Aes struct {
 		Key string `mapstructure:"key"`
