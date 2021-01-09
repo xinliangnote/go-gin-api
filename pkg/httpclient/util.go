@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/journal"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -49,7 +49,7 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 	if err != nil {
 		err = errors.Wrapf(err, "do request [%s %s] err", method, url)
 		if opt.Dialog != nil {
-			opt.Dialog.AppendResponse(&journal.Response{
+			opt.Dialog.AppendResponse(&trace.Response{
 				Body:        err.Error(),
 				CostSeconds: time.Since(ts).Seconds(),
 			})
@@ -66,7 +66,7 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 	if err != nil {
 		err = errors.Wrapf(err, "read resp body from [%s %s] err", method, url)
 		if opt.Dialog != nil {
-			opt.Dialog.AppendResponse(&journal.Response{
+			opt.Dialog.AppendResponse(&trace.Response{
 				Body:        err.Error(),
 				CostSeconds: time.Since(ts).Seconds(),
 			})
@@ -80,10 +80,10 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 
 	defer func() {
 		if opt.Dialog != nil {
-			opt.Dialog.AppendResponse(&journal.Response{
+			opt.Dialog.AppendResponse(&trace.Response{
 				Header:      resp.Header,
-				StatusCode:  resp.StatusCode,
-				Status:      resp.Status,
+				HttpCode:    resp.StatusCode,
+				HttpCodeMsg: resp.Status,
 				Body:        string(body), // unsafe
 				CostSeconds: time.Since(ts).Seconds(),
 			})

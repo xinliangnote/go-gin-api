@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/configs"
-	"github.com/xinliangnote/go-gin-api/internal/router"
+	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/cache_repo"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
+	"github.com/xinliangnote/go-gin-api/internal/api/router"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
 
@@ -25,6 +27,7 @@ import (
 // @host 127.0.0.1:9999
 // @BasePath
 func main() {
+	// 初始化日志
 	loggers, err := logger.NewJSONLogger(
 		logger.WithField("domain", configs.ProjectName()),
 		logger.WithTimeLayout("2006-01-02 15:04:05"),
@@ -35,7 +38,20 @@ func main() {
 	}
 	defer loggers.Sync()
 
-	mux, err := router.NewHTTPMux(loggers)
+	// 初始化数据库
+	dbRepo, err := db_repo.New()
+	if err != nil {
+		loggers.Fatal("new db err", zap.Error(err))
+	}
+
+	// 初始化缓存
+	cacheRepo, err := cache_repo.New()
+	if err != nil {
+		loggers.Fatal("new cache err", zap.Error(err))
+	}
+
+	// 初始化 HTTP 服务
+	mux, err := router.NewHTTPMux(loggers, dbRepo, cacheRepo)
 	if err != nil {
 		panic(err)
 	}
@@ -51,6 +67,7 @@ func main() {
 		}
 	}()
 
+	// 优雅关闭
 	shutdown.NewHook().Close(func() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()

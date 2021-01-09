@@ -1,27 +1,30 @@
 package middleware
 
 import (
+	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/token"
+	"github.com/xinliangnote/go-gin-api/pkg/errno"
+	"github.com/xinliangnote/go-gin-api/pkg/token"
 )
 
 func AuthHandler(ctx core.Context) (userId int, userName string, err errno.Error) {
 	auth := ctx.GetHeader("Authorization")
 	if auth == "" {
-		err = errno.ErrSignParam
+		err = code.ErrSignParam
 		return
 	}
 
-	claims, errParse := token.Parse(auth)
+	cfg := configs.Get().JWT
+	claims, errParse := token.New(cfg.Secret).Parse(auth)
 	if errParse != nil {
-		err = errno.ErrSignParam
+		err = code.ErrSignParam
 		return
 	}
 
 	userId = claims.UserID
 	if userId <= 0 {
-		err = errno.ErrSignParam
+		err = code.ErrSignParam
 		return
 	}
 	userName = claims.UserName

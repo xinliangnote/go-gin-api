@@ -1,18 +1,13 @@
 package demo
 
 import (
-	"fmt"
 	"net/url"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/configs"
+	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/jsonparse"
-	"github.com/xinliangnote/go-gin-api/pkg/aes"
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
-	"github.com/xinliangnote/go-gin-api/pkg/md5"
-	"github.com/xinliangnote/go-gin-api/pkg/rsa"
 
 	"go.uber.org/zap"
 )
@@ -41,16 +36,16 @@ func (d *Demo) Get() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.SetPayload(errno.ErrParam)
+			c.SetPayload(code.ErrParam)
 			return
 		}
 
 		if req.Name != "Tom" {
-			c.SetPayload(errno.ErrUser)
+			c.SetPayload(code.ErrUser)
 			return
 		}
 
-		c.SetPayload(errno.OK.WithData(&response{
+		c.SetPayload(code.OK.WithData(&response{
 			Name: "Tom",
 			Job:  "Student",
 		}))
@@ -70,16 +65,16 @@ func (d *Demo) Post() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindPostForm(req); err != nil {
-			c.SetPayload(errno.ErrParam)
+			c.SetPayload(code.ErrParam)
 			return
 		}
 
 		if req.Name != "Jack" {
-			c.SetPayload(errno.ErrUser)
+			c.SetPayload(code.ErrUser)
 			return
 		}
 
-		c.SetPayload(errno.OK.WithData(&response{
+		c.SetPayload(code.OK.WithData(&response{
 			Name: "Jack",
 			Job:  "Teacher",
 		}))
@@ -109,18 +104,18 @@ func (d *Demo) User() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.SetPayload(errno.ErrParam)
+			c.SetPayload(code.ErrParam)
 			return
 		}
 
 		if req.Name != "Tom" {
-			c.SetPayload(errno.ErrUser)
+			c.SetPayload(code.ErrUser)
 			return
 		}
 
 		body1, err1 := httpclient.Get("http://127.0.0.1:9999/demo/get/"+req.Name, nil,
 			httpclient.WithTTL(time.Second*2),
-			httpclient.WithJournal(c.Journal()),
+			httpclient.WithTrace(c.Trace()),
 			httpclient.WithLogger(c.Logger()),
 			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
 		)
@@ -132,7 +127,7 @@ func (d *Demo) User() core.HandlerFunc {
 		params.Set("name", "Jack")
 		body2, err2 := httpclient.PostForm("http://127.0.0.1:9999/demo/post", params,
 			httpclient.WithTTL(time.Second*2),
-			httpclient.WithJournal(c.Journal()),
+			httpclient.WithTrace(c.Trace()),
 			httpclient.WithLogger(c.Logger()),
 			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
 		)
@@ -153,81 +148,6 @@ func (d *Demo) User() core.HandlerFunc {
 				},
 			}
 		}
-		c.SetPayload(errno.OK.WithData(data))
-	}
-}
-
-func (d *Demo) RsaTest() core.HandlerFunc {
-	return func(c core.Context) {
-		startTime := time.Now()
-		encryptStr := "param_1=xxx&param_2=xxx&ak=xxx&ts=1111111111"
-		count := 500
-
-		cfg := configs.Get().Rsa
-		rsaPublic := rsa.NewPublic(cfg.Public)
-		rsaPrivate := rsa.NewPrivate(cfg.Private)
-
-		for i := 0; i < count; i++ {
-			// 生成签名
-			sn, err := rsaPublic.Encrypt(encryptStr)
-			if err != nil {
-				d.logger.Error("rsa public encrypt err", zap.Error(err))
-			}
-
-			// 验证签名
-			_, err = rsaPrivate.Decrypt(sn)
-			if err != nil {
-				d.logger.Error("rsa private decrypt err", zap.Error(err))
-			}
-		}
-		c.SetPayload(errno.OK.
-			WithData(fmt.Sprintf("%v次 - %v", count, time.Since(startTime))),
-		)
-	}
-}
-
-func (d *Demo) AesTest() core.HandlerFunc {
-	return func(c core.Context) {
-		startTime := time.Now()
-		encryptStr := "param_1=xxx&param_2=xxx&ak=xxx&ts=1111111111"
-		count := 1000000
-
-		cfg := configs.Get().Aes
-		aes := aes.New(cfg.Key, cfg.Iv)
-		for i := 0; i < count; i++ {
-			// 生成签名
-			sn, err := aes.Encrypt(encryptStr)
-			if err != nil {
-				d.logger.Error("aes encrypt err", zap.Error(err))
-			}
-
-			// 验证签名
-			_, err = aes.Decrypt(sn)
-			if err != nil {
-				d.logger.Error("aes decrypt err", zap.Error(err))
-			}
-		}
-		c.SetPayload(errno.OK.
-			WithData(fmt.Sprintf("%v次 - %v", count, time.Since(startTime))))
-	}
-}
-
-func (d *Demo) MD5Test() core.HandlerFunc {
-	return func(c core.Context) {
-		startTime := time.Now()
-		encryptStr := "param_1=xxx&param_2=xxx&ak=xxx&ts=1111111111"
-		count := 1000000
-
-		md5 := md5.New()
-		for i := 0; i < count; i++ {
-			// 生成签名
-			md5.Encrypt(encryptStr)
-
-			// 验证签名
-			md5.Encrypt(encryptStr)
-		}
-		c.SetPayload(errno.OK.
-			WithData(fmt.Sprintf("%v次 - %v", count, time.Since(startTime))),
-		)
+		c.SetPayload(code.OK.WithData(data))
 	}
 }

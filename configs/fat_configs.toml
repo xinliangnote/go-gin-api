@@ -1,3 +1,28 @@
+[mysql]
+
+[mysql.read]
+    addr = ''
+    user = ''
+    pass = ''
+    name = ''
+[mysql.write]
+    addr = ''
+    user = ''
+    pass = ''
+    name = ''
+[mysql.base]
+    maxOpenConn = 10
+    maxIdleConn = 60
+    connMaxLifeTime = 60
+
+[redis]
+addr = ''
+pass = ''
+db = 0
+maxRetries = 3
+poolSize = 10
+minIdleConns = 5
+
 [mail]
 host = 'smtp.163.com'
 port = 465

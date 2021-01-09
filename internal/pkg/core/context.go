@@ -7,9 +7,10 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/journal"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
+	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -18,11 +19,11 @@ import (
 
 type HandlerFunc func(c Context)
 
-type Journal = journal.T
+type Trace = trace.T
 
 const (
 	_Alias          = "_alias_"
-	_JournalName    = "_journal_"
+	_TraceName      = "_trace_"
 	_LoggerName     = "_logger_"
 	_BodyName       = "_body_"
 	_PayloadName    = "_payload_"
@@ -78,9 +79,9 @@ type Context interface {
 	// Redirect 重定向
 	Redirect(code int, location string)
 
-	Journal() Journal
-	setJournal(journal Journal)
-	disableJournal()
+	Trace() Trace
+	setTrace(trace Trace)
+	disableTrace()
 
 	Logger() *zap.Logger
 	setLogger(logger *zap.Logger)
@@ -109,6 +110,11 @@ type Context interface {
 	Host() string
 	Path() string
 	URI() string
+
+	Deadline() (deadline time.Time, ok bool)
+	Done() <-chan struct{}
+	Err() error
+	Value(key interface{}) interface{}
 }
 
 type context struct {
@@ -121,7 +127,7 @@ func (c *context) init() {
 		panic(err)
 	}
 
-	c.ctx.Set(_BodyName, body)                                   // cache body是为了journal使用
+	c.ctx.Set(_BodyName, body)                                   // cache body是为了trace使用
 	c.ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body)) // re-construct req body
 }
 
@@ -161,21 +167,21 @@ func (c *context) Redirect(code int, location string) {
 	c.ctx.Redirect(code, location)
 }
 
-func (c *context) Journal() Journal {
-	j, ok := c.ctx.Get(_JournalName)
-	if !ok || j == nil {
+func (c *context) Trace() Trace {
+	t, ok := c.ctx.Get(_TraceName)
+	if !ok || t == nil {
 		return nil
 	}
 
-	return j.(Journal)
+	return t.(Trace)
 }
 
-func (c *context) setJournal(journal Journal) {
-	c.ctx.Set(_JournalName, journal)
+func (c *context) setTrace(trace Trace) {
+	c.ctx.Set(_TraceName, trace)
 }
 
-func (c *context) disableJournal() {
-	c.setJournal(nil)
+func (c *context) disableTrace() {
+	c.setTrace(nil)
 }
 
 func (c *context) Logger() *zap.Logger {
@@ -302,4 +308,27 @@ func (c *context) Path() string {
 func (c *context) URI() string {
 	uri, _ := url.QueryUnescape(c.ctx.Request.URL.RequestURI())
 	return uri
+}
+
+func (c *context) Deadline() (deadline time.Time, ok bool) {
+	return
+}
+
+func (c *context) Done() <-chan struct{} {
+	return nil
+}
+
+func (c *context) Err() error {
+	return nil
+}
+
+func (c *context) Value(key interface{}) interface{} {
+	if key == 0 {
+		return c.ctx.Request
+	}
+	if keyAsString, ok := key.(string); ok {
+		val, _ := c.ctx.Get(keyAsString)
+		return val
+	}
+	return nil
 }

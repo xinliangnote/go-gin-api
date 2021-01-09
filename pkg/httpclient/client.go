@@ -7,7 +7,7 @@ import (
 	httpURL "net/url"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/journal"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 
 	"github.com/pkg/errors"
 )
@@ -74,10 +74,10 @@ func withoutBody(method, url string, form httpURL.Values, options ...Option) (bo
 
 	opt := newOption()
 	defer func() {
-		if opt.Journal != nil {
+		if opt.Trace != nil {
 			opt.Dialog.Success = err == nil
 			opt.Dialog.CostSeconds = time.Since(ts).Seconds()
-			opt.Journal.AppendDialog(opt.Dialog)
+			opt.Trace.AppendDialog(opt.Dialog)
 		}
 	}()
 
@@ -85,8 +85,8 @@ func withoutBody(method, url string, form httpURL.Values, options ...Option) (bo
 		f(opt)
 	}
 	opt.Header["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
-	if opt.Journal != nil {
-		opt.Header[journal.JournalHeader] = opt.Journal.ID()
+	if opt.Trace != nil {
+		opt.Header[trace.Header] = opt.Trace.ID()
 	}
 
 	ttl := opt.TTL
@@ -99,7 +99,7 @@ func withoutBody(method, url string, form httpURL.Values, options ...Option) (bo
 
 	if opt.Dialog != nil {
 		decodedURL, _ := httpURL.QueryUnescape(url)
-		opt.Dialog.Request = &journal.Request{
+		opt.Dialog.Request = &trace.Request{
 			TTL:        ttl.String(),
 			Method:     method,
 			DecodedURL: decodedURL,
@@ -172,10 +172,10 @@ func withFormBody(method, url string, form httpURL.Values, options ...Option) (b
 
 	opt := newOption()
 	defer func() {
-		if opt.Journal != nil {
+		if opt.Trace != nil {
 			opt.Dialog.Success = err == nil
 			opt.Dialog.CostSeconds = time.Since(ts).Seconds()
-			opt.Journal.AppendDialog(opt.Dialog)
+			opt.Trace.AppendDialog(opt.Dialog)
 		}
 	}()
 
@@ -183,8 +183,8 @@ func withFormBody(method, url string, form httpURL.Values, options ...Option) (b
 		f(opt)
 	}
 	opt.Header["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
-	if opt.Journal != nil {
-		opt.Header[journal.JournalHeader] = opt.Journal.ID()
+	if opt.Trace != nil {
+		opt.Header[trace.Header] = opt.Trace.ID()
 	}
 
 	ttl := opt.TTL
@@ -198,7 +198,7 @@ func withFormBody(method, url string, form httpURL.Values, options ...Option) (b
 	formValue := form.Encode()
 	if opt.Dialog != nil {
 		decodedURL, _ := httpURL.QueryUnescape(url)
-		opt.Dialog.Request = &journal.Request{
+		opt.Dialog.Request = &trace.Request{
 			TTL:        ttl.String(),
 			Method:     method,
 			DecodedURL: decodedURL,
@@ -242,10 +242,10 @@ func withJSONBody(method, url string, raw json.RawMessage, options ...Option) (b
 
 	opt := newOption()
 	defer func() {
-		if opt.Journal != nil {
+		if opt.Trace != nil {
 			opt.Dialog.Success = err == nil
 			opt.Dialog.CostSeconds = time.Since(ts).Seconds()
-			opt.Journal.AppendDialog(opt.Dialog)
+			opt.Trace.AppendDialog(opt.Dialog)
 		}
 	}()
 
@@ -253,8 +253,8 @@ func withJSONBody(method, url string, raw json.RawMessage, options ...Option) (b
 		f(opt)
 	}
 	opt.Header["Content-Type"] = "application/json; charset=utf-8"
-	if opt.Journal != nil {
-		opt.Header[journal.JournalHeader] = opt.Journal.ID()
+	if opt.Trace != nil {
+		opt.Header[trace.Header] = opt.Trace.ID()
 	}
 
 	ttl := opt.TTL
@@ -267,7 +267,7 @@ func withJSONBody(method, url string, raw json.RawMessage, options ...Option) (b
 
 	if opt.Dialog != nil {
 		decodedURL, _ := httpURL.QueryUnescape(url)
-		opt.Dialog.Request = &journal.Request{
+		opt.Dialog.Request = &trace.Request{
 			TTL:        ttl.String(),
 			Method:     method,
 			DecodedURL: decodedURL,

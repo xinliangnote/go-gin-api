@@ -3,13 +3,13 @@ package httpclient
 import (
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/journal"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 
 	"go.uber.org/zap"
 )
 
-// Journal 记录内部流转信息
-type Journal = journal.T
+// Trace 记录内部流转信息
+type Trace = trace.T
 
 // Option 自定义设置http请求
 type Option func(*option)
@@ -17,8 +17,8 @@ type Option func(*option)
 type option struct {
 	TTL        time.Duration
 	Header     map[string]string
-	Journal    *journal.Journal
-	Dialog     *journal.Dialog
+	Trace      *trace.Trace
+	Dialog     *trace.Dialog
 	Logger     *zap.Logger
 	RetryTimes int
 	RetryDelay time.Duration
@@ -44,12 +44,12 @@ func WithHeader(key, value string) Option {
 	}
 }
 
-// WithJournal 设置Journal以便记录内部流转信息
-func WithJournal(j Journal) Option {
+// WithTrace 设置trace信息
+func WithTrace(t Trace) Option {
 	return func(opt *option) {
-		if j != nil {
-			opt.Journal = j.(*journal.Journal)
-			opt.Dialog = new(journal.Dialog)
+		if t != nil {
+			opt.Trace = t.(*trace.Trace)
+			opt.Dialog = new(trace.Dialog)
 		}
 	}
 }

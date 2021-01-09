@@ -1,5 +1,38 @@
 definitions:
-  demo.loginRequest:
+  user_model.CreateRequest:
+    properties:
+      mobile:
+        description: 手机号
+        type: string
+      nick_name:
+        description: 昵称
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  user_model.CreateResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  user_model.DetailResponse:
+    properties:
+      id:
+        description: 用户主键ID
+        type: integer
+      mobile:
+        description: 手机号
+        type: string
+      nick_name:
+        description: 昵称
+        type: string
+      user_name:
+        description: 用户名
+        type: string
+    type: object
+  user_model.LoginRequest:
     properties:
       user_id:
         description: 用户ID（>0）
@@ -8,11 +41,29 @@ definitions:
         description: 用户名
         type: string
     type: object
-  demo.loginResponse:
+  user_model.LoginResponse:
     properties:
       authorization:
         description: 签名
         type: string
+      expire_time:
+        description: 过期时间
+        type: integer
+    type: object
+  user_model.UpdateNickNameByIDRequest:
+    properties:
+      id:
+        description: 用户主键ID
+        type: integer
+      nick_name:
+        description: 昵称
+        type: string
+    type: object
+  user_model.UpdateNickNameByIDResponse:
+    properties:
+      id:
+        description: 用户主键ID
+        type: integer
     type: object
 host: 127.0.0.1:9999
 info:
@@ -54,26 +105,91 @@ paths:
       summary: 获取用户信息
       tags:
       - Demo
-  /user/login:
+  /user/create:
     post:
       consumes:
       - application/json
-      description: 登录获取 Authorization 码
+      description: 创建用户
       parameters:
       - description: 请求信息
         in: body
-        name: loginRequest
+        name: RequestInfo
         required: true
         schema:
-          $ref: '#/definitions/demo.loginRequest'
+          $ref: '#/definitions/user_model.CreateRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: 签名信息
+          description: 返回信息
           schema:
-            $ref: '#/definitions/demo.loginResponse'
-      summary: 登录获取 Authorization 码
+            $ref: '#/definitions/user_model.CreateResponse'
+      summary: 创建用户
+      tags:
+      - Demo
+  /user/info/{username}:
+    get:
+      consumes:
+      - application/json
+      description: 用户详情
+      parameters:
+      - description: 用户名
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回信息
+          schema:
+            $ref: '#/definitions/user_model.DetailResponse'
+      summary: 用户详情
+      tags:
+      - Demo
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录
+      parameters:
+      - description: 请求信息
+        in: body
+        name: RequestInfo
+        required: true
+        schema:
+          $ref: '#/definitions/user_model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回信息
+          schema:
+            $ref: '#/definitions/user_model.LoginResponse'
+      summary: 用户登录
+      tags:
+      - Demo
+  /user/update:
+    post:
+      consumes:
+      - application/json
+      description: 更新用户名称
+      parameters:
+      - description: 请求信息
+        in: body
+        name: RequestInfo
+        required: true
+        schema:
+          $ref: '#/definitions/user_model.UpdateNickNameByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回信息
+          schema:
+            $ref: '#/definitions/user_model.UpdateNickNameByIDResponse'
+      summary: 更新用户名称
       tags:
       - Demo
 swagger: "2.0"

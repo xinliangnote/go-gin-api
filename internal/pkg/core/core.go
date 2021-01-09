@@ -8,9 +8,11 @@ import (
 	"time"
 
 	_ "github.com/xinliangnote/go-gin-api/docs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/journal"
+	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 	"github.com/xinliangnote/go-gin-api/pkg/color"
+	"github.com/xinliangnote/go-gin-api/pkg/env"
+	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
@@ -105,9 +107,8 @@ func WithEnableRate() Option {
 	}
 }
 
-// DisableJournal 标识某些请求不记录journal
-func DisableJournal(ctx Context) {
-	ctx.disableJournal()
+func DisableTrace(ctx Context) {
+	ctx.disableTrace()
 }
 
 // AliasForRecordMetrics 对请求uri起个别名，用于prometheus记录指标。
@@ -242,8 +243,10 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	fmt.Println(color.Blue(_UI))
 
+	fmt.Println(color.Green(fmt.Sprintf("* [register -env %s]", env.Active().Value())))
+
 	// withoutLogPaths 这些请求，默认不记录日志
-	withoutJournalPaths := map[string]bool{
+	withoutTracePaths := map[string]bool{
 		"/metrics": true,
 
 		"/debug/pprof/":             true,
@@ -259,6 +262,9 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 		"/debug/pprof/threadcreate": true,
 
 		"/favicon.ico": true,
+
+		"/h/ping": true,
+		"/h/info": true,
 	}
 
 	opt := new(option)
@@ -318,11 +324,11 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 		context.init()
 		context.setLogger(logger)
 
-		if !withoutJournalPaths[ctx.Request.URL.Path] {
-			if journalID := context.GetHeader(journal.JournalHeader); journalID != "" {
-				context.setJournal(journal.NewJournal(journalID))
+		if !withoutTracePaths[ctx.Request.URL.Path] {
+			if traceId := context.GetHeader(trace.Header); traceId != "" {
+				context.setTrace(trace.New(traceId))
 			} else {
-				context.setJournal(journal.NewJournal(""))
+				context.setTrace(trace.New(""))
 			}
 		}
 
@@ -330,7 +336,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			if err := recover(); err != nil {
 				stackInfo := string(debug.Stack())
 				logger.Error("got panic", zap.String("panic", fmt.Sprintf("%+v", err)), zap.String("stack", stackInfo))
-				context.SetPayload(errno.ErrServer)
+				context.SetPayload(code.ErrServer)
 
 				if notify := opt.panicNotify; notify != nil {
 					notify(context, err, stackInfo)
@@ -342,8 +348,10 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			}
 
 			var (
-				response errno.Error
-				abortErr error
+				response        errno.Error
+				businessCode    int
+				businessCodeMsg string
+				abortErr        error
 			)
 
 			if ctx.IsAborted() {
@@ -360,12 +368,14 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			}
 
 			if response != nil {
-				if x := context.Journal(); x != nil {
-					context.SetHeader(journal.JournalHeader, x.ID())
+				if x := context.Trace(); x != nil {
+					context.SetHeader(trace.Header, x.ID())
 					response.WithID(x.ID())
 				} else {
 					response.WithID("")
 				}
+				businessCode = response.GetCode()
+				businessCodeMsg = response.GetMsg()
 				ctx.JSON(http.StatusOK, response)
 			}
 
@@ -375,23 +385,18 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 					uri = alias
 				}
 
-				businessCode := 0
-				if response != nil {
-					businessCode = response.GetCode()
-				}
-
 				opt.recordMetrics(context.Method(), uri, !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK, ctx.Writer.Status(), businessCode, time.Since(ts).Seconds())
 			}
 
-			var j *journal.Journal
-			if x := context.Journal(); x != nil {
-				j = x.(*journal.Journal)
+			var t *trace.Trace
+			if x := context.Trace(); x != nil {
+				t = x.(*trace.Trace)
 			} else {
 				return
 			}
 
 			decodedURL, _ := url.QueryUnescape(ctx.Request.URL.RequestURI())
-			j.WithRequest(&journal.Request{
+			t.WithRequest(&trace.Request{
 				TTL:        "un-limit",
 				Method:     ctx.Request.Method,
 				DecodedURL: decodedURL,
@@ -399,17 +404,19 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				Body:       string(context.RawData()),
 			})
 
-			j.WithResponse(&journal.Response{
-				Header:     ctx.Writer.Header(),
-				StatusCode: ctx.Writer.Status(),
-				Status:     http.StatusText(ctx.Writer.Status()),
-				Body:       response,
+			t.WithResponse(&trace.Response{
+				Header:          ctx.Writer.Header(),
+				HttpCode:        ctx.Writer.Status(),
+				HttpCodeMsg:     http.StatusText(ctx.Writer.Status()),
+				BusinessCode:    businessCode,
+				BusinessCodeMsg: businessCodeMsg,
+				Body:            response,
 			})
 
-			j.Success = !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK
-			j.CostSeconds = time.Since(ts).Seconds()
+			t.Success = !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK
+			t.CostSeconds = time.Since(ts).Seconds()
 
-			logger.Info("interceptor", zap.Any("journal", j))
+			logger.Info("interceptor", zap.Any("trace", t))
 		}()
 
 		ctx.Next()
@@ -422,7 +429,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			defer releaseContext(context)
 
 			if !limiter.Allow() {
-				context.SetPayload(errno.ErrManyRequest)
+				context.SetPayload(code.ErrManyRequest)
 				ctx.Abort()
 				return
 			}
@@ -430,24 +437,26 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 		})
 	}
 
-	mux.engine.NoMethod(wrapHandlers(DisableJournal)...)
-	mux.engine.NoRoute(wrapHandlers(DisableJournal)...)
+	mux.engine.NoMethod(wrapHandlers(DisableTrace)...)
+	mux.engine.NoRoute(wrapHandlers(DisableTrace)...)
 
-	h := mux.Group("/h", DisableJournal)
+	h := mux.Group("/h")
 	{
 		h.GET("/ping", func(ctx Context) {
-			ctx.SetPayload(errno.OK.WithData("pong"))
+			ctx.SetPayload(code.OK.WithData("pong"))
 		})
 
 		h.GET("/info", func(ctx Context) {
 			resp := &struct {
 				Header interface{} `json:"header"`
 				Ts     time.Time   `json:"ts"`
+				Env    string      `json:"env"`
 			}{
 				Header: ctx.Header(),
 				Ts:     time.Now(),
+				Env:    env.Active().Value(),
 			}
-			ctx.SetPayload(errno.OK.WithData(resp))
+			ctx.SetPayload(code.OK.WithData(resp))
 		})
 	}
 

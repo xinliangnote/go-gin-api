@@ -1,7 +1,7 @@
 package notify
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/configs"
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify/mail"
 
@@ -16,7 +16,7 @@ func OnPanicNotify(ctx core.Context, err interface{}, stackInfo string) {
 		return
 	}
 
-	subject, body, htmlErr := mail.NewPanicHTMLEmail(ctx.Method(), ctx.Host(), ctx.URI(), ctx.Journal().ID(), err, stackInfo)
+	subject, body, htmlErr := mail.NewPanicHTMLEmail(ctx.Method(), ctx.Host(), ctx.URI(), ctx.Trace().ID(), err, stackInfo)
 	if htmlErr != nil {
 		ctx.Logger().Error("NewPanicHTMLEmail error", zap.Error(htmlErr))
 		return

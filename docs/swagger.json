@@ -58,9 +58,9 @@
                 }
             }
         },
-        "/user/login": {
+        "/user/create": {
             "post": {
-                "description": "登录获取 Authorization 码",
+                "description": "创建用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,23 +70,123 @@
                 "tags": [
                     "Demo"
                 ],
-                "summary": "登录获取 Authorization 码",
+                "summary": "创建用户",
                 "parameters": [
                     {
                         "description": "请求信息",
-                        "name": "loginRequest",
+                        "name": "RequestInfo",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/demo.loginRequest"
+                            "$ref": "#/definitions/user_model.CreateRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "签名信息",
+                        "description": "返回信息",
                         "schema": {
-                            "$ref": "#/definitions/demo.loginResponse"
+                            "$ref": "#/definitions/user_model.CreateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info/{username}": {
+            "get": {
+                "description": "用户详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "用户详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/user_model.DetailResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "description": "用户登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "RequestInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user_model.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/user_model.LoginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/update": {
+            "post": {
+                "description": "更新用户名称",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "更新用户名称",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "RequestInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user_model.UpdateNickNameByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/user_model.UpdateNickNameByIDResponse"
                         }
                     }
                 }
@@ -94,7 +194,54 @@
         }
     },
     "definitions": {
-        "demo.loginRequest": {
+        "user_model.CreateRequest": {
+            "type": "object",
+            "properties": {
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "nick_name": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "user_model.CreateResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "user_model.DetailResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户主键ID",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "nick_name": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "user_model.LoginRequest": {
             "type": "object",
             "properties": {
                 "user_id": {
@@ -107,12 +254,38 @@
                 }
             }
         },
-        "demo.loginResponse": {
+        "user_model.LoginResponse": {
             "type": "object",
             "properties": {
                 "authorization": {
                     "description": "签名",
                     "type": "string"
+                },
+                "expire_time": {
+                    "description": "过期时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "user_model.UpdateNickNameByIDRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户主键ID",
+                    "type": "integer"
+                },
+                "nick_name": {
+                    "description": "昵称",
+                    "type": "string"
+                }
+            }
+        },
+        "user_model.UpdateNickNameByIDResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户主键ID",
+                    "type": "integer"
                 }
             }
         }
