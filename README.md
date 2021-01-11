@@ -1,27 +1,22 @@
-```
- ██████╗  ██████╗        ██████╗ ██╗███╗   ██╗       █████╗ ██████╗ ██╗
-██╔════╝ ██╔═══██╗      ██╔════╝ ██║████╗  ██║      ██╔══██╗██╔══██╗██║
-██║  ███╗██║   ██║█████╗██║  ███╗██║██╔██╗ ██║█████╗███████║██████╔╝██║
-██║   ██║██║   ██║╚════╝██║   ██║██║██║╚██╗██║╚════╝██╔══██║██╔═══╝ ██║
-╚██████╔╝╚██████╔╝      ╚██████╔╝██║██║ ╚████║      ██║  ██║██║     ██║
- ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
-
-* [register -env fat]
-* [register cors]
-* [register rate]
-* [register panic notify]
-* [register pprof]
-* [register swagger]
-* [register prometheus]
-```
-
 ## go-gin-api
+
+[![GitHub stars](https://img.shields.io/github/stars/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api/network/members)
+[![GitHub watchers](https://img.shields.io/github/watchers/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api/watchers)
+[![GitHub license](https://img.shields.io/github/license/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api/blob/master/LICENSE)
+[![GitHub repo size](https://img.shields.io/github/repo-size/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api)
 
 基于 [Gin](https://github.com/gin-gonic/gin) 进行模块化设计的 API 框架，封装了常用的功能，使用简单，致力于进行快速的业务研发，同时增加了更多限制，以约束项目组开发成员、规避混乱无序和自由随意。
 
-亮点功能：
+查看 Jaeger 链路追踪代码，请查看 [v1.0版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，文档点这里 [jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 。
 
-- :star: [trace] 开发调试的辅助工具。
+供参考学习，线上使用请谨慎！
+
+持续更新... 
+
+## Star Module
+
+亮点功能：:star: [trace] 开发调试的辅助工具。
 
 可记录如下信息：
 
@@ -33,12 +28,6 @@
 - sqls，当前请求执行的 sql 信息
 - success，当前请求结果
 - cost_seconds，执行时长，单位秒
-
-供参考学习，线上使用请谨慎！
-
-**查看 Jaeger 链路追踪代码，请查看 [v1.0版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，文档 [jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 点这里**。
-
-持续更新... 
 
 ## Catalogue
 
@@ -120,9 +109,24 @@ export GOPROXY=https://goproxy.io
 #### Build & Run
 
 ```
-cd go-gin-api
+cd go-gin-api/cmd/api
 
-go run main.go
+go run main.go -env fat
+
+ ██████╗  ██████╗        ██████╗ ██╗███╗   ██╗       █████╗ ██████╗ ██╗
+██╔════╝ ██╔═══██╗      ██╔════╝ ██║████╗  ██║      ██╔══██╗██╔══██╗██║
+██║  ███╗██║   ██║█████╗██║  ███╗██║██╔██╗ ██║█████╗███████║██████╔╝██║
+██║   ██║██║   ██║╚════╝██║   ██║██║██║╚██╗██║╚════╝██╔══██║██╔═══╝ ██║
+╚██████╔╝╚██████╔╝      ╚██████╔╝██║██║ ╚████║      ██║  ██║██║     ██║
+ ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
+
+* [register -env fat]
+* [register cors]
+* [register rate]
+* [register panic notify]
+* [register pprof]
+* [register swagger]
+* [register prometheus]
 
 // 启动成功后，可访问：http://127.0.0.1:9999/h/info
 ```
