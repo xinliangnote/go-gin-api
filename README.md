@@ -32,13 +32,12 @@
 ## Catalogue
 
 ```cassandraql
-├── cmd                          # 项目入口文件，api/main.go 为启动 HTTP API 服务
+├── main.go                      # 项目入口文件
 ├── configs                      # 配置文件统一存放目录
 ├── docs                         # Swagger 文档，执行 swag init 生成的
 ├── init                         # 项目初始脚本，比如初始化 SQL 语句
 ├── internal                     # 业务目录
 │   ├── api                      # 业务代码
-│   ├── core                     # 脚本代码
 │   ├── pkg                      # 内部使用的 package
 ├── logs                         # 存放日志的目录
 └── pkg                          # 一些封装好的 package
@@ -135,7 +134,7 @@ export GOPROXY=https://goproxy.io
 #### Build & Run
 
 ```
-cd go-gin-api/cmd/api
+cd go-gin-api
 
 go run main.go -env fat
 
