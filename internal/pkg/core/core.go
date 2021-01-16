@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	_ "github.com/xinliangnote/go-gin-api/docs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
@@ -242,8 +243,8 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	}
 
 	fmt.Println(color.Blue(_UI))
-
-	fmt.Println(color.Green(fmt.Sprintf("* [register -env %s]", env.Active().Value())))
+	fmt.Println(color.Green(fmt.Sprintf("* [register port %s]", configs.ProjectPort())))
+	fmt.Println(color.Green(fmt.Sprintf("* [register env %s]", env.Active().Value())))
 
 	// withoutLogPaths 这些请求，默认不记录日志
 	withoutTracePaths := map[string]bool{
@@ -263,8 +264,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 		"/favicon.ico": true,
 
-		"/h/ping": true,
-		"/h/info": true,
+		"/system/health": true,
 	}
 
 	opt := new(option)
@@ -365,7 +365,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 					response = err
 				}
 			} else {
-				response = context.GetPayload()
+				response = context.getPayload()
 			}
 
 			if response != nil {
@@ -440,22 +440,20 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	mux.engine.NoMethod(wrapHandlers(DisableTrace)...)
 	mux.engine.NoRoute(wrapHandlers(DisableTrace)...)
-
-	h := mux.Group("/h")
+	system := mux.Group("/system")
 	{
-		h.GET("/ping", func(ctx Context) {
-			ctx.SetPayload(code.OK.WithData("pong"))
-		})
-
-		h.GET("/info", func(ctx Context) {
+		// 健康检查
+		system.GET("/health", func(ctx Context) {
 			resp := &struct {
-				Header interface{} `json:"header"`
-				Ts     time.Time   `json:"ts"`
-				Env    string      `json:"env"`
+				Timestamp   time.Time `json:"timestamp"`
+				Environment string    `json:"environment"`
+				Host        string    `json:"host"`
+				Status      string    `json:"status"`
 			}{
-				Header: ctx.Header(),
-				Ts:     time.Now(),
-				Env:    env.Active().Value(),
+				Timestamp:   time.Now(),
+				Environment: env.Active().Value(),
+				Host:        ctx.Host(),
+				Status:      "ok",
 			}
 			ctx.SetPayload(code.OK.WithData(resp))
 		})

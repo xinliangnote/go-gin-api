@@ -19,9 +19,6 @@ var (
 	}
 )
 
-// Trace 记录内部流转信息
-type Trace = trace.T
-
 // Mock 定义接口Mock数据
 type Mock func() (body []byte)
 
@@ -82,7 +79,7 @@ func WithHeader(key, value string) Option {
 }
 
 // WithTrace 设置trace信息
-func WithTrace(t Trace) Option {
+func WithTrace(t trace.T) Option {
 	return func(opt *option) {
 		if t != nil {
 			opt.trace = t.(*trace.Trace)
@@ -99,9 +96,9 @@ func WithLogger(logger *zap.Logger) Option {
 }
 
 // WithMock 设置 mock 数据
-func WithMock(mock Mock) Option {
+func WithMock(m Mock) Option {
 	return func(opt *option) {
-		opt.mock = mock
+		opt.mock = m
 	}
 }
 

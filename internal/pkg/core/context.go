@@ -86,7 +86,7 @@ type Context interface {
 	Logger() *zap.Logger
 	setLogger(logger *zap.Logger)
 
-	GetPayload() errno.Error
+	getPayload() errno.Error
 	SetPayload(payload errno.Error)
 
 	Header() http.Header
@@ -197,7 +197,7 @@ func (c *context) setLogger(logger *zap.Logger) {
 	c.ctx.Set(_LoggerName, logger)
 }
 
-func (c *context) GetPayload() errno.Error {
+func (c *context) getPayload() errno.Error {
 	payload, _ := c.ctx.Get(_PayloadName)
 	return payload.(errno.Error)
 }

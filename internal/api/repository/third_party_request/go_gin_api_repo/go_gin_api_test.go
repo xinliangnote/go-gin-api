@@ -18,7 +18,7 @@ func TestDemoGet(t *testing.T) {
 		//httpclient.WithLogger(ctx.Logger()),
 		httpclient.WithHeader("Authorization", authorization),
 		httpclient.WithOnFailedRetry(3, time.Second*1, retryVerify),
-		httpclient.WithOnFailedAlarm("接口异常", new(third_party_request.AlarmEmail), alarmVerify),
+		httpclient.WithOnFailedAlarm("接口告警", new(third_party_request.AlarmEmail), alarmVerify),
 		//httpclient.WithMock(MockDemoGet),
 	)
 
@@ -63,7 +63,7 @@ func retryVerify(body []byte) (shouldRetry bool) {
 }
 
 // 设置告警规则
-func alarmVerify(body []byte) (shouldRetry bool) {
+func alarmVerify(body []byte) (shouldAlarm bool) {
 	if len(body) == 0 {
 		return true
 	}

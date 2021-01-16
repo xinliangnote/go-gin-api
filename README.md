@@ -145,7 +145,8 @@ go run main.go -env fat
 ╚██████╔╝╚██████╔╝      ╚██████╔╝██║██║ ╚████║      ██║  ██║██║     ██║
  ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
 
-* [register -env fat]
+* [register port :9999]
+* [register env fat]
 * [register cors]
 * [register rate]
 * [register panic notify]
@@ -153,7 +154,7 @@ go run main.go -env fat
 * [register swagger]
 * [register prometheus]
 
-// 启动成功后，可访问：http://127.0.0.1:9999/h/info
+// 启动成功后，可访问：http://127.0.0.1:9999/system/health
 ```
 
 #### swagger

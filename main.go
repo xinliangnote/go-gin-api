@@ -57,7 +57,7 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:    ":9999",
+		Addr:    configs.ProjectPort(),
 		Handler: mux,
 	}
 

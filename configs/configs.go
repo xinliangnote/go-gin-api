@@ -86,6 +86,6 @@ func ProjectName() string {
 	return "go-gin-api"
 }
 
-func ProjectVersion() string {
-	return "v2.0"
+func ProjectPort() string {
+	return ":9999"
 }
