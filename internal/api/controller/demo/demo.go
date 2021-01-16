@@ -1,12 +1,11 @@
 package demo
 
 import (
-	"net/url"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/third_party_request/go_gin_api_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/jsonparse"
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
 
 	"go.uber.org/zap"
@@ -113,40 +112,41 @@ func (d *Demo) User() core.HandlerFunc {
 			return
 		}
 
-		body1, err1 := httpclient.Get("http://127.0.0.1:9999/demo/get/"+req.Name, nil,
-			httpclient.WithTTL(time.Second*2),
+		res1, err := go_gin_api_repo.DemoGet(req.Name,
+			httpclient.WithTTL(time.Second*5),
 			httpclient.WithTrace(c.Trace()),
 			httpclient.WithLogger(c.Logger()),
 			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
+			httpclient.WithOnFailedRetry(3, time.Second*1, go_gin_api_repo.DemoGetRetryVerify),
 		)
-		if err1 != nil {
-			d.logger.Error("get [demo/get] err", zap.Error(err1))
+
+		if err != nil {
+			d.logger.Error("get [demo/get] err", zap.Error(err))
+			c.SetPayload(code.ErrUserHTTP)
 		}
 
-		params := url.Values{}
-		params.Set("name", "Jack")
-		body2, err2 := httpclient.PostForm("http://127.0.0.1:9999/demo/post", params,
-			httpclient.WithTTL(time.Second*2),
+		res2, err := go_gin_api_repo.DemoPost("Jack",
+			httpclient.WithTTL(time.Second*5),
 			httpclient.WithTrace(c.Trace()),
 			httpclient.WithLogger(c.Logger()),
 			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
+			httpclient.WithOnFailedRetry(3, time.Second*1, go_gin_api_repo.DemoPostRetryVerify),
 		)
-		if err2 != nil {
-			d.logger.Error("post [demo/post] err", zap.Error(err2))
+
+		if err != nil {
+			d.logger.Error("post [demo/post] err", zap.Error(err))
+			c.SetPayload(code.ErrUserHTTP)
 		}
 
-		data := &response{}
-		if err1 == nil && err2 == nil {
-			data = &response{
-				{
-					Name: jsonparse.Get(string(body1), "data.name").(string),
-					Job:  jsonparse.Get(string(body1), "data.job").(string),
-				},
-				{
-					Name: jsonparse.Get(string(body2), "data.name").(string),
-					Job:  jsonparse.Get(string(body2), "data.job").(string),
-				},
-			}
+		data := &response{
+			{
+				Name: res1.Data.Name,
+				Job:  res1.Data.Job,
+			},
+			{
+				Name: res2.Data.Name,
+				Job:  res2.Data.Job,
+			},
 		}
 		c.SetPayload(code.OK.WithData(data))
 	}

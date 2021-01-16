@@ -1,4 +1,4 @@
-## go-gin-api
+## go-gin-api ![go report](https://goreportcard.com/badge/github.com/xinliangnote/go-gin-api)
 
 [![GitHub stars](https://img.shields.io/github/stars/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/xinliangnote/go-gin-api)](https://github.com/xinliangnote/go-gin-api/network/members)
@@ -49,23 +49,49 @@
 - [x] [Gin](https://github.com/gin-gonic/gin) 支持优雅关闭
 - [x] 配置文件解析库 [Viper](https://github.com/spf13/viper)
 - [x] 文档使用 [Swagger](https://swagger.io/) 生成
-- [x] 性能分析使用 [pprof](github.com/gin-contrib/pprof)
-- [x] [zap](go.uber.org/zap) 日志记录
-- [x] [rate](golang.org/x/time/rate) 限流
-- [x] [token] 基于[JWT](github.com/dgrijalva/jwt-go) 身份认证
+- [x] 性能分析使用 [pprof](https://github.com/gin-contrib/pprof)
+- [x] [zap](https://go.uber.org/zap) 日志记录
+- [x] [rate](https://golang.org/x/time/rate) 限流
+- [x] [token] 基于[JWT](https://github.com/dgrijalva/jwt-go) 身份认证
 - [x] [notify] 异常捕获并进行邮件告警
 - [x] [trace] 开发调试的辅助工具
+    - [x] 支持设置 trace_id
+    - [x] 支持设置 request 信息
+    - [x] 支持设置 response 信息
+    - [x] 支持设置 third_party_requests 三方请求信息
+    - [x] 支持设置 debugs 打印调试信息
+    - [x] 支持设置 sqls 执行 SQL 信息
+    - [x] 可记录 cost_seconds 执行时长
 - [x] [errno] 统一定义错误码
 - [x] [env] 支持 FAT、UAT、PRO 环境
 - [x] [aes] AES 对称加密
+    - [x] 支持密码分组链模式（CBC）
 - [x] [rsa] RSA 非对称加密
-- [x] 数据库组件使用 [GORM V2](gorm.io/gorm)
+- [x] 数据库组件使用 [GORM V2](https://gorm.io/gorm)
+    - [x] 自带连接池
 - [x] Redis 组件使用 [go-redis](https://github.com/go-redis/redis)
+    - [x] 自带连接池
 - [ ] MongoDB
-- [ ] Prometheus
+- [x] 使用 [Prometheus Client](https://github.com/prometheus/client_golang/prometheus)
+    - [x] 已设置计数器（Counter）指标
+    - [x] 已设置直方图（Histogram）指标
 - [ ] 任务调度
 - [ ] gRPC
-- [ ] ...
+- [ ] ID 生成器
+- [x] [httpclient] HTTP 请求包
+    - [x] 支持设置 TTL 一次请求的最长执行时间
+    - [x] 支持设置 Header 信息
+    - [x] 支持设置 Trace 信息
+    - [x] 支持设置 Logger 信息
+    - [x] 支持设置 Mock 数据
+    - [x] 支持设置 OnFailedAlarm 失败
+        - [x] 可设置 alarmTitle 告警标题
+        - [x] 可设置 alarmObject 告警方式（邮件/短信/微信）
+        - [x] 可设置 alarmVerify 定义符合告警的验证规则
+    - [x] 支持设置 OnFailedRetry 失败重试
+        - [x] 可设置 retryTimes 重试次数
+        - [x] 可设置 retryDelay 重试前延迟等待时间
+        - [x] 可设置 retryVerify 定义符合重试的验证规则
 
 ## Quick start
 

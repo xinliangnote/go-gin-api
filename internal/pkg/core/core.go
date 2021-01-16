@@ -35,7 +35,7 @@ const _UI = `
  ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
 `
 
-const _MaxBurstSize = 100
+const _MaxBurstSize = 100000
 
 type Option func(*option)
 
@@ -54,7 +54,7 @@ type OnPanicNotify func(ctx Context, err interface{}, stackInfo string)
 
 // RecordMetrics 记录prometheus指标用
 // 如果使用AliasForRecordMetrics配置了别名，uri将被替换为别名。
-type RecordMetrics func(method, uri string, success bool, httpCode, businessCode int, costSeconds float64)
+type RecordMetrics func(method, uri string, success bool, httpCode, businessCode int, costSeconds float64, traceId string)
 
 // WithDisablePProf 禁用 pprof
 func WithDisablePProf() Option {
@@ -352,6 +352,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				businessCode    int
 				businessCodeMsg string
 				abortErr        error
+				traceId         string
 			)
 
 			if ctx.IsAborted() {
@@ -371,6 +372,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				if x := context.Trace(); x != nil {
 					context.SetHeader(trace.Header, x.ID())
 					response.WithID(x.ID())
+					traceId = x.ID()
 				} else {
 					response.WithID("")
 				}
@@ -385,7 +387,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 					uri = alias
 				}
 
-				opt.recordMetrics(context.Method(), uri, !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK, ctx.Writer.Status(), businessCode, time.Since(ts).Seconds())
+				opt.recordMetrics(context.Method(), uri, !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK, ctx.Writer.Status(), businessCode, time.Since(ts).Seconds(), traceId)
 			}
 
 			var t *trace.Trace
@@ -416,7 +418,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			t.Success = !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK
 			t.CostSeconds = time.Since(ts).Seconds()
 
-			logger.Info("interceptor", zap.Any("trace", t))
+			logger.Info("core-interceptor", zap.Any("trace", t))
 		}()
 
 		ctx.Next()
@@ -429,8 +431,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			defer releaseContext(context)
 
 			if !limiter.Allow() {
-				context.SetPayload(code.ErrManyRequest)
-				ctx.Abort()
+				context.AbortWithError(code.ErrManyRequest)
 				return
 			}
 			ctx.Next()

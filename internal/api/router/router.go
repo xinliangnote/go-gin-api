@@ -38,17 +38,17 @@ func NewHTTPMux(logger *zap.Logger, db db_repo.Repo, cache cache_repo.Repo) (cor
 	{
 		u.POST("/login", userHandler.Login())
 		u.POST("/create", userHandler.Create())
-		u.GET("/info/:username", userHandler.Detail())
+		u.GET("/info/:username", core.AliasForRecordMetrics("/user/info"), userHandler.Detail())
 		u.POST("/update", userHandler.UpdateNickNameByID())
 	}
 
 	d := mux.Group("/demo", core.WrapAuthHandler(auth.AuthHandler)) //使用 auth 验证
 	{
-		d.GET("user/:name", demoHandler.User())
+		d.GET("user/:name", core.AliasForRecordMetrics("/demo/user"), demoHandler.User())
 
 		// 模拟数据
-		d.GET("get/:name", demoHandler.Get(), core.DisableTrace)
-		d.POST("post", demoHandler.Post(), core.DisableTrace)
+		d.GET("get/:name", core.AliasForRecordMetrics("/demo/get"), demoHandler.Get())
+		d.POST("post", demoHandler.Post())
 	}
 
 	return mux, nil

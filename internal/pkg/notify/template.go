@@ -1,4 +1,4 @@
-package mail
+package notify
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/notify/mail/templates"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/notify/templates"
 )
 
 // NewPanicHTMLEmail 发送系统异常邮件 html

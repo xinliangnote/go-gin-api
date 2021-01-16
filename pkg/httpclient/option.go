@@ -1,6 +1,7 @@
 package httpclient
 
 import (
+	"sync"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
@@ -8,39 +9,75 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	cache = &sync.Pool{
+		New: func() interface{} {
+			return &option{
+				header: make(map[string][]string),
+			}
+		},
+	}
+)
+
 // Trace 记录内部流转信息
 type Trace = trace.T
+
+// Mock 定义接口Mock数据
+type Mock func() (body []byte)
 
 // Option 自定义设置http请求
 type Option func(*option)
 
 type option struct {
-	TTL        time.Duration
-	Header     map[string]string
-	Trace      *trace.Trace
-	Dialog     *trace.Dialog
-	Logger     *zap.Logger
-	RetryTimes int
-	RetryDelay time.Duration
+	ttl         time.Duration
+	header      map[string][]string
+	trace       *trace.Trace
+	dialog      *trace.Dialog
+	logger      *zap.Logger
+	retryTimes  int
+	retryDelay  time.Duration
+	retryVerify RetryVerify
+	alarmTitle  string
+	alarmObject AlarmObject
+	alarmVerify AlarmVerify
+	mock        Mock
 }
 
-func newOption() *option {
-	return &option{
-		Header: make(map[string]string),
-	}
+func (o *option) reset() {
+	o.ttl = 0
+	o.header = make(map[string][]string)
+	o.trace = nil
+	o.dialog = nil
+	o.logger = nil
+	o.retryTimes = 0
+	o.retryDelay = 0
+	o.retryVerify = nil
+	o.alarmTitle = ""
+	o.alarmObject = nil
+	o.alarmVerify = nil
+	o.mock = nil
+}
+
+func getOption() *option {
+	return cache.Get().(*option)
+}
+
+func releaseOption(opt *option) {
+	opt.reset()
+	cache.Put(opt)
 }
 
 // WithTTL 本次http请求最长执行时间
 func WithTTL(ttl time.Duration) Option {
 	return func(opt *option) {
-		opt.TTL = ttl
+		opt.ttl = ttl
 	}
 }
 
 // WithHeader 设置http header，可以调用多次设置多对key-value
 func WithHeader(key, value string) Option {
 	return func(opt *option) {
-		opt.Header[key] = value
+		opt.header[key] = []string{value}
 	}
 }
 
@@ -48,8 +85,8 @@ func WithHeader(key, value string) Option {
 func WithTrace(t Trace) Option {
 	return func(opt *option) {
 		if t != nil {
-			opt.Trace = t.(*trace.Trace)
-			opt.Dialog = new(trace.Dialog)
+			opt.trace = t.(*trace.Trace)
+			opt.dialog = new(trace.Dialog)
 		}
 	}
 }
@@ -57,20 +94,31 @@ func WithTrace(t Trace) Option {
 // WithLogger 设置logger以便打印关键日志
 func WithLogger(logger *zap.Logger) Option {
 	return func(opt *option) {
-		opt.Logger = logger
+		opt.logger = logger
 	}
 }
 
-// WithRetryTimes 如果请求失败，最多重试N次
-func WithRetryTimes(retryTimes int) Option {
+// WithMock 设置 mock 数据
+func WithMock(mock Mock) Option {
 	return func(opt *option) {
-		opt.RetryTimes = retryTimes
+		opt.mock = mock
 	}
 }
 
-// WithRetryDelay 在重试前，延迟等待一会
-func WithRetryDelay(retryDelay time.Duration) Option {
+// WithOnFailedAlarm 设置告警通知
+func WithOnFailedAlarm(alarmTitle string, alarmObject AlarmObject, alarmVerify AlarmVerify) Option {
 	return func(opt *option) {
-		opt.RetryDelay = retryDelay
+		opt.alarmTitle = alarmTitle
+		opt.alarmObject = alarmObject
+		opt.alarmVerify = alarmVerify
+	}
+}
+
+// WithOnFailedRetry 设置失败重试
+func WithOnFailedRetry(retryTimes int, retryDelay time.Duration, retryVerify RetryVerify) Option {
+	return func(opt *option) {
+		opt.retryTimes = retryTimes
+		opt.retryDelay = retryDelay
+		opt.retryVerify = retryVerify
 	}
 }

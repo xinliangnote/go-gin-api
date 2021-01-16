@@ -35,28 +35,40 @@ var defaultClient = &http.Client{
 func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option) ([]byte, int, error) {
 	ts := time.Now()
 
+	if mock := opt.mock; mock != nil {
+		if opt.dialog != nil {
+			opt.dialog.AppendResponse(&trace.Response{
+				HttpCode:    http.StatusOK,
+				HttpCodeMsg: http.StatusText(http.StatusOK),
+				Body:        string(mock()),
+				CostSeconds: time.Since(ts).Seconds(),
+			})
+		}
+		return mock(), http.StatusOK, nil
+	}
+
 	req, err := http.NewRequest(method, url, bytes.NewReader(payload))
 	if err != nil {
 		return nil, -1, errors.Wrapf(err, "new request [%s %s] err", method, url)
 	}
 
 	req = req.WithContext(ctx)
-	for key, value := range opt.Header {
-		req.Header.Set(key, value)
+	for key, value := range opt.header {
+		req.Header.Set(key, value[0])
 	}
 
 	resp, err := defaultClient.Do(req)
 	if err != nil {
 		err = errors.Wrapf(err, "do request [%s %s] err", method, url)
-		if opt.Dialog != nil {
-			opt.Dialog.AppendResponse(&trace.Response{
+		if opt.dialog != nil {
+			opt.dialog.AppendResponse(&trace.Response{
 				Body:        err.Error(),
 				CostSeconds: time.Since(ts).Seconds(),
 			})
 		}
 
-		if opt.Logger != nil {
-			opt.Logger.Warn("doHTTP got err", zap.Error(err))
+		if opt.logger != nil {
+			opt.logger.Warn("doHTTP got err", zap.Error(err))
 		}
 		return nil, _StatusDoReqErr, err
 	}
@@ -65,22 +77,22 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		err = errors.Wrapf(err, "read resp body from [%s %s] err", method, url)
-		if opt.Dialog != nil {
-			opt.Dialog.AppendResponse(&trace.Response{
+		if opt.dialog != nil {
+			opt.dialog.AppendResponse(&trace.Response{
 				Body:        err.Error(),
 				CostSeconds: time.Since(ts).Seconds(),
 			})
 		}
 
-		if opt.Logger != nil {
-			opt.Logger.Warn("doHTTP got err", zap.Error(err))
+		if opt.logger != nil {
+			opt.logger.Warn("doHTTP got err", zap.Error(err))
 		}
 		return nil, _StatusReadRespErr, err
 	}
 
 	defer func() {
-		if opt.Dialog != nil {
-			opt.Dialog.AppendResponse(&trace.Response{
+		if opt.dialog != nil {
+			opt.dialog.AppendResponse(&trace.Response{
 				Header:      resp.Header,
 				HttpCode:    resp.StatusCode,
 				HttpCodeMsg: resp.Status,
@@ -91,11 +103,7 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode, newReplyErr(
-			resp.StatusCode,
-			body,
-			errors.Errorf("do [%s %s] return code: %d message: %s", method, url, resp.StatusCode, string(body)),
-		)
+		return body, resp.StatusCode, errors.Errorf("do [%s %s] return code: %d message: %s", method, url, resp.StatusCode, string(body))
 	}
 
 	return body, http.StatusOK, nil

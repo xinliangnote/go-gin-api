@@ -11,16 +11,15 @@ require (
 	github.com/go-openapi/spec v0.20.0 // indirect
 	github.com/go-redis/redis/v7 v7.4.0
 	github.com/google/go-cmp v0.5.4 // indirect
-	github.com/jinzhu/gorm v1.9.16
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.4 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v0.9.3
 	github.com/rs/cors v1.7.0
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/viper v1.7.1
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
-	github.com/tidwall/gjson v1.6.6
 	go.uber.org/multierr v1.5.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/mod v0.4.0 // indirect

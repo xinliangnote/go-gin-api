@@ -49,9 +49,9 @@
 
 执行的 SQL 信息，多个 SQL 会记录多组数据。
 
-- time，时间，格式：2006-01-02 15:04:05
-- src，文件地址和行号
-- duration，执行时长，单位：秒
+- timestamp，时间，格式：2006-01-02 15:04:05
+- stack，文件地址和行号
+- cost_seconds，执行时长，单位：秒
 - sql，SQL 语句
 - rows_affected，影响行数
 

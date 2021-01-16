@@ -14,7 +14,6 @@ import (
 const (
 	callBackBeforeName = "core:before"
 	callBackAfterName  = "core:after"
-	coreContext        = "_core_context"
 	startTime          = "_start_time"
 )
 
@@ -22,46 +21,6 @@ type TracePlugin struct{}
 
 func (op *TracePlugin) Name() string {
 	return "tracePlugin"
-}
-
-func before(db *gorm.DB) {
-	db.InstanceSet(coreContext, db.Statement.Context)
-	db.InstanceSet(startTime, time.Now())
-	return
-}
-
-func after(db *gorm.DB) {
-	_ctx, isExist := db.InstanceGet(coreContext)
-	if !isExist {
-		return
-	}
-
-	ctx, ok := _ctx.(core.Context)
-	if !ok {
-		return
-	}
-
-	_ts, isExist := db.InstanceGet(startTime)
-	if !isExist {
-		return
-	}
-
-	ts, ok := _ts.(time.Time)
-	if !ok {
-		return
-	}
-
-	sql := db.Dialector.Explain(db.Statement.SQL.String(), db.Statement.Vars...)
-
-	sqlInfo := new(trace.SQL)
-	sqlInfo.Time = time_parse.CSTLayoutString()
-	sqlInfo.SQL = sql
-	sqlInfo.Src = utils.FileWithLineNum()
-	sqlInfo.Rows = db.Statement.RowsAffected
-	sqlInfo.Duration = time.Since(ts).Seconds()
-	ctx.Trace().AppendSQL(sqlInfo)
-
-	return
 }
 
 func (op *TracePlugin) Initialize(db *gorm.DB) (err error) {
@@ -84,3 +43,38 @@ func (op *TracePlugin) Initialize(db *gorm.DB) (err error) {
 }
 
 var _ gorm.Plugin = &TracePlugin{}
+
+func before(db *gorm.DB) {
+	db.InstanceSet(startTime, time.Now())
+	return
+}
+
+func after(db *gorm.DB) {
+	_ctx := db.Statement.Context
+	ctx, ok := _ctx.(core.Context)
+	if !ok {
+		return
+	}
+
+	_ts, isExist := db.InstanceGet(startTime)
+	if !isExist {
+		return
+	}
+
+	ts, ok := _ts.(time.Time)
+	if !ok {
+		return
+	}
+
+	sql := db.Dialector.Explain(db.Statement.SQL.String(), db.Statement.Vars...)
+
+	sqlInfo := new(trace.SQL)
+	sqlInfo.Timestamp = time_parse.CSTLayoutString()
+	sqlInfo.SQL = sql
+	sqlInfo.Stack = utils.FileWithLineNum()
+	sqlInfo.Rows = db.Statement.RowsAffected
+	sqlInfo.CostSeconds = time.Since(ts).Seconds()
+	ctx.Trace().AppendSQL(sqlInfo)
+
+	return
+}

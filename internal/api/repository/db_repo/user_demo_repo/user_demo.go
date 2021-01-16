@@ -5,7 +5,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
 
@@ -43,7 +42,7 @@ func (u *userRepo) Create(ctx core.Context, user user_model.UserDemo) (id uint, 
 func (u *userRepo) getUserByID(ctx core.Context, id uint) (*user_model.UserDemo, error) {
 	data := new(user_model.UserDemo)
 	err := u.db.GetDbR().WithContext(ctx).First(data, id).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, errors.Wrap(err, "[user_demo] get user data err")
 	}
 	return data, nil
@@ -64,7 +63,7 @@ func (u *userRepo) GetUserByUserName(ctx core.Context, username string) (*user_m
 		Select([]string{"id", "user_name", "nick_name", "mobile"}).
 		Where("user_name = ?", username).
 		First(data).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, errors.Wrap(err, "[user_demo] get user data err")
 	}
 	return data, nil

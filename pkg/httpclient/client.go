@@ -3,6 +3,7 @@ package httpclient
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	httpURL "net/url"
 	"time"
@@ -15,39 +16,7 @@ import (
 const (
 	// DefaultTTL 一次http请求最长执行1分钟
 	DefaultTTL = time.Minute
-	// DefaultRetryTimes 如果请求失败，最多重试3次
-	DefaultRetryTimes = 3
-	// DefaultRetryDelay 在重试前，延迟等待100毫秒
-	DefaultRetryDelay = time.Millisecond * 100
 )
-
-// TODO retry的code不一定正确，缺失或者多余待实际使用中修改。
-func shouldRetry(ctx context.Context, httpCode int) bool {
-	select {
-	case <-ctx.Done():
-		return false
-	default:
-	}
-
-	switch httpCode {
-	case
-		_StatusDoReqErr,    // customize
-		_StatusReadRespErr, // customize
-
-		http.StatusRequestTimeout,
-		http.StatusLocked,
-		http.StatusTooEarly,
-		http.StatusTooManyRequests,
-
-		http.StatusServiceUnavailable,
-		http.StatusGatewayTimeout:
-
-		return true
-
-	default:
-		return false
-	}
-}
 
 // Get get 请求
 func Get(url string, form httpURL.Values, options ...Option) (body []byte, err error) {
@@ -72,24 +41,26 @@ func withoutBody(method, url string, form httpURL.Values, options ...Option) (bo
 
 	ts := time.Now()
 
-	opt := newOption()
+	opt := getOption()
 	defer func() {
-		if opt.Trace != nil {
-			opt.Dialog.Success = err == nil
-			opt.Dialog.CostSeconds = time.Since(ts).Seconds()
-			opt.Trace.AppendDialog(opt.Dialog)
+		if opt.trace != nil {
+			opt.dialog.Success = err == nil
+			opt.dialog.CostSeconds = time.Since(ts).Seconds()
+			opt.trace.AppendDialog(opt.dialog)
 		}
+
+		releaseOption(opt)
 	}()
 
 	for _, f := range options {
 		f(opt)
 	}
-	opt.Header["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
-	if opt.Trace != nil {
-		opt.Header[trace.Header] = opt.Trace.ID()
+	opt.header["Content-Type"] = []string{"application/x-www-form-urlencoded; charset=utf-8"}
+	if opt.trace != nil {
+		opt.header[trace.Header] = []string{opt.trace.ID()}
 	}
 
-	ttl := opt.TTL
+	ttl := opt.ttl
 	if ttl <= 0 {
 		ttl = DefaultTTL
 	}
@@ -97,30 +68,70 @@ func withoutBody(method, url string, form httpURL.Values, options ...Option) (bo
 	ctx, cancel := context.WithTimeout(context.Background(), ttl)
 	defer cancel()
 
-	if opt.Dialog != nil {
+	if opt.dialog != nil {
 		decodedURL, _ := httpURL.QueryUnescape(url)
-		opt.Dialog.Request = &trace.Request{
+		opt.dialog.Request = &trace.Request{
 			TTL:        ttl.String(),
 			Method:     method,
 			DecodedURL: decodedURL,
-			Header:     opt.Header,
+			Header:     opt.header,
 		}
 	}
 
-	retryTimes := opt.RetryTimes
+	retryTimes := opt.retryTimes
 	if retryTimes <= 0 {
 		retryTimes = DefaultRetryTimes
 	}
 
-	retryDelay := opt.RetryDelay
+	retryDelay := opt.retryDelay
 	if retryDelay <= 0 {
 		retryDelay = DefaultRetryDelay
 	}
 
 	var httpCode int
+
+	defer func() {
+		if opt.alarmObject == nil {
+			return
+		}
+
+		if opt.alarmVerify != nil && !opt.alarmVerify(body) && err == nil {
+			return
+		}
+
+		info := &struct {
+			TraceID string `json:"trace_id"`
+			Request struct {
+				Method string `json:"method"`
+				URL    string `json:"url"`
+			} `json:"request"`
+			Response struct {
+				HTTPCode int    `json:"http_code"`
+				Body     string `json:"body"`
+			} `json:"response"`
+			Error string `json:"error"`
+		}{}
+
+		if opt.trace != nil {
+			info.TraceID = opt.trace.ID()
+		}
+		info.Request.Method = method
+		info.Request.URL = url
+		info.Response.HTTPCode = httpCode
+		info.Response.Body = string(body)
+		info.Error = ""
+		if err != nil {
+			info.Error = fmt.Sprintf("%+v", err)
+		}
+
+		raw, _ := json.MarshalIndent(info, "", " ")
+		onFailedAlarm(opt.alarmTitle, raw, opt.logger, opt.alarmObject)
+
+	}()
+
 	for k := 0; k < retryTimes; k++ {
 		body, httpCode, err = doHTTP(ctx, method, url, nil, opt)
-		if shouldRetry(ctx, httpCode) {
+		if shouldRetry(ctx, httpCode) || (opt.retryVerify != nil && opt.retryVerify(body)) {
 			time.Sleep(retryDelay)
 			continue
 		}
@@ -170,24 +181,26 @@ func withFormBody(method, url string, form httpURL.Values, options ...Option) (b
 
 	ts := time.Now()
 
-	opt := newOption()
+	opt := getOption()
 	defer func() {
-		if opt.Trace != nil {
-			opt.Dialog.Success = err == nil
-			opt.Dialog.CostSeconds = time.Since(ts).Seconds()
-			opt.Trace.AppendDialog(opt.Dialog)
+		if opt.trace != nil {
+			opt.dialog.Success = err == nil
+			opt.dialog.CostSeconds = time.Since(ts).Seconds()
+			opt.trace.AppendDialog(opt.dialog)
 		}
+
+		releaseOption(opt)
 	}()
 
 	for _, f := range options {
 		f(opt)
 	}
-	opt.Header["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
-	if opt.Trace != nil {
-		opt.Header[trace.Header] = opt.Trace.ID()
+	opt.header["Content-Type"] = []string{"application/x-www-form-urlencoded; charset=utf-8"}
+	if opt.trace != nil {
+		opt.header[trace.Header] = []string{opt.trace.ID()}
 	}
 
-	ttl := opt.TTL
+	ttl := opt.ttl
 	if ttl <= 0 {
 		ttl = DefaultTTL
 	}
@@ -196,31 +209,71 @@ func withFormBody(method, url string, form httpURL.Values, options ...Option) (b
 	defer cancel()
 
 	formValue := form.Encode()
-	if opt.Dialog != nil {
+	if opt.dialog != nil {
 		decodedURL, _ := httpURL.QueryUnescape(url)
-		opt.Dialog.Request = &trace.Request{
+		opt.dialog.Request = &trace.Request{
 			TTL:        ttl.String(),
 			Method:     method,
 			DecodedURL: decodedURL,
-			Header:     opt.Header,
+			Header:     opt.header,
 			Body:       formValue,
 		}
 	}
 
-	retryTimes := opt.RetryTimes
+	retryTimes := opt.retryTimes
 	if retryTimes <= 0 {
 		retryTimes = DefaultRetryTimes
 	}
 
-	retryDelay := opt.RetryDelay
+	retryDelay := opt.retryDelay
 	if retryDelay <= 0 {
 		retryDelay = DefaultRetryDelay
 	}
 
 	var httpCode int
+
+	defer func() {
+		if opt.alarmObject == nil {
+			return
+		}
+
+		if opt.alarmVerify != nil && !opt.alarmVerify(body) && err == nil {
+			return
+		}
+
+		info := &struct {
+			TraceID string `json:"trace_id"`
+			Request struct {
+				Method string `json:"method"`
+				URL    string `json:"url"`
+			} `json:"request"`
+			Response struct {
+				HTTPCode int    `json:"http_code"`
+				Body     string `json:"body"`
+			} `json:"response"`
+			Error string `json:"error"`
+		}{}
+
+		if opt.trace != nil {
+			info.TraceID = opt.trace.ID()
+		}
+		info.Request.Method = method
+		info.Request.URL = url
+		info.Response.HTTPCode = httpCode
+		info.Response.Body = string(body)
+		info.Error = ""
+		if err != nil {
+			info.Error = fmt.Sprintf("%+v", err)
+		}
+
+		raw, _ := json.MarshalIndent(info, "", " ")
+		onFailedAlarm(opt.alarmTitle, raw, opt.logger, opt.alarmObject)
+
+	}()
+
 	for k := 0; k < retryTimes; k++ {
 		body, httpCode, err = doHTTP(ctx, method, url, []byte(formValue), opt)
-		if shouldRetry(ctx, httpCode) {
+		if shouldRetry(ctx, httpCode) || (opt.retryVerify != nil && opt.retryVerify(body)) {
 			time.Sleep(retryDelay)
 			continue
 		}
@@ -240,24 +293,26 @@ func withJSONBody(method, url string, raw json.RawMessage, options ...Option) (b
 
 	ts := time.Now()
 
-	opt := newOption()
+	opt := getOption()
 	defer func() {
-		if opt.Trace != nil {
-			opt.Dialog.Success = err == nil
-			opt.Dialog.CostSeconds = time.Since(ts).Seconds()
-			opt.Trace.AppendDialog(opt.Dialog)
+		if opt.trace != nil {
+			opt.dialog.Success = err == nil
+			opt.dialog.CostSeconds = time.Since(ts).Seconds()
+			opt.trace.AppendDialog(opt.dialog)
 		}
+
+		releaseOption(opt)
 	}()
 
 	for _, f := range options {
 		f(opt)
 	}
-	opt.Header["Content-Type"] = "application/json; charset=utf-8"
-	if opt.Trace != nil {
-		opt.Header[trace.Header] = opt.Trace.ID()
+	opt.header["Content-Type"] = []string{"application/json; charset=utf-8"}
+	if opt.trace != nil {
+		opt.header[trace.Header] = []string{opt.trace.ID()}
 	}
 
-	ttl := opt.TTL
+	ttl := opt.ttl
 	if ttl <= 0 {
 		ttl = DefaultTTL
 	}
@@ -265,31 +320,71 @@ func withJSONBody(method, url string, raw json.RawMessage, options ...Option) (b
 	ctx, cancel := context.WithTimeout(context.Background(), ttl)
 	defer cancel()
 
-	if opt.Dialog != nil {
+	if opt.dialog != nil {
 		decodedURL, _ := httpURL.QueryUnescape(url)
-		opt.Dialog.Request = &trace.Request{
+		opt.dialog.Request = &trace.Request{
 			TTL:        ttl.String(),
 			Method:     method,
 			DecodedURL: decodedURL,
-			Header:     opt.Header,
+			Header:     opt.header,
 			Body:       string(raw), // TODO unsafe
 		}
 	}
 
-	retryTimes := opt.RetryTimes
+	retryTimes := opt.retryTimes
 	if retryTimes <= 0 {
 		retryTimes = DefaultRetryTimes
 	}
 
-	retryDelay := opt.RetryDelay
+	retryDelay := opt.retryDelay
 	if retryDelay <= 0 {
 		retryDelay = DefaultRetryDelay
 	}
 
 	var httpCode int
+
+	defer func() {
+		if opt.alarmObject == nil {
+			return
+		}
+
+		if opt.alarmVerify != nil && !opt.alarmVerify(body) && err == nil {
+			return
+		}
+
+		info := &struct {
+			TraceID string `json:"trace_id"`
+			Request struct {
+				Method string `json:"method"`
+				URL    string `json:"url"`
+			} `json:"request"`
+			Response struct {
+				HTTPCode int    `json:"http_code"`
+				Body     string `json:"body"`
+			} `json:"response"`
+			Error string `json:"error"`
+		}{}
+
+		if opt.trace != nil {
+			info.TraceID = opt.trace.ID()
+		}
+		info.Request.Method = method
+		info.Request.URL = url
+		info.Response.HTTPCode = httpCode
+		info.Response.Body = string(body)
+		info.Error = ""
+		if err != nil {
+			info.Error = fmt.Sprintf("%+v", err)
+		}
+
+		raw, _ := json.MarshalIndent(info, "", " ")
+		onFailedAlarm(opt.alarmTitle, raw, opt.logger, opt.alarmObject)
+
+	}()
+
 	for k := 0; k < retryTimes; k++ {
 		body, httpCode, err = doHTTP(ctx, method, url, raw, opt)
-		if shouldRetry(ctx, httpCode) {
+		if shouldRetry(ctx, httpCode) || (opt.retryVerify != nil && opt.retryVerify(body)) {
 			time.Sleep(retryDelay)
 			continue
 		}

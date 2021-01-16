@@ -23,6 +23,7 @@ var (
 	ErrUserCreate = errno.NewError(20102, "创建用户失败")
 	ErrUserUpdate = errno.NewError(20103, "更新用户失败")
 	ErrUserSearch = errno.NewError(20104, "查询用户失败")
+	ErrUserHTTP   = errno.NewError(20105, "调用他方接口失败")
 
 	// ...
 )
