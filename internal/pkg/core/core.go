@@ -125,6 +125,7 @@ func WrapAuthHandler(handler func(Context) (userID int, userName string, err err
 	return func(ctx Context) {
 		userID, userName, err := handler(ctx)
 		if err != nil {
+			ctx.Logger().Error("auth handler err", zap.Error(errors.WithStack(errors.New(err.GetMsg()))))
 			ctx.AbortWithError(err)
 			return
 		}
@@ -336,7 +337,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			if err := recover(); err != nil {
 				stackInfo := string(debug.Stack())
 				logger.Error("got panic", zap.String("panic", fmt.Sprintf("%+v", err)), zap.String("stack", stackInfo))
-				context.SetPayload(code.ErrServer)
+				context.AbortWithError(code.ErrServer)
 
 				if notify := opt.panicNotify; notify != nil {
 					notify(context, err, stackInfo)
@@ -376,9 +377,10 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				} else {
 					response.WithID("")
 				}
-				businessCode = response.GetCode()
+
+				businessCode = response.GetBusinessCode()
 				businessCodeMsg = response.GetMsg()
-				ctx.JSON(http.StatusOK, response)
+				ctx.JSON(response.GetHttpCode(), response)
 			}
 
 			if opt.recordMetrics != nil {

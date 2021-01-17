@@ -35,12 +35,12 @@ func (d *Demo) Get() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
 		if req.Name != "Tom" {
-			c.SetPayload(code.ErrUser)
+			c.AbortWithError(code.ErrUser)
 			return
 		}
 
@@ -64,12 +64,12 @@ func (d *Demo) Post() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindPostForm(req); err != nil {
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
 		if req.Name != "Jack" {
-			c.SetPayload(code.ErrUser)
+			c.AbortWithError(code.ErrUser)
 			return
 		}
 
@@ -103,14 +103,15 @@ func (d *Demo) User() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
 		if req.Name != "Tom" {
-			c.SetPayload(code.ErrUser)
+			c.AbortWithError(code.ErrUser)
 			return
 		}
+
 
 		res1, err := go_gin_api_repo.DemoGet(req.Name,
 			httpclient.WithTTL(time.Second*5),
@@ -122,7 +123,8 @@ func (d *Demo) User() core.HandlerFunc {
 
 		if err != nil {
 			d.logger.Error("get [demo/get] err", zap.Error(err))
-			c.SetPayload(code.ErrUserHTTP)
+			c.AbortWithError(code.ErrUserHTTP)
+			return
 		}
 
 		res2, err := go_gin_api_repo.DemoPost("Jack",
@@ -135,7 +137,8 @@ func (d *Demo) User() core.HandlerFunc {
 
 		if err != nil {
 			d.logger.Error("post [demo/post] err", zap.Error(err))
-			c.SetPayload(code.ErrUserHTTP)
+			c.AbortWithError(code.ErrUserHTTP)
+			return
 		}
 
 		data := &response{

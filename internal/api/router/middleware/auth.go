@@ -11,20 +11,20 @@ import (
 func AuthHandler(ctx core.Context) (userId int, userName string, err errno.Error) {
 	auth := ctx.GetHeader("Authorization")
 	if auth == "" {
-		err = code.ErrSignParam
+		err = code.ErrAuthorization
 		return
 	}
 
 	cfg := configs.Get().JWT
 	claims, errParse := token.New(cfg.Secret).Parse(auth)
 	if errParse != nil {
-		err = code.ErrSignParam
+		err = code.ErrAuthorization
 		return
 	}
 
 	userId = claims.UserID
 	if userId <= 0 {
-		err = code.ErrSignParam
+		err = code.ErrAuthorization
 		return
 	}
 	userName = claims.UserName

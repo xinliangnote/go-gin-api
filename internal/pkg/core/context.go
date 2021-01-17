@@ -255,7 +255,12 @@ func (c *context) setUserName(userName string) {
 
 func (c *context) AbortWithError(err errno.Error) {
 	if err != nil {
-		c.ctx.AbortWithStatus(http.StatusInternalServerError)
+		httpCode := err.GetHttpCode()
+		if httpCode == 0 {
+			httpCode = http.StatusInternalServerError
+		}
+
+		c.ctx.AbortWithStatus(httpCode)
 		c.ctx.Set(_AbortErrorName, err)
 	}
 }

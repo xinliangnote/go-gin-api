@@ -13,8 +13,10 @@ type Error interface {
 	WithData(data interface{}) Error
 	// WithID 设置当前请求的唯一ID
 	WithID(id string) Error
-	// GetCode 获取 Code
-	GetCode() int
+	// GetBusinessCode 获取 Business Code
+	GetBusinessCode() int
+	// GetHttpCode 获取 HTTP Code
+	GetHttpCode() int
 	// GetMsg 获取 Msg
 	GetMsg() string
 	// ToString 返回 JSON 格式的错误详情
@@ -22,17 +24,19 @@ type Error interface {
 }
 
 type err struct {
-	Code int         `json:"code"`         // 业务编码
-	Msg  string      `json:"msg"`          // 错误描述
-	Data interface{} `json:"data"`         // 成功时返回的数据
-	ID   string      `json:"id,omitempty"` // 当前请求的唯一ID，便于问题定位，忽略也可以
+	HttpCode     int         `json:"-"`            // HTTP Code
+	BusinessCode int         `json:"code"`         // Business Code
+	Msg          string      `json:"msg"`          // 错误描述
+	Data         interface{} `json:"data"`         // 成功时返回的数据
+	ID           string      `json:"id,omitempty"` // 当前请求的唯一ID，便于问题定位，忽略也可以
 }
 
-func NewError(code int, msg string) Error {
+func NewError(httpCode, businessCode int, msg string) Error {
 	return &err{
-		Code: code,
-		Msg:  msg,
-		Data: nil,
+		HttpCode:     httpCode,
+		BusinessCode: businessCode,
+		Msg:          msg,
+		Data:         nil,
 	}
 }
 
@@ -48,8 +52,12 @@ func (e *err) WithID(id string) Error {
 	return e
 }
 
-func (e *err) GetCode() int {
-	return e.Code
+func (e *err) GetHttpCode() int {
+	return e.HttpCode
+}
+
+func (e *err) GetBusinessCode() int {
+	return e.BusinessCode
 }
 
 func (e *err) GetMsg() string {
@@ -59,15 +67,17 @@ func (e *err) GetMsg() string {
 // ToString 返回 JSON 格式的错误详情
 func (e *err) ToString() string {
 	err := &struct {
-		Code int         `json:"code"`
-		Msg  string      `json:"msg"`
-		Data interface{} `json:"data"`
-		ID   string      `json:"id,omitempty"`
+		HttpCode     int         `json:"http_code"`
+		BusinessCode int         `json:"business_code"`
+		Msg          string      `json:"msg"`
+		Data         interface{} `json:"data"`
+		ID           string      `json:"id,omitempty"`
 	}{
-		Code: e.Code,
-		Msg:  e.Msg,
-		Data: e.Data,
-		ID:   e.ID,
+		HttpCode:     e.HttpCode,
+		BusinessCode: e.BusinessCode,
+		Msg:          e.Msg,
+		Data:         e.Data,
+		ID:           e.ID,
 	}
 
 	raw, _ := json.Marshal(err)

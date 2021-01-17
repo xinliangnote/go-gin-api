@@ -57,14 +57,14 @@ func (u *userDemo) Create() core.HandlerFunc {
 		res := new(user_model.CreateResponse)
 		if err := c.ShouldBindJSON(req); err != nil {
 			u.logger.Error("[user] should bind json err", zap.Error(err))
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
 		id, err := u.userService.Create(c, req)
 		if err != nil {
 			u.logger.Error("[user] Create err", zap.Error(err))
-			c.SetPayload(code.ErrUserCreate)
+			c.AbortWithError(code.ErrUserCreate)
 			return
 		}
 
@@ -88,14 +88,14 @@ func (u *userDemo) UpdateNickNameByID() core.HandlerFunc {
 		res := new(user_model.UpdateNickNameByIDResponse)
 		if err := c.ShouldBindJSON(req); err != nil {
 			u.logger.Error("[user] should bind json err", zap.Error(err))
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
 		err := u.userService.UpdateNickNameByID(c, req.Id, req.NickName)
 		if err != nil {
 			u.logger.Error("[user] UpdateNickNameByID err", zap.Error(err))
-			c.SetPayload(code.ErrUserUpdate)
+			c.AbortWithError(code.ErrUserUpdate)
 			return
 		}
 
@@ -119,7 +119,7 @@ func (u *userDemo) Login() core.HandlerFunc {
 		res := new(user_model.LoginResponse)
 		if err := c.ShouldBindJSON(req); err != nil {
 			u.logger.Error("should bind json err", zap.Error(err))
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
@@ -127,14 +127,14 @@ func (u *userDemo) Login() core.HandlerFunc {
 		tokenString, err := token.New(cfg.Secret).Sign(req.UserID, req.UserName)
 		if err != nil {
 			u.logger.Error("token sign err", zap.Error(err))
-			c.SetPayload(code.ErrSign)
+			c.AbortWithError(code.ErrAuthorization)
 			return
 		}
 
 		claims, err := token.New(cfg.Secret).Parse(tokenString)
 		if err != nil {
 			u.logger.Error("token parse err", zap.Error(err))
-			c.SetPayload(code.ErrSign)
+			c.AbortWithError(code.ErrAuthorization)
 			return
 		}
 
@@ -160,14 +160,14 @@ func (u *userDemo) Detail() core.HandlerFunc {
 		res := new(user_model.DetailResponse)
 		if err := c.ShouldBindURI(req); err != nil {
 			u.logger.Error("should bind uri err", zap.Error(err))
-			c.SetPayload(code.ErrParam)
+			c.AbortWithError(code.ErrParamBind)
 			return
 		}
 
 		user, err := u.userService.GetUserByUserName(c, req.UserName)
 		if err != nil {
 			u.logger.Error("[user] GetUserByUserName err", zap.Error(err))
-			c.SetPayload(code.ErrUserSearch)
+			c.AbortWithError(code.ErrUserSearch)
 			return
 		}
 
