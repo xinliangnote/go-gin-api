@@ -1,4 +1,4 @@
-package db_repo
+package db
 
 import (
 	"time"
@@ -51,7 +51,7 @@ func before(db *gorm.DB) {
 
 func after(db *gorm.DB) {
 	_ctx := db.Statement.Context
-	ctx, ok := _ctx.(core.Context)
+	ctx, ok := _ctx.(core.StdContext)
 	if !ok {
 		return
 	}
@@ -74,7 +74,7 @@ func after(db *gorm.DB) {
 	sqlInfo.Stack = utils.FileWithLineNum()
 	sqlInfo.Rows = db.Statement.RowsAffected
 	sqlInfo.CostSeconds = time.Since(ts).Seconds()
-	ctx.Trace().AppendSQL(sqlInfo)
+	ctx.Trace.AppendSQL(sqlInfo)
 
 	return
 }

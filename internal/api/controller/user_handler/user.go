@@ -1,14 +1,14 @@
 package user_handler
 
 import (
-	"github.com/xinliangnote/go-gin-api/configs"
+	"errors"
+
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/api/model/user_model"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/cache_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/service/user_service"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/token"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 
 	"go.uber.org/zap"
 )
@@ -18,24 +18,30 @@ var _ UserDemo = (*userDemo)(nil)
 type UserDemo interface {
 	// i 为了避免被其他包实现
 	i()
-	// 创建用户
+
+	// Create 创建用户
 	Create() core.HandlerFunc
-	// 通过用户主键ID更新用户昵称
+
+	// UpdateNickNameByID 编辑用户 - 通过主键ID更新用户昵称
 	UpdateNickNameByID() core.HandlerFunc
-	// 用户登录
-	Login() core.HandlerFunc
-	// 用户详情
+
+	// Delete 删除用户 - 通过主键ID更新 is_deleted = 1
+	Delete() core.HandlerFunc
+
+	// Detail 用户详情
 	Detail() core.HandlerFunc
 }
 
 type userDemo struct {
 	logger      *zap.Logger
+	cache       cache.Repo
 	userService user_service.UserService
 }
 
-func NewUserDemo(logger *zap.Logger, db db_repo.Repo, cache cache_repo.Repo) UserDemo {
+func NewUserDemo(logger *zap.Logger, db db.Repo, cache cache.Repo) UserDemo {
 	return &userDemo{
 		logger:      logger,
+		cache:       cache,
 		userService: user_service.NewUserService(db, cache),
 	}
 }
@@ -45,10 +51,11 @@ func (u *userDemo) i() {}
 // 创建用户
 // @Summary 创建用户
 // @Description 创建用户
-// @Tags Demo
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param RequestInfo body user_model.CreateRequest true "请求信息"
+// @Param Authorization header string true "签名"
 // @Success 200 {object} user_model.CreateResponse "返回信息"
 // @Router /user/create [post]
 func (u *userDemo) Create() core.HandlerFunc {
@@ -56,102 +63,92 @@ func (u *userDemo) Create() core.HandlerFunc {
 		req := new(user_model.CreateRequest)
 		res := new(user_model.CreateResponse)
 		if err := c.ShouldBindJSON(req); err != nil {
-			u.logger.Error("[user] should bind json err", zap.Error(err))
-			c.AbortWithError(code.ErrParamBind)
+			c.AbortWithError(code.ErrParamBind.WithErr(err))
+			return
+		}
+
+		if req.UserName == "" {
+			c.AbortWithError(code.ErrUserName.WithErr(errors.New("req.UserName = ''")))
 			return
 		}
 
 		id, err := u.userService.Create(c, req)
 		if err != nil {
-			u.logger.Error("[user] Create err", zap.Error(err))
-			c.AbortWithError(code.ErrUserCreate)
+			c.AbortWithError(code.ErrUserCreate.WithErr(err))
 			return
 		}
 
 		res.Id = id
-		c.SetPayload(code.OK.WithData(res))
+		c.Payload(code.OK.WithData(res))
 	}
 }
 
-// 更新用户名称
-// @Summary 更新用户名称
-// @Description 更新用户名称
-// @Tags Demo
+// 编辑用户 - 通过用户主键ID更新用户昵称
+// @Summary 编辑用户 - 通过用户主键ID更新用户昵称
+// @Description 编辑用户 - 通过用户主键ID更新用户昵称
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param RequestInfo body user_model.UpdateNickNameByIDRequest true "请求信息"
+// @Param Authorization header string true "签名"
 // @Success 200 {object} user_model.UpdateNickNameByIDResponse "返回信息"
-// @Router /user/update [post]
+// @Router /user/update [put]
 func (u *userDemo) UpdateNickNameByID() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(user_model.UpdateNickNameByIDRequest)
 		res := new(user_model.UpdateNickNameByIDResponse)
 		if err := c.ShouldBindJSON(req); err != nil {
-			u.logger.Error("[user] should bind json err", zap.Error(err))
-			c.AbortWithError(code.ErrParamBind)
+			c.AbortWithError(code.ErrParamBind.WithErr(err))
 			return
 		}
 
 		err := u.userService.UpdateNickNameByID(c, req.Id, req.NickName)
 		if err != nil {
-			u.logger.Error("[user] UpdateNickNameByID err", zap.Error(err))
-			c.AbortWithError(code.ErrUserUpdate)
+			c.AbortWithError(code.ErrUserUpdate.WithErr(err))
 			return
 		}
 
 		res.Id = req.Id
-		c.SetPayload(code.OK.WithData(res))
+		c.Payload(code.OK.WithData(res))
 	}
 }
 
-// 用户登录
-// @Summary 用户登录
-// @Description 用户登录
-// @Tags Demo
+// 删除用户 - 更新 is_deleted = 1
+// @Summary 删除用户 - 更新 is_deleted = 1
+// @Description 删除用户 - 更新 is_deleted = 1
+// @Tags User
 // @Accept  json
 // @Produce  json
-// @Param RequestInfo body user_model.LoginRequest true "请求信息"
-// @Success 200 {object} user_model.LoginResponse "返回信息"
-// @Router /user/login [post]
-func (u *userDemo) Login() core.HandlerFunc {
+// @Param id path int true "用户ID"
+// @Param Authorization header string true "签名"
+// @Success 200 "返回信息"
+// @Router /user/delete/{id} [patch]
+func (u *userDemo) Delete() core.HandlerFunc {
 	return func(c core.Context) {
-		req := new(user_model.LoginRequest)
-		res := new(user_model.LoginResponse)
-		if err := c.ShouldBindJSON(req); err != nil {
-			u.logger.Error("should bind json err", zap.Error(err))
-			c.AbortWithError(code.ErrParamBind)
+		req := new(user_model.DeleteRequest)
+		if err := c.ShouldBindURI(req); err != nil {
+			c.AbortWithError(code.ErrParamBind.WithErr(err))
 			return
 		}
 
-		cfg := configs.Get().JWT
-		tokenString, err := token.New(cfg.Secret).Sign(req.UserID, req.UserName)
+		err := u.userService.Delete(c, req.Id)
 		if err != nil {
-			u.logger.Error("token sign err", zap.Error(err))
-			c.AbortWithError(code.ErrAuthorization)
+			c.AbortWithError(code.ErrUserUpdate.WithErr(err))
 			return
 		}
 
-		claims, err := token.New(cfg.Secret).Parse(tokenString)
-		if err != nil {
-			u.logger.Error("token parse err", zap.Error(err))
-			c.AbortWithError(code.ErrAuthorization)
-			return
-		}
-
-		res.Authorization = tokenString
-		res.ExpireTime = claims.ExpiresAt
-
-		c.SetPayload(code.OK.WithData(res))
+		c.Payload(code.OK.WithData(nil))
 	}
 }
 
 // 用户详情
 // @Summary 用户详情
 // @Description 用户详情
-// @Tags Demo
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param username path string true "用户名"
+// @Param Authorization header string true "签名"
 // @Success 200 {object} user_model.DetailResponse "返回信息"
 // @Router /user/info/{username} [get]
 func (u *userDemo) Detail() core.HandlerFunc {
@@ -159,15 +156,13 @@ func (u *userDemo) Detail() core.HandlerFunc {
 		req := new(user_model.DetailRequest)
 		res := new(user_model.DetailResponse)
 		if err := c.ShouldBindURI(req); err != nil {
-			u.logger.Error("should bind uri err", zap.Error(err))
-			c.AbortWithError(code.ErrParamBind)
+			c.AbortWithError(code.ErrParamBind.WithErr(err))
 			return
 		}
 
 		user, err := u.userService.GetUserByUserName(c, req.UserName)
 		if err != nil {
-			u.logger.Error("[user] GetUserByUserName err", zap.Error(err))
-			c.AbortWithError(code.ErrUserSearch)
+			c.AbortWithError(code.ErrUserSearch.WithErr(err))
 			return
 		}
 
@@ -175,6 +170,6 @@ func (u *userDemo) Detail() core.HandlerFunc {
 		res.UserName = user.UserName
 		res.NickName = user.NickName
 		res.Mobile = user.Mobile
-		c.SetPayload(code.OK.WithData(res))
+		c.Payload(code.OK.WithData(res))
 	}
 }

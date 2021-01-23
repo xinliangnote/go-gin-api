@@ -121,11 +121,10 @@ func AliasForRecordMetrics(path string) HandlerFunc {
 }
 
 // WrapAuthHandler 用来处理 Auth 的入口，在之后的handler中只需 ctx.UserID() ctx.UserName() 即可。
-func WrapAuthHandler(handler func(Context) (userID int, userName string, err errno.Error)) HandlerFunc {
+func WrapAuthHandler(handler func(Context) (userID int64, userName string, err errno.Error)) HandlerFunc {
 	return func(ctx Context) {
 		userID, userName, err := handler(ctx)
 		if err != nil {
-			ctx.Logger().Error("auth handler err", zap.Error(errors.WithStack(errors.New(err.GetMsg()))))
 			ctx.AbortWithError(err)
 			return
 		}
@@ -362,7 +361,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				}
 
 				if err := context.abortError(); err != nil { // customer err
-					multierr.AppendInto(&abortErr, errors.New(err.GetMsg()))
+					multierr.AppendInto(&abortErr, err.GetErr())
 					response = err
 				}
 			} else {
@@ -389,7 +388,15 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 					uri = alias
 				}
 
-				opt.recordMetrics(context.Method(), uri, !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK, ctx.Writer.Status(), businessCode, time.Since(ts).Seconds(), traceId)
+				opt.recordMetrics(
+					context.Method(),
+					uri,
+					!ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK,
+					ctx.Writer.Status(),
+					businessCode,
+					time.Since(ts).Seconds(),
+					traceId,
+				)
 			}
 
 			var t *trace.Trace
@@ -420,7 +427,12 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			t.Success = !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK
 			t.CostSeconds = time.Since(ts).Seconds()
 
-			logger.Info("core-interceptor", zap.Any("trace", t))
+			if abortErr == nil {
+				logger.Info("core-interceptor", zap.Any("trace", t))
+			} else {
+				logger.Info("core-interceptor", zap.Any("trace", t), zap.Error(abortErr))
+			}
+
 		}()
 
 		ctx.Next()
@@ -436,6 +448,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				context.AbortWithError(code.ErrManyRequest)
 				return
 			}
+
 			ctx.Next()
 		})
 	}
@@ -457,7 +470,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				Host:        ctx.Host(),
 				Status:      "ok",
 			}
-			ctx.SetPayload(code.OK.WithData(resp))
+			ctx.Payload(code.OK.WithData(resp))
 		})
 	}
 

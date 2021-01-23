@@ -26,6 +26,7 @@
 - third_party_requests，当前请求涉及到调用第三方的信息
 - debugs，当前请求的调试信息
 - sqls，当前请求执行的 sql 信息
+- redis，当前请求执行的 redis 信息
 - success，当前请求结果
 - cost_seconds，执行时长，单位秒
 
@@ -60,6 +61,7 @@
     - [x] 支持设置 third_party_requests 三方请求信息
     - [x] 支持设置 debugs 打印调试信息
     - [x] 支持设置 sqls 执行 SQL 信息
+    - [x] 支持设置 redis 执行 Redis 信息
     - [x] 可记录 cost_seconds 执行时长
 - [x] [errno] 统一定义错误码
 - [x] [env] 支持 FAT、UAT、PRO 环境

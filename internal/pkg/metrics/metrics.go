@@ -5,30 +5,45 @@ import (
 	"github.com/spf13/cast"
 )
 
-// requestsCounter 定义计数器（Counter）
-var requestsCounter = prometheus.NewCounterVec(
+const (
+	namespace = "xinliangnote"
+	subsystem = "go_gin_api"
+)
+
+// metricsRequestsTotal metrics for request total 计数器（Counter）
+var metricsRequestsTotal = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
-		Name: "api_requests_total",
+		Namespace: namespace,
+		Subsystem: subsystem,
+		Name:      "requests_total",
+		Help:      "request(s) total",
 	},
 	[]string{"method", "path"},
 )
 
-// httpDurationsHistogram 定义累积直方图（Histogram）
-var httpDurationsHistogram = prometheus.NewHistogramVec(
+// metricsRequestsCost metrics for requests cost 累积直方图（Histogram）
+var metricsRequestsCost = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
-		Name:    "api_http_durations_histogram_seconds",
-		Buckets: []float64{0.01, 0.02, 0.03},
+		Namespace: namespace,
+		Subsystem: subsystem,
+		Name:      "requests_cost",
+		Help:      "request(s) cost seconds",
 	},
 	[]string{"method", "path", "success", "http_code", "business_code", "cost_seconds", "trace_id"},
 )
 
 func init() {
-	prometheus.MustRegister(requestsCounter, httpDurationsHistogram)
+	prometheus.MustRegister(metricsRequestsTotal, metricsRequestsCost)
 }
 
 // RecordMetrics 记录指标
 func RecordMetrics(method, uri string, success bool, httpCode, businessCode int, costSeconds float64, traceId string) {
-	httpDurationsHistogram.With(prometheus.Labels{
+	metricsRequestsTotal.With(prometheus.Labels{
+		"method": method,
+		"path":   uri,
+	}).Inc()
+
+	metricsRequestsCost.With(prometheus.Labels{
 		"method":        method,
 		"path":          uri,
 		"success":       cast.ToString(success),
@@ -37,9 +52,4 @@ func RecordMetrics(method, uri string, success bool, httpCode, businessCode int,
 		"cost_seconds":  cast.ToString(costSeconds),
 		"trace_id":      traceId,
 	}).Observe(costSeconds)
-
-	requestsCounter.With(prometheus.Labels{
-		"method": method,
-		"path":   uri,
-	}).Add(1)
 }

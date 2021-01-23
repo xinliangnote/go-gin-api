@@ -1,37 +1,38 @@
 [mysql]
 
-[mysql.read]
-    addr = ''
-    user = ''
-    pass = ''
-    name = ''
-[mysql.write]
-    addr = ''
-    user = ''
-    pass = ''
-    name = ''
-[mysql.base]
-    maxOpenConn = 10
-    maxIdleConn = 60
-    connMaxLifeTime = 60
+[mysql.read] # 从库信息，可读
+    addr = '127.0.0.1:3306'      # MySQL 地址:端口
+    user = 'root'                # 用户名
+    pass = 'root'                # 密码
+    name = 'go_gin_api'          # 数据库名称
+[mysql.write] # 主库信息，可读写
+    addr = '127.0.0.1:3306'      # MySQL 地址:端口
+    user = 'root'                # 用户名
+    pass = 'root'                # 密码
+    name = 'go_gin_api'          # 数据库名称
+[mysql.base] # 基础配置
+    maxOpenConn = 10             # 最大打开的连接数
+    maxIdleConn = 60             # 闲置的连接数
+    connMaxLifeTime = 60         # 最大连接超时(单位:分)
 
 [redis]
-addr = ''
-pass = ''
-db = 0
-maxRetries = 3
-poolSize = 10
-minIdleConns = 5
+addr = '127.0.0.1:6379'          # Redis 地址:端口
+pass = ''                        # 密码
+db = 0                           # 序号从 0 开始，默认是0，可以不用设置
+maxRetries = 3                   # 命令执行失败时，最多重试多少次，默认为 0 即不重试
+poolSize = 10                    # 连接池最大连接数，默认为 CPU 数 * 10
+minIdleConns = 5                 # 最小空闲连接数
 
 [mail]
-host = 'smtp.163.com'
-port = 465
-user = ""
-pass = ""
-to   = ""
+host = 'smtp.163.com'            # 邮箱服务器，比如 smtp.163.com
+port = 465                       # 端口
+user = ""                        # 发件人邮箱
+pass = ""                        # 发件人邮箱密码或授权码，根据邮箱服务器而定
+to   = ""                        # 收件人邮箱，多个可以逗号(,)分割
 
 [jwt]
-secret = 'i1ydX9RtHyuJTrw7frcu'
+secret = 'i1ydX9RtHyuJTrw7frcu'  # JWT secret
+expireDuration = 24              # JWT ExpiresAt 过期时间(单位:小时)
 
 [aes]
 key = 'IgkibX71IEf382PT'

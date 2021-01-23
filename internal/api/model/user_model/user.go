@@ -28,7 +28,7 @@ type CreateRequest struct {
 
 // user_handler Create Response
 type CreateResponse struct {
-	Id uint `json:"id"` //主键ID
+	Id uint `json:"id"` // 主键ID
 }
 
 // user_handler UpdateNickNameByID Request
@@ -42,16 +42,9 @@ type UpdateNickNameByIDResponse struct {
 	Id uint `json:"id"` // 用户主键ID
 }
 
-// user_handler Login Request
-type LoginRequest struct {
-	UserID   int    `json:"user_id" form:"user_id"`     // 用户ID（>0）
-	UserName string `json:"user_name" form:"user_name"` // 用户名
-}
-
-// user_handler Login Response
-type LoginResponse struct {
-	Authorization string `json:"authorization"` // 签名
-	ExpireTime    int64  `json:"expire_time"`   // 过期时间
+// user_handler Delete Request
+type DeleteRequest struct {
+	Id uint `uri:"id"` // 用户ID
 }
 
 // user_handler Detail Request

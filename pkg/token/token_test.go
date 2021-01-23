@@ -2,12 +2,13 @@ package token
 
 import (
 	"testing"
+	"time"
 )
 
 const secret = "i1ydX9RtHyuJTrw7frcu"
 
 func TestSign(t *testing.T) {
-	tokenString, err := New(secret).Sign(123456789, "xinliangnote")
+	tokenString, err := New(secret).Sign(123456789, "xinliangnote", 24*time.Hour)
 	if err != nil {
 		t.Error("sign error", err)
 		return
@@ -29,7 +30,7 @@ func BenchmarkSignAndParse(b *testing.B) {
 	b.ResetTimer()
 	token := New(secret)
 	for i := 0; i < b.N; i++ {
-		tokenString, _ := token.Sign(123456789, "xinliangnote")
+		tokenString, _ := token.Sign(123456789, "xinliangnote", 24*time.Hour)
 		token.Parse(tokenString)
 	}
 }

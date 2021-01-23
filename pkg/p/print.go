@@ -1,9 +1,9 @@
 package p
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
+	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 )
 
 type Option func(*option)
@@ -19,7 +19,7 @@ func newOption() *option {
 	return &option{}
 }
 
-func Print(key string, value interface{}, options ...Option) {
+func Println(key string, value interface{}, options ...Option) {
 	opt := newOption()
 	defer func() {
 		if opt.Trace != nil {
@@ -33,7 +33,7 @@ func Print(key string, value interface{}, options ...Option) {
 		f(opt)
 	}
 
-	spew.Dump(key, value)
+	fmt.Println(fmt.Sprintf("KEY: %s | VALUE: %v", key, value))
 }
 
 // WithTrace 设置trace信息

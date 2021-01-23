@@ -2,12 +2,12 @@ package core
 
 import (
 	"bytes"
+	stdctx "context"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
@@ -55,70 +55,88 @@ var _ Context = (*context)(nil)
 type Context interface {
 	init()
 
-	// ShouldBindQuery 反序列化querystring
-	// tag: `form:"xxx"` (注：不要写成query)
+	// ShouldBindQuery 反序列化 querystring
+	// tag: `form:"xxx"` (注：不要写成 query)
 	ShouldBindQuery(obj interface{}) error
 
-	// ShouldBindPostForm 反序列化postform(querystring会被忽略)
+	// ShouldBindPostForm 反序列化 postform (querystring会被忽略)
 	// tag: `form:"xxx"`
 	ShouldBindPostForm(obj interface{}) error
 
-	// ShouldBindForm 同时反序列化querystring和postform;
-	// 当querystring和postform存在相同字段时，postform优先使用。
+	// ShouldBindForm 同时反序列化 querystring 和 postform;
+	// 当 querystring 和 postform 存在相同字段时，postform 优先使用。
 	// tag: `form:"xxx"`
 	ShouldBindForm(obj interface{}) error
 
-	// ShouldBindJSON 反序列化postjson
+	// ShouldBindJSON 反序列化 postjson
 	// tag: `json:"xxx"`
 	ShouldBindJSON(obj interface{}) error
 
-	// ShouldBindURI 反序列化path参数(如路由路径为 /user/:name)
+	// ShouldBindURI 反序列化 path 参数(如路由路径为 /user/:name)
 	// tag: `uri:"xxx"`
 	ShouldBindURI(obj interface{}) error
 
 	// Redirect 重定向
 	Redirect(code int, location string)
 
+	// Trace 获取 Trace 对象
 	Trace() Trace
 	setTrace(trace Trace)
 	disableTrace()
 
+	// Logger 获取 Logger 对象
 	Logger() *zap.Logger
 	setLogger(logger *zap.Logger)
 
+	// Payload 正确返回
+	Payload(payload errno.Error)
 	getPayload() errno.Error
-	SetPayload(payload errno.Error)
 
-	Header() http.Header
-	GetHeader(key string) string
-	SetHeader(key, value string)
-
-	UserID() int
-	setUserID(userID int)
-
-	UserName() string
-	setUserName(userName string)
-
+	// AbortWithError 错误返回
 	AbortWithError(err errno.Error)
 	abortError() errno.Error
 
+	// Header 获取 Header 对象
+	Header() http.Header
+	// GetHeader 获取 Header
+	GetHeader(key string) string
+	// SetHeader 设置 Header
+	SetHeader(key, value string)
+
+	// UserID 获取 JWT 中 UserID
+	UserID() int64
+	setUserID(userID int64)
+
+	// UserName 获取 JWT 中 UserName
+	UserName() string
+	setUserName(userName string)
+
+	// Alias 设置路由别名 for metrics uri
 	Alias() string
 	setAlias(path string)
 
+	// RawData 获取 Request.Body
 	RawData() []byte
+	// Method 获取 Request.Method
 	Method() string
+	// Host 获取 Request.Host
 	Host() string
+	// Path 获取 请求的路径 Request.URL.Path (不附带 querystring)
 	Path() string
+	// URI 获取 unescape 后的 Request.URL.RequestURI()
 	URI() string
-
-	Deadline() (deadline time.Time, ok bool)
-	Done() <-chan struct{}
-	Err() error
-	Value(key interface{}) interface{}
+	// RequestContext 获取请求的 context (当 client 关闭后，会自动 canceled)
+	RequestContext() StdContext
 }
 
 type context struct {
 	ctx *gin.Context
+}
+
+type StdContext struct {
+	stdctx.Context
+	Trace
+	*zap.Logger
 }
 
 func (c *context) init() {
@@ -137,7 +155,7 @@ func (c *context) ShouldBindQuery(obj interface{}) error {
 	return c.ctx.ShouldBindWith(obj, binding.Query)
 }
 
-// ShouldBindPostForm 反序列化postform(querystring会被忽略)
+// ShouldBindPostForm 反序列化 postform (querystring 会被忽略)
 // tag: `form:"xxx"`
 func (c *context) ShouldBindPostForm(obj interface{}) error {
 	return c.ctx.ShouldBindWith(obj, binding.FormPost)
@@ -202,7 +220,7 @@ func (c *context) getPayload() errno.Error {
 	return payload.(errno.Error)
 }
 
-func (c *context) SetPayload(payload errno.Error) {
+func (c *context) Payload(payload errno.Error) {
 	c.ctx.Set(_PayloadName, payload)
 }
 
@@ -227,16 +245,16 @@ func (c *context) SetHeader(key, value string) {
 	c.ctx.Header(key, value)
 }
 
-func (c *context) UserID() int {
+func (c *context) UserID() int64 {
 	val, ok := c.ctx.Get(_UserID)
 	if !ok {
 		return 0
 	}
 
-	return val.(int)
+	return val.(int64)
 }
 
-func (c *context) setUserID(userID int) {
+func (c *context) setUserID(userID int64) {
 	c.ctx.Set(_UserID, userID)
 }
 
@@ -315,25 +333,11 @@ func (c *context) URI() string {
 	return uri
 }
 
-func (c *context) Deadline() (deadline time.Time, ok bool) {
-	return
-}
-
-func (c *context) Done() <-chan struct{} {
-	return nil
-}
-
-func (c *context) Err() error {
-	return nil
-}
-
-func (c *context) Value(key interface{}) interface{} {
-	if key == 0 {
-		return c.ctx.Request
+// RequestContext 获取请求的 context (当client关闭后，会自动canceled)
+func (c *context) RequestContext() StdContext {
+	return StdContext{
+		c.ctx.Request.Context(),
+		c.Trace(),
+		c.Logger(),
 	}
-	if keyAsString, ok := key.(string); ok {
-		val, _ := c.ctx.Get(keyAsString)
-		return val
-	}
-	return nil
 }

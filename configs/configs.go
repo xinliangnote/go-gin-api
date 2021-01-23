@@ -49,7 +49,8 @@ type Config struct {
 	} `toml:"mail"`
 
 	JWT struct {
-		Secret string `toml:"secret"`
+		Secret         string        `toml:"secret"`
+		ExpireDuration time.Duration `toml:"expireDuration"`
 	} `toml:"jwt"`
 
 	Aes struct {

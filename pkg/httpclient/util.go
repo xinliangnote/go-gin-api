@@ -29,6 +29,9 @@ var defaultClient = &http.Client{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
+		MaxIdleConns:        100,
+		MaxConnsPerHost:     100,
+		MaxIdleConnsPerHost: 100,
 	},
 }
 
@@ -47,12 +50,11 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 		return mock(), http.StatusOK, nil
 	}
 
-	req, err := http.NewRequest(method, url, bytes.NewReader(payload))
+	req, err := http.NewRequestWithContext(ctx, method, url, bytes.NewReader(payload))
 	if err != nil {
 		return nil, -1, errors.Wrapf(err, "new request [%s %s] err", method, url)
 	}
 
-	req = req.WithContext(ctx)
 	for key, value := range opt.header {
 		req.Header.Set(key, value[0])
 	}

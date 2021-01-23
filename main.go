@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/cache_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/router"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
 
@@ -23,6 +23,9 @@ import (
 // @contact.name
 // @contact.url
 // @contact.email
+
+// @license.name MIT
+// @license.url https://github.com/xinliangnote/go-gin-api/blob/master/LICENSE
 
 // @host 127.0.0.1:9999
 // @BasePath
@@ -39,13 +42,13 @@ func main() {
 	defer loggers.Sync()
 
 	// 初始化数据库
-	dbRepo, err := db_repo.New()
+	dbRepo, err := db.New()
 	if err != nil {
 		loggers.Fatal("new db err", zap.Error(err))
 	}
 
 	// 初始化缓存
-	cacheRepo, err := cache_repo.New()
+	cacheRepo, err := cache.New()
 	if err != nil {
 		loggers.Fatal("new cache err", zap.Error(err))
 	}

@@ -1,4 +1,13 @@
 definitions:
+  demo.authResponse:
+    properties:
+      authorization:
+        description: 签名
+        type: string
+      expire_time:
+        description: 过期时间
+        type: integer
+    type: object
   user_model.CreateRequest:
     properties:
       mobile:
@@ -32,24 +41,6 @@ definitions:
         description: 用户名
         type: string
     type: object
-  user_model.LoginRequest:
-    properties:
-      user_id:
-        description: 用户ID（>0）
-        type: integer
-      user_name:
-        description: 用户名
-        type: string
-    type: object
-  user_model.LoginResponse:
-    properties:
-      authorization:
-        description: 签名
-        type: string
-      expire_time:
-        description: 过期时间
-        type: integer
-    type: object
   user_model.UpdateNickNameByIDRequest:
     properties:
       id:
@@ -68,19 +59,32 @@ definitions:
 host: 127.0.0.1:9999
 info:
   contact: {}
+  license:
+    name: MIT
+    url: https://github.com/xinliangnote/go-gin-api/blob/master/LICENSE
   title: go-gin-api docs api
 paths:
-  /demo/user/{name}:
+  /auth/get:
+    post:
+      consumes:
+      - application/json
+      description: 获取授权信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回信息
+          schema:
+            $ref: '#/definitions/demo.authResponse'
+      summary: 获取授权信息
+      tags:
+      - Demo
+  /demo/trace:
     get:
       consumes:
       - application/json
-      description: 获取用户信息
+      description: Trace 示例
       parameters:
-      - description: 用户名(Tom)
-        in: path
-        name: name
-        required: true
-        type: string
       - description: 签名
         in: header
         name: Authorization
@@ -102,7 +106,7 @@ paths:
                   type: string
               type: object
             type: array
-      summary: 获取用户信息
+      summary: Trace 示例
       tags:
       - Demo
   /user/create:
@@ -117,6 +121,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/user_model.CreateRequest'
+      - description: 签名
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -126,7 +135,31 @@ paths:
             $ref: '#/definitions/user_model.CreateResponse'
       summary: 创建用户
       tags:
-      - Demo
+      - User
+  /user/delete/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 删除用户 - 更新 is_deleted = 1
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 签名
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回信息
+      summary: 删除用户 - 更新 is_deleted = 1
+      tags:
+      - User
   /user/info/{username}:
     get:
       consumes:
@@ -138,6 +171,11 @@ paths:
         name: username
         required: true
         type: string
+      - description: 签名
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -147,34 +185,12 @@ paths:
             $ref: '#/definitions/user_model.DetailResponse'
       summary: 用户详情
       tags:
-      - Demo
-  /user/login:
-    post:
-      consumes:
-      - application/json
-      description: 用户登录
-      parameters:
-      - description: 请求信息
-        in: body
-        name: RequestInfo
-        required: true
-        schema:
-          $ref: '#/definitions/user_model.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 返回信息
-          schema:
-            $ref: '#/definitions/user_model.LoginResponse'
-      summary: 用户登录
-      tags:
-      - Demo
+      - User
   /user/update:
-    post:
+    put:
       consumes:
       - application/json
-      description: 更新用户名称
+      description: 编辑用户 - 通过用户主键ID更新用户昵称
       parameters:
       - description: 请求信息
         in: body
@@ -182,6 +198,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/user_model.UpdateNickNameByIDRequest'
+      - description: 签名
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -189,7 +210,7 @@ paths:
           description: 返回信息
           schema:
             $ref: '#/definitions/user_model.UpdateNickNameByIDResponse'
-      summary: 更新用户名称
+      summary: 编辑用户 - 通过用户主键ID更新用户昵称
       tags:
-      - Demo
+      - User
 swagger: "2.0"

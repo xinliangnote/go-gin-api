@@ -11,7 +11,7 @@ var _ Token = (*token)(nil)
 type Token interface {
 	// i 为了避免被其他包实现
 	i()
-	Sign(userId int, userName string) (tokenString string, err error)
+	Sign(userId int64, userName string, expireDuration time.Duration) (tokenString string, err error)
 	Parse(tokenString string) (*claims, error)
 }
 
@@ -20,7 +20,7 @@ type token struct {
 }
 
 type claims struct {
-	UserID   int
+	UserID   int64
 	UserName string
 	jwt.StandardClaims
 }
@@ -33,7 +33,7 @@ func New(secret string) Token {
 
 func (t *token) i() {}
 
-func (t *token) Sign(userId int, userName string) (tokenString string, err error) {
+func (t *token) Sign(userId int64, userName string, expireDuration time.Duration) (tokenString string, err error) {
 	// The token content.
 	// iss: （Issuer）签发者
 	// iat: （Issued At）签发时间，用Unix时间戳表示
@@ -48,8 +48,7 @@ func (t *token) Sign(userId int, userName string) (tokenString string, err error
 		jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 			IssuedAt:  time.Now().Unix(),
-			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
-			Issuer:    "go-gin-api",
+			ExpiresAt: time.Now().Add(expireDuration).Unix(),
 		},
 	}
 	tokenString, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(t.secret))

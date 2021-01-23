@@ -2,10 +2,10 @@ package user_service
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/api/model/user_model"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/cache_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/user_demo_repo"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 )
 
 var _ UserService = (*userSer)(nil)
@@ -17,15 +17,16 @@ type UserService interface {
 	Create(ctx core.Context, user *user_model.CreateRequest) (id uint, err error)
 	UpdateNickNameByID(ctx core.Context, id uint, username string) (err error)
 	GetUserByUserName(ctx core.Context, username string) (user *user_model.UserDemo, err error)
+	Delete(ctx core.Context, id uint) (err error)
 }
 
 type userSer struct {
-	db       db_repo.Repo
-	cache    cache_repo.Repo
+	db       db.Repo
+	cache    cache.Repo
 	userRepo user_demo_repo.UserRepo
 }
 
-func NewUserService(db db_repo.Repo, cache cache_repo.Repo) UserService {
+func NewUserService(db db.Repo, cache cache.Repo) UserService {
 	userRepo := user_demo_repo.NewUserRepo(db)
 	return &userSer{
 		db:       db,
@@ -64,4 +65,12 @@ func (u *userSer) GetUserByUserName(ctx core.Context, username string) (user *us
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *userSer) Delete(ctx core.Context, id uint) (err error) {
+	err = u.userRepo.Delete(ctx, id)
+	if err != nil {
+		return nil
+	}
+	return nil
 }

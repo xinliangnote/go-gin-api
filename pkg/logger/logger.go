@@ -14,6 +14,7 @@ import (
 const (
 	// DefaultLevel the default log level
 	DefaultLevel = zapcore.InfoLevel
+
 	// DefaultTimeLayout the default time layout;
 	DefaultTimeLayout = time.RFC3339
 )

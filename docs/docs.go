@@ -19,14 +19,18 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/xinliangnote/go-gin-api/blob/master/LICENSE"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/demo/user/{name}": {
-            "get": {
-                "description": "获取用户信息",
+        "/auth/get": {
+            "post": {
+                "description": "获取授权信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -36,15 +40,31 @@ var doc = `{
                 "tags": [
                     "Demo"
                 ],
-                "summary": "获取用户信息",
+                "summary": "获取授权信息",
+                "responses": {
+                    "200": {
+                        "description": "返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/demo.authResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/demo/trace": {
+            "get": {
+                "description": "Trace 示例",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Demo"
+                ],
+                "summary": "Trace 示例",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户名(Tom)",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "签名",
@@ -86,7 +106,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Demo"
+                    "User"
                 ],
                 "summary": "创建用户",
                 "parameters": [
@@ -98,6 +118,13 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/user_model.CreateRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -106,6 +133,42 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/user_model.CreateResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/user/delete/{id}": {
+            "patch": {
+                "description": "删除用户 - 更新 is_deleted = 1",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "删除用户 - 更新 is_deleted = 1",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回信息"
                     }
                 }
             }
@@ -120,7 +183,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Demo"
+                    "User"
                 ],
                 "summary": "用户详情",
                 "parameters": [
@@ -129,6 +192,13 @@ var doc = `{
                         "description": "用户名",
                         "name": "username",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -142,43 +212,9 @@ var doc = `{
                 }
             }
         },
-        "/user/login": {
-            "post": {
-                "description": "用户登录",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Demo"
-                ],
-                "summary": "用户登录",
-                "parameters": [
-                    {
-                        "description": "请求信息",
-                        "name": "RequestInfo",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user_model.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "返回信息",
-                        "schema": {
-                            "$ref": "#/definitions/user_model.LoginResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/user/update": {
-            "post": {
-                "description": "更新用户名称",
+            "put": {
+                "description": "编辑用户 - 通过用户主键ID更新用户昵称",
                 "consumes": [
                     "application/json"
                 ],
@@ -186,9 +222,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Demo"
+                    "User"
                 ],
-                "summary": "更新用户名称",
+                "summary": "编辑用户 - 通过用户主键ID更新用户昵称",
                 "parameters": [
                     {
                         "description": "请求信息",
@@ -198,6 +234,13 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/user_model.UpdateNickNameByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -212,6 +255,19 @@ var doc = `{
         }
     },
     "definitions": {
+        "demo.authResponse": {
+            "type": "object",
+            "properties": {
+                "authorization": {
+                    "description": "签名",
+                    "type": "string"
+                },
+                "expire_time": {
+                    "description": "过期时间",
+                    "type": "integer"
+                }
+            }
+        },
         "user_model.CreateRequest": {
             "type": "object",
             "properties": {
@@ -256,32 +312,6 @@ var doc = `{
                 "user_name": {
                     "description": "用户名",
                     "type": "string"
-                }
-            }
-        },
-        "user_model.LoginRequest": {
-            "type": "object",
-            "properties": {
-                "user_id": {
-                    "description": "用户ID（\u003e0）",
-                    "type": "integer"
-                },
-                "user_name": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "user_model.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "authorization": {
-                    "description": "签名",
-                    "type": "string"
-                },
-                "expire_time": {
-                    "description": "过期时间",
-                    "type": "integer"
                 }
             }
         },

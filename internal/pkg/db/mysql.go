@@ -1,4 +1,4 @@
-package db_repo
+package db
 
 import (
 	"fmt"
