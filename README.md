@@ -34,7 +34,7 @@ go-gin-api 文档由以下几个主要部分组成：
 - 组件指南
 - 工具包
 
-**地址：[https://www.yuque.com/xinliangnote/go-gin-api](https://www.yuque.com/xinliangnote/go-gin-api)**
+**地址：[https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)**
 
 ## 其他
 
