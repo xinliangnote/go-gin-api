@@ -62,7 +62,8 @@ info:
   license:
     name: MIT
     url: https://github.com/xinliangnote/go-gin-api/blob/master/LICENSE
-  title: go-gin-api docs api
+  title: swagger 接口文档
+  version: "2.0"
 paths:
   /auth/get:
     post:

@@ -23,10 +23,11 @@ const (
 type Option func(*option)
 
 type option struct {
-	level      zapcore.Level
-	fields     map[string]string
-	file       io.Writer
-	timeLayout string
+	level          zapcore.Level
+	fields         map[string]string
+	file           io.Writer
+	timeLayout     string
+	disableConsole bool
 }
 
 // WithDebugLevel only greater than 'level' will output
@@ -90,11 +91,12 @@ func WithFileRotationP(file string) Option {
 
 	return func(opt *option) {
 		opt.file = &lumberjack.Logger{ // concurrent-safed
-			Filename:   file,
-			MaxSize:    10, // megabytes
-			MaxBackups: 100,
-			MaxAge:     30, // days
-			LocalTime:  true,
+			Filename:   file, // 文件路径
+			MaxSize:    128,  // 单个文件最大尺寸，默认单位 M
+			MaxBackups: 300,  // 最多保留 300 个备份
+			MaxAge:     30,   // 最大时间，默认单位 day
+			LocalTime:  true, // 使用本地时间
+			Compress:   true, // 是否压缩 disabled by default
 		}
 	}
 }
@@ -103,6 +105,13 @@ func WithFileRotationP(file string) Option {
 func WithTimeLayout(timeLayout string) Option {
 	return func(opt *option) {
 		opt.timeLayout = timeLayout
+	}
+}
+
+// WithEnableConsole write log to os.Stdout or os.Stderr
+func WithDisableConsole() Option {
+	return func(opt *option) {
+		opt.disableConsole = true
 	}
 }
 
@@ -120,19 +129,19 @@ func NewJSONLogger(opts ...Option) (*zap.Logger, error) {
 
 	// similar to zap.NewProductionEncoderConfig()
 	encoderConfig := zapcore.EncoderConfig{
-		TimeKey:       "timestamp",
+		TimeKey:       "time",
 		LevelKey:      "level",
 		NameKey:       "logger", // used by logger.Named(key); optional; useless
 		CallerKey:     "caller",
 		MessageKey:    "msg",
 		StacktraceKey: "stacktrace", // use by zap.AddStacktrace; optional; useless
 		LineEnding:    zapcore.DefaultLineEnding,
-		EncodeLevel:   zapcore.LowercaseLevelEncoder,
+		EncodeLevel:   zapcore.LowercaseLevelEncoder, // 小写编码器
 		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 			enc.AppendString(t.Format(timeLayout))
 		},
 		EncodeDuration: zapcore.MillisDurationEncoder,
-		EncodeCaller:   zapcore.ShortCallerEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder, // 全路径编码器
 	}
 
 	jsonEncoder := zapcore.NewJSONEncoder(encoderConfig)
@@ -150,16 +159,20 @@ func NewJSONLogger(opts ...Option) (*zap.Logger, error) {
 	stdout := zapcore.Lock(os.Stdout) // lock for concurrent safe
 	stderr := zapcore.Lock(os.Stderr) // lock for concurrent safe
 
-	core := zapcore.NewTee(
-		zapcore.NewCore(jsonEncoder,
-			zapcore.NewMultiWriteSyncer(stdout),
-			lowPriority,
-		),
-		zapcore.NewCore(jsonEncoder,
-			zapcore.NewMultiWriteSyncer(stderr),
-			highPriority,
-		),
-	)
+	core := zapcore.NewTee()
+
+	if !opt.disableConsole {
+		core = zapcore.NewTee(
+			zapcore.NewCore(jsonEncoder,
+				zapcore.NewMultiWriteSyncer(stdout),
+				lowPriority,
+			),
+			zapcore.NewCore(jsonEncoder,
+				zapcore.NewMultiWriteSyncer(stderr),
+				highPriority,
+			),
+		)
+	}
 
 	if opt.file != nil {
 		core = zapcore.NewTee(core,

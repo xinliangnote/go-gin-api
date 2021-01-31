@@ -4,6 +4,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/demo"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/user_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/router/middleware/auth"
+	"github.com/xinliangnote/go-gin-api/internal/graph/handler"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
@@ -33,6 +34,13 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo) (core.Mux, err
 
 	demoHandler := demo.NewDemo(logger, db, cache)
 	userHandler := user_handler.NewUserDemo(logger, db, cache)
+	gqlHandler := handler.New(logger, db, cache)
+
+	gql := mux.Group("/graphql")
+	{
+		gql.GET("", gqlHandler.Playground())
+		gql.POST("/query", gqlHandler.Query())
+	}
 
 	// user_demo CURD
 	user := mux.Group("/user", core.WrapAuthHandler(auth.AuthHandler))

@@ -6,6 +6,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 var _ UserRepo = (*userRepo)(nil)
@@ -42,8 +43,9 @@ func (u *userRepo) Create(ctx core.Context, user user_model.UserDemo) (id uint, 
 
 func (u *userRepo) getUserByID(ctx core.Context, id uint) (*user_model.UserDemo, error) {
 	data := new(user_model.UserDemo)
-	err := u.db.GetDbR().WithContext(ctx.RequestContext()).First(data, id).Where("is_deleted = ?", -1).Error
-	if err != nil {
+	err := u.db.GetDbR().
+		WithContext(ctx.RequestContext()).First(data, id).Where("is_deleted = ?", -1).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, errors.Wrap(err, "[user_demo] get user data err")
 	}
 	return data, nil
@@ -52,7 +54,7 @@ func (u *userRepo) getUserByID(ctx core.Context, id uint) (*user_model.UserDemo,
 func (u *userRepo) UpdateNickNameByID(ctx core.Context, id uint, nickname string) (err error) {
 	user, err := u.getUserByID(ctx, id)
 	if err != nil {
-		return errors.Wrap(err, "[user_demo] update user data err")
+		return errors.Wrap(err, "[user_demo] get user data err")
 	}
 	return u.db.GetDbW().WithContext(ctx.RequestContext()).Model(user).Update("nick_name", nickname).Error
 }
@@ -60,7 +62,7 @@ func (u *userRepo) UpdateNickNameByID(ctx core.Context, id uint, nickname string
 func (u *userRepo) Delete(ctx core.Context, id uint) (err error) {
 	user, err := u.getUserByID(ctx, id)
 	if err != nil {
-		return errors.Wrap(err, "[user_demo] update user data err")
+		return errors.Wrap(err, "[user_demo] get user data err")
 	}
 	return u.db.GetDbW().WithContext(ctx.RequestContext()).Model(user).Update("is_deleted", 1).Error
 }
@@ -72,7 +74,7 @@ func (u *userRepo) GetUserByUserName(ctx core.Context, username string) (*user_m
 		Select([]string{"id", "user_name", "nick_name", "mobile"}).
 		Where("user_name = ? and is_deleted = ?", username, -1).
 		First(data).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, errors.Wrap(err, "[user_demo] get user data err")
 	}
 	return data, nil

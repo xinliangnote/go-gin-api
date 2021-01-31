@@ -2,6 +2,7 @@ package p
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 )
@@ -20,11 +21,13 @@ func newOption() *option {
 }
 
 func Println(key string, value interface{}, options ...Option) {
+	ts := time.Now()
 	opt := newOption()
 	defer func() {
 		if opt.Trace != nil {
 			opt.Debug.Key = key
 			opt.Debug.Value = value
+			opt.Debug.CostSeconds = time.Since(ts).Seconds()
 			opt.Trace.AppendDebug(opt.Debug)
 		}
 	}()

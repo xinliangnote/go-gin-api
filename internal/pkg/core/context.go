@@ -22,14 +22,15 @@ type HandlerFunc func(c Context)
 type Trace = trace.T
 
 const (
-	_Alias          = "_alias_"
-	_TraceName      = "_trace_"
-	_LoggerName     = "_logger_"
-	_BodyName       = "_body_"
-	_PayloadName    = "_payload_"
-	_UserID         = "_user_id_"
-	_UserName       = "_user_name_"
-	_AbortErrorName = "_abort_error_"
+	_Alias            = "_alias_"
+	_TraceName        = "_trace_"
+	_LoggerName       = "_logger_"
+	_BodyName         = "_body_"
+	_PayloadName      = "_payload_"
+	_GraphPayloadName = "_graph_payload_"
+	_UserID           = "_user_id_"
+	_UserName         = "_user_name_"
+	_AbortErrorName   = "_abort_error_"
 )
 
 var contextPool = &sync.Pool{
@@ -92,6 +93,10 @@ type Context interface {
 	Payload(payload errno.Error)
 	getPayload() errno.Error
 
+	// GraphPayload GraphQL返回值 与 api 返回结构不同
+	GraphPayload(payload interface{})
+	getGraphPayload() interface{}
+
 	// AbortWithError 错误返回
 	AbortWithError(err errno.Error)
 	abortError() errno.Error
@@ -115,6 +120,8 @@ type Context interface {
 	Alias() string
 	setAlias(path string)
 
+	// Request 获取 Request 对象
+	Request() *http.Request
 	// RawData 获取 Request.Body
 	RawData() []byte
 	// Method 获取 Request.Method
@@ -127,6 +134,9 @@ type Context interface {
 	URI() string
 	// RequestContext 获取请求的 context (当 client 关闭后，会自动 canceled)
 	RequestContext() StdContext
+
+	// ResponseWriter 获取 ResponseWriter 对象
+	ResponseWriter() gin.ResponseWriter
 }
 
 type context struct {
@@ -216,12 +226,25 @@ func (c *context) setLogger(logger *zap.Logger) {
 }
 
 func (c *context) getPayload() errno.Error {
-	payload, _ := c.ctx.Get(_PayloadName)
-	return payload.(errno.Error)
+	if payload, ok := c.ctx.Get(_PayloadName); ok != false {
+		return payload.(errno.Error)
+	}
+	return nil
 }
 
 func (c *context) Payload(payload errno.Error) {
 	c.ctx.Set(_PayloadName, payload)
+}
+
+func (c *context) getGraphPayload() interface{} {
+	if payload, ok := c.ctx.Get(_GraphPayloadName); ok != false {
+		return payload
+	}
+	return nil
+}
+
+func (c *context) GraphPayload(payload interface{}) {
+	c.ctx.Set(_GraphPayloadName, payload)
 }
 
 func (c *context) Header() http.Header {
@@ -303,6 +326,11 @@ func (c *context) setAlias(path string) {
 	}
 }
 
+// Request 获取 Request
+func (c *context) Request() *http.Request {
+	return c.ctx.Request
+}
+
 func (c *context) RawData() []byte {
 	body, ok := c.ctx.Get(_BodyName)
 	if !ok {
@@ -340,4 +368,9 @@ func (c *context) RequestContext() StdContext {
 		c.Trace(),
 		c.Logger(),
 	}
+}
+
+// ResponseWriter 获取 ResponseWriter
+func (c *context) ResponseWriter() gin.ResponseWriter {
+	return c.ctx.Writer
 }

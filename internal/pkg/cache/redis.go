@@ -75,6 +75,7 @@ func redisConnect() (*redis.Client, error) {
 
 // Set set some <key,value> into redis
 func (c *cacheRepo) Set(key, value string, ttl time.Duration, options ...Option) error {
+	ts := time.Now()
 	opt := newOption()
 	defer func() {
 		if opt.Trace != nil {
@@ -82,7 +83,8 @@ func (c *cacheRepo) Set(key, value string, ttl time.Duration, options ...Option)
 			opt.Redis.Handle = "set"
 			opt.Redis.Key = key
 			opt.Redis.Value = value
-			opt.Redis.TTL = ttl
+			opt.Redis.TTL = ttl.Minutes()
+			opt.Redis.CostSeconds = time.Since(ts).Seconds()
 			opt.Trace.AppendRedis(opt.Redis)
 		}
 	}()
@@ -100,12 +102,14 @@ func (c *cacheRepo) Set(key, value string, ttl time.Duration, options ...Option)
 
 // Get get some key from redis
 func (c *cacheRepo) Get(key string, options ...Option) (string, error) {
+	ts := time.Now()
 	opt := newOption()
 	defer func() {
 		if opt.Trace != nil {
 			opt.Redis.Timestamp = time_parse.CSTLayoutString()
 			opt.Redis.Handle = "get"
 			opt.Redis.Key = key
+			opt.Redis.CostSeconds = time.Since(ts).Seconds()
 			opt.Trace.AppendRedis(opt.Redis)
 		}
 	}()
@@ -155,12 +159,14 @@ func (c *cacheRepo) Del(keys ...string) bool {
 }
 
 func (c *cacheRepo) Incr(key string, options ...Option) int64 {
+	ts := time.Now()
 	opt := newOption()
 	defer func() {
 		if opt.Trace != nil {
 			opt.Redis.Timestamp = time_parse.CSTLayoutString()
 			opt.Redis.Handle = "incr"
 			opt.Redis.Key = key
+			opt.Redis.CostSeconds = time.Since(ts).Seconds()
 			opt.Trace.AppendRedis(opt.Redis)
 		}
 	}()

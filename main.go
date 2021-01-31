@@ -10,14 +10,15 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/router"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
 
 	"go.uber.org/zap"
 )
 
-// @title go-gin-api docs api
-// @version
+// @title swagger 接口文档
+// @version 2.0
 // @description
 
 // @contact.name
@@ -30,9 +31,9 @@ import (
 // @host 127.0.0.1:9999
 // @BasePath
 func main() {
-	// 初始化日志
+	// 初始化 logger
 	loggers, err := logger.NewJSONLogger(
-		logger.WithField("domain", configs.ProjectName()),
+		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName(), env.Active().Value())),
 		logger.WithTimeLayout("2006-01-02 15:04:05"),
 		logger.WithFileP(fmt.Sprintf("./logs/%s-access.log", configs.ProjectName())),
 	)
@@ -41,13 +42,13 @@ func main() {
 	}
 	defer loggers.Sync()
 
-	// 初始化数据库
+	// 初始化 DB
 	dbRepo, err := db.New()
 	if err != nil {
 		loggers.Fatal("new db err", zap.Error(err))
 	}
 
-	// 初始化缓存
+	// 初始化 Cache
 	cacheRepo, err := cache.New()
 	if err != nil {
 		loggers.Fatal("new cache err", zap.Error(err))
@@ -71,14 +72,33 @@ func main() {
 	}()
 
 	// 优雅关闭
-	shutdown.NewHook().Close(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-		defer cancel()
+	shutdown.NewHook().Close(
+		// 关闭 http server
+		func() {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+			defer cancel()
 
-		if err := server.Shutdown(ctx); err != nil {
-			loggers.Fatal("shutdown err", zap.Error(err))
-		} else {
-			loggers.Info("shutdown success")
-		}
-	})
+			if err := server.Shutdown(ctx); err != nil {
+				loggers.Error("server shutdown err", zap.Error(err))
+			} else {
+				loggers.Info("server shutdown success")
+			}
+		},
+
+		// 关闭 db
+		func() {
+			if err := dbRepo.DbWClose(); err != nil {
+				loggers.Error("dbw close err", zap.Error(err))
+			}
+
+			if err := dbRepo.DbRClose(); err != nil {
+				loggers.Error("dbr close err", zap.Error(err))
+			}
+		},
+
+		// 关闭 cache
+		func() {
+			cacheRepo.Close()
+		},
+	)
 }

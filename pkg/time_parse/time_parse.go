@@ -27,7 +27,19 @@ func RFC3339ToCSTLayout(value string) (string, error) {
 	return ts.In(cst).Format(CSTLayout), nil
 }
 
+// CSTLayoutString 格式化时间
+// 返回 "2006-01-02 15:04:05" 格式的时间
 func CSTLayoutString() string {
 	ts := time.Now()
 	return ts.In(cst).Format(CSTLayout)
+}
+
+// CSTLayoutStringToUnix 返回 unix 时间戳
+// 2020-01-24 21:11:11 => 1579871471
+func CSTLayoutStringToUnix(cstLayoutString string) (int64, error) {
+	stamp, err := time.ParseInLocation(CSTLayout, cstLayoutString, cst)
+	if err != nil {
+		return 0, err
+	}
+	return stamp.Unix(), nil
 }

@@ -1,0 +1,22 @@
+type User {
+  id: String!
+  name: String!
+  sex: String!
+  mobile: String!
+}
+
+# 查询 集合
+type Query {
+  bySex(sex: String!): [User!]
+}
+
+# 输入类型: 一般用户更改资源中的输入是列表对象，完成复杂任务
+input updateUserMobileInput {
+  id:ID!
+  mobile: String!
+}
+
+# 更改或者创建 集合
+type Mutation {
+  updateUserMobile(data: updateUserMobileInput!): User
+}

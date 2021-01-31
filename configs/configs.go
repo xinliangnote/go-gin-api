@@ -68,7 +68,6 @@ func init() {
 	viper.SetConfigName(env.Active().Value() + "_configs")
 	viper.SetConfigType("toml")
 	viper.AddConfigPath("./configs")
-	viper.AddConfigPath("../../configs") // 兼容 cmd/cron/main.go 引用配置文件
 
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)

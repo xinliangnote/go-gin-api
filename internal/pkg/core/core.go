@@ -353,6 +353,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				businessCodeMsg string
 				abortErr        error
 				traceId         string
+				graphResponse   interface{}
 			)
 
 			if ctx.IsAborted() {
@@ -381,6 +382,8 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				businessCodeMsg = response.GetMsg()
 				ctx.JSON(response.GetHttpCode(), response)
 			}
+
+			graphResponse = context.getGraphPayload()
 
 			if opt.recordMetrics != nil {
 				uri := context.URI()
@@ -415,24 +418,40 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				Body:       string(context.RawData()),
 			})
 
+			var responseBody interface{}
+
+			if response != nil {
+				responseBody = response
+			}
+
+			if graphResponse != nil {
+				responseBody = graphResponse
+			}
+
 			t.WithResponse(&trace.Response{
 				Header:          ctx.Writer.Header(),
 				HttpCode:        ctx.Writer.Status(),
 				HttpCodeMsg:     http.StatusText(ctx.Writer.Status()),
 				BusinessCode:    businessCode,
 				BusinessCodeMsg: businessCodeMsg,
-				Body:            response,
+				Body:            responseBody,
+				CostSeconds:     time.Since(ts).Seconds(),
 			})
 
 			t.Success = !ctx.IsAborted() && ctx.Writer.Status() == http.StatusOK
 			t.CostSeconds = time.Since(ts).Seconds()
 
-			if abortErr == nil {
-				logger.Info("core-interceptor", zap.Any("trace", t))
-			} else {
-				logger.Info("core-interceptor", zap.Any("trace", t), zap.Error(abortErr))
-			}
-
+			logger.Info("core-interceptor",
+				zap.Any("method", ctx.Request.Method),
+				zap.Any("path", decodedURL),
+				zap.Any("http_code", ctx.Writer.Status()),
+				zap.Any("business_code", businessCode),
+				zap.Any("success", t.Success),
+				zap.Any("cost_seconds", t.CostSeconds),
+				zap.Any("trace_id", t.Identifier),
+				zap.Any("trace_info", t),
+				zap.Error(abortErr),
+			)
 		}()
 
 		ctx.Next()

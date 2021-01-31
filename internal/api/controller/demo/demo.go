@@ -171,7 +171,10 @@ func (d *Demo) Trace() core.HandlerFunc {
 		}
 
 		// 调试信息
-		p.Println("res2.Data.Name", res2.Data.Name, p.WithTrace(c.Trace()))
+		p.Println("res2.Data.Name",
+			res2.Data.Name,
+			p.WithTrace(c.Trace()),
+		)
 
 		// 执行 SQL 信息
 		d.userService.GetUserByUserName(c, "test_user")
