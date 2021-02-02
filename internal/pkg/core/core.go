@@ -10,10 +10,10 @@ import (
 	"github.com/xinliangnote/go-gin-api/configs"
 	_ "github.com/xinliangnote/go-gin-api/docs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 	"github.com/xinliangnote/go-gin-api/pkg/color"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
+	"github.com/xinliangnote/go-gin-api/pkg/trace"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"

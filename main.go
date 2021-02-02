@@ -35,7 +35,7 @@ func main() {
 	loggers, err := logger.NewJSONLogger(
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName(), env.Active().Value())),
 		logger.WithTimeLayout("2006-01-02 15:04:05"),
-		logger.WithFileP(fmt.Sprintf("./logs/%s-access.log", configs.ProjectName())),
+		logger.WithFileP(configs.ProjectLogFile()),
 	)
 	if err != nil {
 		panic(err)

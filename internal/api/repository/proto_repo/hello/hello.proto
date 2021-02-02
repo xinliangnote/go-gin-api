@@ -1,0 +1,23 @@
+syntax = "proto3"; // 指定 proto 版本
+
+package hello;     // 指定包名
+
+// 定义 Hello 服务
+service Hello {
+
+	// 定义 SayHello 方法
+	rpc SayHello(HelloRequest) returns (HelloResponse) {}
+
+	// 定义 LotsOfReplies 方法
+	rpc LotsOfReplies(HelloRequest) returns (stream HelloResponse){}
+}
+
+// HelloRequest 请求结构
+message HelloRequest {
+	string name = 1;
+}
+
+// HelloResponse 响应结构
+message HelloResponse {
+    string message = 1;
+}

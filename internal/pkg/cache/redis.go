@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/trace"
 
 	"github.com/go-redis/redis/v7"
 	"github.com/pkg/errors"

@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/trace"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/utils"

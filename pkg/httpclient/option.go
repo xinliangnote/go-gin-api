@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/trace"
+	"github.com/xinliangnote/go-gin-api/pkg/trace"
 
 	"go.uber.org/zap"
 )

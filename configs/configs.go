@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/pkg/env"
@@ -88,4 +89,8 @@ func ProjectName() string {
 
 func ProjectPort() string {
 	return ":9999"
+}
+
+func ProjectLogFile() string {
+	return fmt.Sprintf("./logs/%s-access.log", ProjectName())
 }
