@@ -27,8 +27,8 @@ type option struct {
 	resolverBuilder resolver.Builder
 	dialTimeout     time.Duration
 	sign            Sign
-	Trace           *trace.Trace
-	Grpc            *trace.Grpc
+	trace           *trace.Trace
+	grpc            *trace.Grpc
 }
 
 // WithCredential setup credential for tls
@@ -63,8 +63,8 @@ func WithSign(sign Sign) Option {
 func WithTrace(t Trace) Option {
 	return func(opt *option) {
 		if t != nil {
-			opt.Trace = t.(*trace.Trace)
-			opt.Grpc = new(trace.Grpc)
+			opt.trace = t.(*trace.Trace)
+			opt.grpc = new(trace.Grpc)
 		}
 	}
 }
@@ -89,7 +89,7 @@ func New(target string, options ...Option) (*grpc.ClientConn, error) {
 		dialTimeout = opt.dialTimeout
 	}
 
-	clientInterceptor := NewClientInterceptor(opt.sign, opt.Trace, opt.Grpc)
+	clientInterceptor := NewClientInterceptor(opt.sign, opt.trace, opt.grpc)
 
 	dialOptions := []grpc.DialOption{
 		grpc.WithBlock(),
