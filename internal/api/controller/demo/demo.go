@@ -185,11 +185,11 @@ func (d *Demo) Trace() core.HandlerFunc {
 		p.Println("redis-name", val, p.WithTrace(c.Trace()))
 
 		//// 执行 gRPC 信息
-		//conn, err := grpcclient.New("127.0.0.1:9001",
-		//	grpcclient.WithDialTimeout(time.Second*5),
-		//	grpcclient.WithTrace(c.Trace()),
-		//	grpcclient.WithSign(func(message []byte) (authorization string, err error) {
-		//		return grpcclient.GenerateSign("abcdef", message)
+		//conn, err := grpclient.New("127.0.0.1:9001",
+		//	grpclient.WithDialTimeout(time.Second*5),
+		//	grpclient.WithTrace(c.Trace()),
+		//	grpclient.WithSign(func(message []byte) (authorization string, err error) {
+		//		return grpclient.GenerateSign("abcdef", message)
 		//	}),
 		//)
 		//if err != nil {
