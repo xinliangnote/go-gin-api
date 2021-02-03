@@ -9,6 +9,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/pkg/ddm"
 
 	"go.uber.org/zap"
 )
@@ -169,7 +170,7 @@ func (u *userDemo) Detail() core.HandlerFunc {
 		res.Id = user.Id
 		res.UserName = user.UserName
 		res.NickName = user.NickName
-		res.Mobile = user.Mobile
+		res.Mobile = ddm.Mobile(user.Mobile)
 		c.Payload(code.OK.WithData(res))
 	}
 }

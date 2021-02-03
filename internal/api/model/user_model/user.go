@@ -2,6 +2,8 @@ package user_model
 
 import (
 	"time"
+
+	"github.com/xinliangnote/go-gin-api/pkg/ddm"
 )
 
 // 用户Demo表
@@ -54,8 +56,8 @@ type DetailRequest struct {
 
 // user_handler Detail Response
 type DetailResponse struct {
-	Id       uint   `json:"id"`        // 用户主键ID
-	UserName string `json:"user_name"` // 用户名
-	NickName string `json:"nick_name"` // 昵称
-	Mobile   string `json:"mobile"`    // 手机号
+	Id       uint       `json:"id"`        // 用户主键ID
+	UserName string     `json:"user_name"` // 用户名
+	NickName string     `json:"nick_name"` // 昵称
+	Mobile   ddm.Mobile `json:"mobile"`    // 手机号（脱敏）
 }
