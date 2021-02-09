@@ -10,6 +10,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/router"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/grpc"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
@@ -54,8 +55,14 @@ func main() {
 		loggers.Fatal("new cache err", zap.Error(err))
 	}
 
+	// 初始化 gRPC client
+	gRPCRepo, err := grpc.New()
+	if err != nil {
+		loggers.Fatal("new grpc err", zap.Error(err))
+	}
+
 	// 初始化 HTTP 服务
-	mux, err := router.NewHTTPMux(loggers, dbRepo, cacheRepo)
+	mux, err := router.NewHTTPMux(loggers, dbRepo, cacheRepo, gRPCRepo)
 	if err != nil {
 		panic(err)
 	}
@@ -89,16 +96,33 @@ func main() {
 		func() {
 			if err := dbRepo.DbWClose(); err != nil {
 				loggers.Error("dbw close err", zap.Error(err))
+			} else {
+				loggers.Info("dbw close success")
 			}
 
 			if err := dbRepo.DbRClose(); err != nil {
 				loggers.Error("dbr close err", zap.Error(err))
+			} else {
+				loggers.Info("dbr close success")
 			}
 		},
 
 		// 关闭 cache
 		func() {
-			cacheRepo.Close()
+			if err := cacheRepo.Close(); err != nil {
+				loggers.Error("cache close err", zap.Error(err))
+			} else {
+				loggers.Info("cache close success")
+			}
+		},
+
+		// 关闭 gRPC client
+		func() {
+			if err := gRPCRepo.Conn().Close(); err != nil {
+				loggers.Error("gRPC client close err", zap.Error(err))
+			} else {
+				loggers.Info("gRPC client close success")
+			}
 		},
 	)
 }

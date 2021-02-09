@@ -8,6 +8,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/grpc"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
 
@@ -15,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo) (core.Mux, error) {
+func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpconn grpc.ClientConn) (core.Mux, error) {
 
 	if logger == nil {
 		return nil, errors.New("logger required")
@@ -32,7 +33,7 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo) (core.Mux, err
 		panic(err)
 	}
 
-	demoHandler := demo.NewDemo(logger, db, cache)
+	demoHandler := demo.NewDemo(logger, db, cache, grpconn)
 	userHandler := user_handler.NewUserDemo(logger, db, cache)
 	gqlHandler := handler.New(logger, db, cache)
 

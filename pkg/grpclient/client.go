@@ -4,31 +4,23 @@ import (
 	"context"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/pkg/trace"
-
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/resolver"
 )
 
 var (
 	defaultDialTimeout = time.Second * 2
 )
 
-type Trace = trace.T
-
 type Option func(*option)
 
 type option struct {
-	credential      credentials.TransportCredentials
-	keepalive       *keepalive.ClientParameters
-	resolverBuilder resolver.Builder
-	dialTimeout     time.Duration
-	sign            Sign
-	trace           *trace.Trace
-	grpc            *trace.Grpc
+	credential       credentials.TransportCredentials
+	keepalive        *keepalive.ClientParameters
+	dialTimeout      time.Duration
+	unaryInterceptor grpc.UnaryClientInterceptor
 }
 
 // WithCredential setup credential for tls
@@ -52,20 +44,9 @@ func WithDialTimeout(timeout time.Duration) Option {
 	}
 }
 
-// WithSign setup the signature handler
-func WithSign(sign Sign) Option {
+func WithUnaryInterceptor(unaryInterceptor grpc.UnaryClientInterceptor) Option {
 	return func(opt *option) {
-		opt.sign = sign
-	}
-}
-
-// WithTrace setup trace info
-func WithTrace(t Trace) Option {
-	return func(opt *option) {
-		if t != nil {
-			opt.trace = t.(*trace.Trace)
-			opt.grpc = new(trace.Grpc)
-		}
+		opt.unaryInterceptor = unaryInterceptor
 	}
 }
 
@@ -89,12 +70,13 @@ func New(target string, options ...Option) (*grpc.ClientConn, error) {
 		dialTimeout = opt.dialTimeout
 	}
 
-	clientInterceptor := NewClientInterceptor(opt.sign, opt.trace, opt.grpc)
-
 	dialOptions := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithKeepaliveParams(*kacp),
-		grpc.WithUnaryInterceptor(clientInterceptor.UnaryInterceptor),
+	}
+
+	if opt.unaryInterceptor != nil {
+		dialOptions = append(dialOptions, grpc.WithUnaryInterceptor(opt.unaryInterceptor))
 	}
 
 	if opt.credential == nil {

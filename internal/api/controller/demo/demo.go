@@ -10,6 +10,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/grpc"
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
 	"github.com/xinliangnote/go-gin-api/pkg/p"
 	"github.com/xinliangnote/go-gin-api/pkg/token"
@@ -21,13 +22,15 @@ import (
 type Demo struct {
 	logger      *zap.Logger
 	cache       cache.Repo
+	grpconn     grpc.ClientConn
 	userService user_service.UserService
 }
 
-func NewDemo(logger *zap.Logger, db db.Repo, cache cache.Repo) *Demo {
+func NewDemo(logger *zap.Logger, db db.Repo, cache cache.Repo, grpconn grpc.ClientConn) *Demo {
 	return &Demo{
 		logger:      logger,
 		cache:       cache,
+		grpconn:     grpconn,
 		userService: user_service.NewUserService(db, cache),
 	}
 }
@@ -184,29 +187,9 @@ func (d *Demo) Trace() core.HandlerFunc {
 		val, _ := d.cache.Get("name", cache.WithTrace(c.Trace()))
 		p.Println("redis-name", val, p.WithTrace(c.Trace()))
 
-		//// 执行 gRPC 信息
-		//conn, err := grpclient.New("127.0.0.1:9001",
-		//	grpclient.WithDialTimeout(time.Second*5),
-		//	grpclient.WithTrace(c.Trace()),
-		//	grpclient.WithSign(func(message []byte) (authorization string, err error) {
-		//		return grpclient.GenerateSign("abcdef", message)
-		//	}),
-		//)
-		//if err != nil {
-		//	d.logger.Error("grpc conn err", zap.Error(err))
-		//}
-		//defer conn.Close()
-		//
-		//// 初始化客户端
-		//client := hello.NewHelloClient(conn)
-		//
-		//// 调用 SayHello 方法
-		//ctx := context.Background()
-		//// 设置 SayHello 超时间
-		//ctx, cancel := context.WithTimeout(ctx, time.Second*3)
-		//defer cancel()
-		//
-		//client.SayHello(ctx, &hello.HelloRequest{Name: "Hello World"})
+		// 初始化客户端
+		// client := hello.NewHelloClient(d.grpconn.Conn())
+		// client.SayHello(grpc.ContextWithValueAndTimeout(c, time.Second*3), &hello.HelloRequest{Name: "Hello World"})
 
 		data := &traceResponse{
 			{

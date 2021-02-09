@@ -1,4 +1,4 @@
-package grpclient
+package grpc
 
 import (
 	"bytes"

@@ -35,7 +35,7 @@ type Repo interface {
 	ExpireAt(key string, ttl time.Time) bool
 	Del(keys ...string) bool
 	Incr(key string, options ...Option) int64
-	Close()
+	Close() error
 }
 
 type cacheRepo struct {
@@ -179,8 +179,8 @@ func (c *cacheRepo) Incr(key string, options ...Option) int64 {
 }
 
 // Close close redis client
-func (c *cacheRepo) Close() {
-	c.client.Close()
+func (c *cacheRepo) Close() error {
+	return c.client.Close()
 }
 
 // WithTrace 设置trace信息

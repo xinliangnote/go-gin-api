@@ -18,6 +18,8 @@ type T interface {
 	WithResponse(resp *Response) *Trace
 	AppendDialog(dialog *Dialog) *Trace
 	AppendSQL(sql *SQL) *Trace
+	AppendRedis(redis *Redis) *Trace
+	AppendGRPC(grpc *Grpc) *Trace
 }
 
 // Trace 记录的参数
