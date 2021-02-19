@@ -336,7 +336,11 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			if err := recover(); err != nil {
 				stackInfo := string(debug.Stack())
 				logger.Error("got panic", zap.String("panic", fmt.Sprintf("%+v", err)), zap.String("stack", stackInfo))
-				context.AbortWithError(code.ErrServer)
+				context.AbortWithError(errno.NewError(
+					http.StatusInternalServerError,
+					code.ServerError,
+					code.Text(code.ServerError)),
+				)
 
 				if notify := opt.panicNotify; notify != nil {
 					notify(context, err, stackInfo)
@@ -348,7 +352,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			}
 
 			var (
-				response        errno.Error
+				response        interface{}
 				businessCode    int
 				businessCodeMsg string
 				abortErr        error
@@ -364,23 +368,27 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				if err := context.abortError(); err != nil { // customer err
 					multierr.AppendInto(&abortErr, err.GetErr())
 					response = err
+					businessCode = err.GetBusinessCode()
+					businessCodeMsg = err.GetMsg()
+
+					reply := &code.Failure{
+						Code:    businessCode,
+						Message: businessCodeMsg,
+					}
+					ctx.JSON(err.GetHttpCode(), reply)
 				}
 			} else {
 				response = context.getPayload()
+				if response != nil {
+					ctx.JSON(http.StatusOK, response)
+				}
 			}
 
 			if response != nil {
 				if x := context.Trace(); x != nil {
 					context.SetHeader(trace.Header, x.ID())
-					response.WithID(x.ID())
 					traceId = x.ID()
-				} else {
-					response.WithID("")
 				}
-
-				businessCode = response.GetBusinessCode()
-				businessCodeMsg = response.GetMsg()
-				ctx.JSON(response.GetHttpCode(), response)
 			}
 
 			graphResponse = context.getGraphPayload()
@@ -464,7 +472,11 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			defer releaseContext(context)
 
 			if !limiter.Allow() {
-				context.AbortWithError(code.ErrManyRequest)
+				context.AbortWithError(errno.NewError(
+					http.StatusTooManyRequests,
+					code.TooManyRequests,
+					code.Text(code.TooManyRequests)),
+				)
 				return
 			}
 
@@ -489,7 +501,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 				Host:        ctx.Host(),
 				Status:      "ok",
 			}
-			ctx.Payload(code.OK.WithData(resp))
+			ctx.Payload(resp)
 		})
 	}
 

@@ -1,6 +1,7 @@
 package demo
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
@@ -11,6 +12,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/grpc"
+	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
 	"github.com/xinliangnote/go-gin-api/pkg/p"
 	"github.com/xinliangnote/go-gin-api/pkg/token"
@@ -49,19 +51,27 @@ func (d *Demo) Get() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.AbortWithError(code.ErrParamBind.WithErr(err))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ParamBindError,
+				code.Text(code.ParamBindError)).WithErr(err),
+			)
 			return
 		}
 
 		if req.Name != "Tom" {
-			c.AbortWithError(code.ErrUser.WithErr(errors.New("req.Name != Tom")))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.IllegalUserName,
+				code.Text(code.IllegalUserName)).WithErr(errors.New("req.Name != Tom")),
+			)
 			return
 		}
 
-		c.Payload(code.OK.WithData(&response{
+		c.Payload(&response{
 			Name: "Tom",
 			Job:  "Student",
-		}))
+		})
 	}
 }
 
@@ -78,19 +88,27 @@ func (d *Demo) Post() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(request)
 		if err := c.ShouldBindPostForm(req); err != nil {
-			c.AbortWithError(code.ErrParamBind.WithErr(err))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ParamBindError,
+				code.Text(code.ParamBindError)).WithErr(err),
+			)
 			return
 		}
 
 		if req.Name != "Jack" {
-			c.AbortWithError(code.ErrUser.WithErr(errors.New("req.Name != Jack")))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.IllegalUserName,
+				code.Text(code.IllegalUserName)).WithErr(errors.New("req.Name != Jack")),
+			)
 			return
 		}
 
-		c.Payload(code.OK.WithData(&response{
+		c.Payload(&response{
 			Name: "Jack",
 			Job:  "Teacher",
-		}))
+		})
 	}
 }
 
@@ -110,14 +128,19 @@ type traceResponse []struct {
 // @Tags Demo
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} authResponse "返回信息"
+// @Success 200 {object} authResponse
+// @Failure 400 {object} code.Failure
 // @Router /auth/get [post]
 func (d *Demo) Auth() core.HandlerFunc {
 	return func(c core.Context) {
 		cfg := configs.Get().JWT
 		tokenString, err := token.New(cfg.Secret).Sign(1, "xinliangnote", time.Hour*cfg.ExpireDuration)
 		if err != nil {
-			c.AbortWithError(code.ErrAuthorization.WithErr(err))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(err),
+			)
 			return
 		}
 
@@ -125,7 +148,7 @@ func (d *Demo) Auth() core.HandlerFunc {
 		res.Authorization = tokenString
 		res.ExpireTime = time.Now().Add(time.Hour * cfg.ExpireDuration).Unix()
 
-		c.Payload(code.OK.WithData(res))
+		c.Payload(res)
 	}
 }
 
@@ -136,7 +159,9 @@ func (d *Demo) Auth() core.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param Authorization header string true "签名"
-// @Success 200 {object} traceResponse "用户信息"
+// @Success 200 {object} traceResponse
+// @Failure 400 {object} code.Failure
+// @Failure 401 {object} code.Failure
 // @Router /demo/trace [get]
 func (d *Demo) Trace() core.HandlerFunc {
 	return func(c core.Context) {
@@ -151,12 +176,16 @@ func (d *Demo) Trace() core.HandlerFunc {
 
 		if err != nil {
 			d.logger.Error("get [demo/get] err", zap.Error(err))
-			c.AbortWithError(code.ErrUserHTTP.WithErr(err))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.CallHTTPError,
+				code.Text(code.CallHTTPError)).WithErr(err),
+			)
 			return
 		}
 
 		// 调试信息
-		p.Println("res1.Data.Name", res1.Data.Name, p.WithTrace(c.Trace()))
+		p.Println("res1.Name", res1.Name, p.WithTrace(c.Trace()))
 
 		// 三方请求信息
 		res2, err := go_gin_api_repo.DemoPost("Jack",
@@ -169,13 +198,17 @@ func (d *Demo) Trace() core.HandlerFunc {
 
 		if err != nil {
 			d.logger.Error("post [demo/post] err", zap.Error(err))
-			c.AbortWithError(code.ErrUserHTTP.WithErr(err))
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.CallHTTPError,
+				code.Text(code.CallHTTPError)).WithErr(err),
+			)
 			return
 		}
 
 		// 调试信息
-		p.Println("res2.Data.Name",
-			res2.Data.Name,
+		p.Println("res2.Name",
+			res2.Name,
 			p.WithTrace(c.Trace()),
 		)
 
@@ -193,14 +226,14 @@ func (d *Demo) Trace() core.HandlerFunc {
 
 		data := &traceResponse{
 			{
-				Name: res1.Data.Name,
-				Job:  res1.Data.Job,
+				Name: res1.Name,
+				Job:  res1.Job,
 			},
 			{
-				Name: res2.Data.Name,
-				Job:  res2.Data.Job,
+				Name: res2.Name,
+				Job:  res2.Job,
 			},
 		}
-		c.Payload(code.OK.WithData(data))
+		c.Payload(data)
 	}
 }

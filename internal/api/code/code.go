@@ -1,28 +1,41 @@
 package code
 
-import (
-	"net/http"
+// 错误时返回结构
+type Failure struct {
+	Code    int    `json:"code"`    // 业务码
+	Message string `json:"message"` // 描述信息
+}
 
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
-)
-
-var (
-	// OK
-	OK = errno.NewError(http.StatusOK, 1, "OK")
-
+const (
 	// 服务级错误码
-	ErrServer        = errno.NewError(http.StatusInternalServerError, 10101, http.StatusText(http.StatusInternalServerError))
-	ErrManyRequest   = errno.NewError(http.StatusTooManyRequests, 10102, http.StatusText(http.StatusTooManyRequests))
-	ErrParamBind     = errno.NewError(http.StatusBadRequest, 10103, "参数信息有误")
-	ErrAuthorization = errno.NewError(http.StatusUnauthorized, 10104, "签名信息有误")
+	ServerError        = 10101
+	TooManyRequests    = 10102
+	ParamBindError     = 10103
+	AuthorizationError = 10104
+	CallHTTPError      = 10105
 
 	// 模块级错误码 - 用户模块
-	ErrUser       = errno.NewError(http.StatusBadRequest, 20101, "非法用户")
-	ErrUserName   = errno.NewError(http.StatusBadRequest, 20102, "账号不能为空")
-	ErrUserCreate = errno.NewError(http.StatusBadRequest, 20103, "创建用户失败")
-	ErrUserUpdate = errno.NewError(http.StatusBadRequest, 20104, "更新用户失败")
-	ErrUserSearch = errno.NewError(http.StatusBadRequest, 20105, "查询用户失败")
-	ErrUserHTTP   = errno.NewError(http.StatusBadRequest, 20106, "调用他方接口失败")
+	IllegalUserName = 20101
+	UserCreateError = 20102
+	UserUpdateError = 20103
+	UserSearchError = 20104
 
 	// ...
 )
+
+var codeText = map[int]string{
+	ServerError:        "Internal Server Error",
+	TooManyRequests:    "Too Many Requests",
+	ParamBindError:     "参数信息有误",
+	AuthorizationError: "签名信息有误",
+	CallHTTPError:      "调用第三方 HTTP 接口失败",
+
+	IllegalUserName: "非法用户名",
+	UserCreateError: "创建用户失败",
+	UserUpdateError: "更新用户失败",
+	UserSearchError: "查询用户失败",
+}
+
+func Text(code int) string {
+	return codeText[code]
+}

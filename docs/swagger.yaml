@@ -1,4 +1,13 @@
 definitions:
+  code.Failure:
+    properties:
+      code:
+        description: 业务码
+        type: integer
+      message:
+        description: 描述信息
+        type: string
+    type: object
   demo.authResponse:
     properties:
       authorization:
@@ -32,7 +41,7 @@ definitions:
         description: 用户主键ID
         type: integer
       mobile:
-        description: 手机号
+        description: 手机号（脱敏）
         type: string
       nick_name:
         description: 昵称
@@ -74,9 +83,13 @@ paths:
       - application/json
       responses:
         "200":
-          description: 返回信息
+          description: OK
           schema:
             $ref: '#/definitions/demo.authResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
       summary: 获取授权信息
       tags:
       - Demo
@@ -95,7 +108,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: 用户信息
+          description: OK
           schema:
             items:
               properties:
@@ -107,6 +120,14 @@ paths:
                   type: string
               type: object
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/code.Failure'
       summary: Trace 示例
       tags:
       - Demo
@@ -131,9 +152,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: 返回信息
+          description: OK
           schema:
             $ref: '#/definitions/user_model.CreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/code.Failure'
       summary: 创建用户
       tags:
       - User
@@ -157,7 +186,15 @@ paths:
       - application/json
       responses:
         "200":
-          description: 返回信息
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/code.Failure'
       summary: 删除用户 - 更新 is_deleted = 1
       tags:
       - User
@@ -181,9 +218,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: 返回信息
+          description: OK
           schema:
             $ref: '#/definitions/user_model.DetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/code.Failure'
       summary: 用户详情
       tags:
       - User
@@ -208,9 +253,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: 返回信息
+          description: OK
           schema:
             $ref: '#/definitions/user_model.UpdateNickNameByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/code.Failure'
       summary: 编辑用户 - 通过用户主键ID更新用户昵称
       tags:
       - User

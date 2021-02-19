@@ -43,9 +43,15 @@ var doc = `{
                 "summary": "获取授权信息",
                 "responses": {
                     "200": {
-                        "description": "返回信息",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/demo.authResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
                         }
                     }
                 }
@@ -75,7 +81,7 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "用户信息",
+                        "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -91,6 +97,18 @@ var doc = `{
                                     }
                                 }
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
                         }
                     }
                 }
@@ -129,9 +147,21 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "返回信息",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/user_model.CreateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
                         }
                     }
                 }
@@ -168,7 +198,19 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "返回信息"
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
                     }
                 }
             }
@@ -204,9 +246,21 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "返回信息",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/user_model.DetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
                         }
                     }
                 }
@@ -245,9 +299,21 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "返回信息",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/user_model.UpdateNickNameByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
                         }
                     }
                 }
@@ -255,6 +321,19 @@ var doc = `{
         }
     },
     "definitions": {
+        "code.Failure": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "业务码",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "描述信息",
+                    "type": "string"
+                }
+            }
+        },
         "demo.authResponse": {
             "type": "object",
             "properties": {
@@ -302,7 +381,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "mobile": {
-                    "description": "手机号",
+                    "description": "手机号（脱敏）",
                     "type": "string"
                 },
                 "nick_name": {

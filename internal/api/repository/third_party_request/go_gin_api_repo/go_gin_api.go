@@ -2,7 +2,6 @@ package go_gin_api_repo
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
@@ -11,23 +10,13 @@ import (
 )
 
 type demoGetResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data struct {
-		Name string `json:"name"`
-		Job  string `json:"job"`
-	} `json:"data"`
-	ID string `json:"id"`
+	Name string `json:"name"`
+	Job  string `json:"job"`
 }
 
 type demoPostResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data struct {
-		Name string `json:"name"`
-		Job  string `json:"job"`
-	} `json:"data"`
-	ID string `json:"id"`
+	Name string `json:"name"`
+	Job  string `json:"job"`
 }
 
 func DemoGet(name string, opts ...httpclient.Option) (res *demoGetResponse, err error) {
@@ -43,10 +32,6 @@ func DemoGet(name string, opts ...httpclient.Option) (res *demoGetResponse, err 
 		return nil, errors.Wrap(err, "DemoGet json unmarshal error")
 	}
 
-	if res.Code != 1 {
-		return nil, errors.New(fmt.Sprintf("code err: %d-%s", res.Code, res.Msg))
-	}
-
 	return res, nil
 }
 
@@ -55,17 +40,7 @@ func DemoGetRetryVerify(body []byte) (shouldRetry bool) {
 		return true
 	}
 
-	type Response struct {
-		Code int `json:"code"`
-	}
-	resp := new(Response)
-	if err := json.Unmarshal(body, resp); err != nil {
-		return true
-	}
-
-	// 例如 无需重试的 code 码，code !=1 需要重试
-	successCode := 1
-	return resp.Code != successCode
+	return false
 }
 
 func DemoPost(name string, opts ...httpclient.Option) (res *demoPostResponse, err error) {
@@ -83,10 +58,6 @@ func DemoPost(name string, opts ...httpclient.Option) (res *demoPostResponse, er
 		return nil, errors.Wrap(err, "DemoPost json unmarshal error")
 	}
 
-	if res.Code != 1 {
-		return nil, errors.New(fmt.Sprintf("code err: %d-%s", res.Code, res.Msg))
-	}
-
 	return res, nil
 }
 
@@ -95,15 +66,5 @@ func DemoPostRetryVerify(body []byte) (shouldRetry bool) {
 		return true
 	}
 
-	type Response struct {
-		Code int `json:"code"`
-	}
-	resp := new(Response)
-	if err := json.Unmarshal(body, resp); err != nil {
-		return true
-	}
-
-	// 例如 无需重试的 code 码，code !=1 需要重试
-	successCode := 1
-	return resp.Code != successCode
+	return false
 }

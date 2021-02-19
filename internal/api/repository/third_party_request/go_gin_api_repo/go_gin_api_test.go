@@ -9,7 +9,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
 )
 
-var authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEwLCJVc2VyTmFtZSI6IjEyMyIsImV4cCI6MTYxMDcxODA3NCwiaWF0IjoxNjEwNjMxNjc0LCJpc3MiOiJnby1naW4tYXBpIiwibmJmIjoxNjEwNjMxNjc0fQ.S3T4MaIaz3XjkbJ-xkMDkwzuZ_jfZ8ZRf4cPMz0oXBE"
+var authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIlVzZXJOYW1lIjoieGlubGlhbmdub3RlIiwiZXhwIjoxNjEzODI3MTEzLCJpYXQiOjE2MTM3NDA3MTMsIm5iZiI6MTYxMzc0MDcxM30.SnooP1ikO33ryGPdohsmOKqISa-bWzMkMvUNb5f2zc0"
 
 func TestDemoGet(t *testing.T) {
 	res, err := DemoGet("Tom",

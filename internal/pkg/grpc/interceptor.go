@@ -3,12 +3,14 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"runtime/debug"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
+	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/p"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
 	"github.com/xinliangnote/go-gin-api/pkg/trace"
@@ -53,7 +55,11 @@ func (c *ClientInterceptor) UnaryInterceptor(ctx context.Context, method string,
 		if err := recover(); err != nil {
 			stackInfo := string(debug.Stack())
 			coreContext.Logger().Error("UnaryInterceptor got double panic", zap.String("panic", fmt.Sprintf("%+v", err)), zap.String("stack", stackInfo))
-			coreContext.AbortWithError(code.ErrServer)
+			coreContext.AbortWithError(errno.NewError(
+				http.StatusInternalServerError,
+				code.ServerError,
+				code.Text(code.ServerError)),
+			)
 			notify.OnPanicNotify(coreContext, err, stackInfo)
 		}
 	}()
@@ -62,7 +68,11 @@ func (c *ClientInterceptor) UnaryInterceptor(ctx context.Context, method string,
 		if err := recover(); err != nil {
 			stackInfo := string(debug.Stack())
 			coreContext.Logger().Error("UnaryInterceptor got panic", zap.String("panic", fmt.Sprintf("%+v", err)), zap.String("stack", stackInfo))
-			coreContext.AbortWithError(code.ErrServer)
+			coreContext.AbortWithError(errno.NewError(
+				http.StatusInternalServerError,
+				code.ServerError,
+				code.Text(code.ServerError)),
+			)
 			notify.OnPanicNotify(coreContext, err, stackInfo)
 		}
 

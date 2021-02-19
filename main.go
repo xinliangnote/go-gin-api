@@ -117,12 +117,12 @@ func main() {
 		},
 
 		// 关闭 gRPC client
-		func() {
-			if err := gRPCRepo.Conn().Close(); err != nil {
-				loggers.Error("gRPC client close err", zap.Error(err))
-			} else {
-				loggers.Info("gRPC client close success")
-			}
-		},
+		//func() {
+		//	if err := gRPCRepo.Conn().Close(); err != nil {
+		//		loggers.Error("gRPC client close err", zap.Error(err))
+		//	} else {
+		//		loggers.Info("gRPC client close success")
+		//	}
+		//},
 	)
 }

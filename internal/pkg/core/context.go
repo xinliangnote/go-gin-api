@@ -90,8 +90,8 @@ type Context interface {
 	setLogger(logger *zap.Logger)
 
 	// Payload 正确返回
-	Payload(payload errno.Error)
-	getPayload() errno.Error
+	Payload(payload interface{})
+	getPayload() interface{}
 
 	// GraphPayload GraphQL返回值 与 api 返回结构不同
 	GraphPayload(payload interface{})
@@ -225,14 +225,14 @@ func (c *context) setLogger(logger *zap.Logger) {
 	c.ctx.Set(_LoggerName, logger)
 }
 
-func (c *context) getPayload() errno.Error {
+func (c *context) getPayload() interface{} {
 	if payload, ok := c.ctx.Get(_PayloadName); ok != false {
-		return payload.(errno.Error)
+		return payload
 	}
 	return nil
 }
 
-func (c *context) Payload(payload errno.Error) {
+func (c *context) Payload(payload interface{}) {
 	c.ctx.Set(_PayloadName, payload)
 }
 

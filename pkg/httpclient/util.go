@@ -105,7 +105,11 @@ func doHTTP(ctx context.Context, method, url string, payload []byte, opt *option
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return body, resp.StatusCode, errors.Errorf("do [%s %s] return code: %d message: %s", method, url, resp.StatusCode, string(body))
+		return nil, resp.StatusCode, newReplyErr(
+			resp.StatusCode,
+			body,
+			errors.Errorf("do [%s %s] return code: %d message: %s", method, url, resp.StatusCode, string(body)),
+		)
 	}
 
 	return body, http.StatusOK, nil
