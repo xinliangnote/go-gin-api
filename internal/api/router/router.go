@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/demo"
+	"github.com/xinliangnote/go-gin-api/internal/api/controller/demo_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/user_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/router/middleware/auth"
 	"github.com/xinliangnote/go-gin-api/internal/graph/handler"
@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpconn grpc.ClientConn) (core.Mux, error) {
+func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.ClientConn) (core.Mux, error) {
 
 	if logger == nil {
 		return nil, errors.New("logger required")
@@ -33,8 +33,6 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpconn grpc.C
 		panic(err)
 	}
 
-	demoHandler := demo.NewDemo(logger, db, cache, grpconn)
-	userHandler := user_handler.NewUserDemo(logger, db, cache)
 	gqlHandler := handler.New(logger, db, cache)
 
 	gql := mux.Group("/graphql")
@@ -42,6 +40,9 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpconn grpc.C
 		gql.GET("", gqlHandler.Playground())
 		gql.POST("/query", gqlHandler.Query())
 	}
+
+	demoHandler := demo_handler.New(logger, db, cache, grpConn)
+	userHandler := user_handler.New(logger, db, cache)
 
 	// user_demo CURD
 	user := mux.Group("/user", core.WrapAuthHandler(auth.AuthHandler))

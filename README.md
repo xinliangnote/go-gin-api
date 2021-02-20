@@ -20,6 +20,7 @@
 1. 支持 [viper](https://github.com/spf13/viper) 配置文件解析
 1. 支持 [gorm](https://gorm.io/gorm) 数据库组件
 1. 支持 [go-redis](https://github.com/go-redis/redis/v7) 组件
+1. 支持 RESTful API 返回值规范
 
 
 

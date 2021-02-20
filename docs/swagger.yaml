@@ -8,7 +8,7 @@ definitions:
         description: 描述信息
         type: string
     type: object
-  demo.authResponse:
+  demo_handler.authResponse:
     properties:
       authorization:
         description: 签名
@@ -17,7 +17,7 @@ definitions:
         description: 过期时间
         type: integer
     type: object
-  user_model.CreateRequest:
+  user_handler.createRequest:
     properties:
       mobile:
         description: 手机号
@@ -29,13 +29,19 @@ definitions:
         description: 用户名
         type: string
     type: object
-  user_model.CreateResponse:
+  user_handler.createResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  user_model.DetailResponse:
+  user_handler.deleteResponse:
+    properties:
+      id:
+        description: 用户主键ID
+        type: integer
+    type: object
+  user_handler.detailResponse:
     properties:
       id:
         description: 用户主键ID
@@ -50,7 +56,7 @@ definitions:
         description: 用户名
         type: string
     type: object
-  user_model.UpdateNickNameByIDRequest:
+  user_handler.updateNickNameByIDRequest:
     properties:
       id:
         description: 用户主键ID
@@ -59,7 +65,7 @@ definitions:
         description: 昵称
         type: string
     type: object
-  user_model.UpdateNickNameByIDResponse:
+  user_handler.updateNickNameByIDResponse:
     properties:
       id:
         description: 用户主键ID
@@ -85,7 +91,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/demo.authResponse'
+            $ref: '#/definitions/demo_handler.authResponse'
         "400":
           description: Bad Request
           schema:
@@ -139,10 +145,10 @@ paths:
       parameters:
       - description: 请求信息
         in: body
-        name: RequestInfo
+        name: Request
         required: true
         schema:
-          $ref: '#/definitions/user_model.CreateRequest'
+          $ref: '#/definitions/user_handler.createRequest'
       - description: 签名
         in: header
         name: Authorization
@@ -154,7 +160,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user_model.CreateResponse'
+            $ref: '#/definitions/user_handler.createResponse'
         "400":
           description: Bad Request
           schema:
@@ -186,7 +192,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: ""
+          description: OK
+          schema:
+            $ref: '#/definitions/user_handler.deleteResponse'
         "400":
           description: Bad Request
           schema:
@@ -220,7 +228,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user_model.DetailResponse'
+            $ref: '#/definitions/user_handler.detailResponse'
         "400":
           description: Bad Request
           schema:
@@ -240,10 +248,10 @@ paths:
       parameters:
       - description: 请求信息
         in: body
-        name: RequestInfo
+        name: Request
         required: true
         schema:
-          $ref: '#/definitions/user_model.UpdateNickNameByIDRequest'
+          $ref: '#/definitions/user_handler.updateNickNameByIDRequest'
       - description: 签名
         in: header
         name: Authorization
@@ -255,7 +263,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user_model.UpdateNickNameByIDResponse'
+            $ref: '#/definitions/user_handler.updateNickNameByIDResponse'
         "400":
           description: Bad Request
           schema:

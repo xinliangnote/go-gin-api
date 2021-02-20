@@ -45,7 +45,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/demo.authResponse"
+                            "$ref": "#/definitions/demo_handler.authResponse"
                         }
                     },
                     "400": {
@@ -130,11 +130,11 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "请求信息",
-                        "name": "RequestInfo",
+                        "name": "Request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user_model.CreateRequest"
+                            "$ref": "#/definitions/user_handler.createRequest"
                         }
                     },
                     {
@@ -149,7 +149,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user_model.CreateResponse"
+                            "$ref": "#/definitions/user_handler.createResponse"
                         }
                     },
                     "400": {
@@ -198,7 +198,10 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user_handler.deleteResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -248,7 +251,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user_model.DetailResponse"
+                            "$ref": "#/definitions/user_handler.detailResponse"
                         }
                     },
                     "400": {
@@ -282,11 +285,11 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "请求信息",
-                        "name": "RequestInfo",
+                        "name": "Request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user_model.UpdateNickNameByIDRequest"
+                            "$ref": "#/definitions/user_handler.updateNickNameByIDRequest"
                         }
                     },
                     {
@@ -301,7 +304,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user_model.UpdateNickNameByIDResponse"
+                            "$ref": "#/definitions/user_handler.updateNickNameByIDResponse"
                         }
                     },
                     "400": {
@@ -334,7 +337,7 @@ var doc = `{
                 }
             }
         },
-        "demo.authResponse": {
+        "demo_handler.authResponse": {
             "type": "object",
             "properties": {
                 "authorization": {
@@ -347,7 +350,7 @@ var doc = `{
                 }
             }
         },
-        "user_model.CreateRequest": {
+        "user_handler.createRequest": {
             "type": "object",
             "properties": {
                 "mobile": {
@@ -364,7 +367,7 @@ var doc = `{
                 }
             }
         },
-        "user_model.CreateResponse": {
+        "user_handler.createResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -373,7 +376,16 @@ var doc = `{
                 }
             }
         },
-        "user_model.DetailResponse": {
+        "user_handler.deleteResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "user_handler.detailResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -394,7 +406,7 @@ var doc = `{
                 }
             }
         },
-        "user_model.UpdateNickNameByIDRequest": {
+        "user_handler.updateNickNameByIDRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -407,7 +419,7 @@ var doc = `{
                 }
             }
         },
-        "user_model.UpdateNickNameByIDResponse": {
+        "user_handler.updateNickNameByIDResponse": {
             "type": "object",
             "properties": {
                 "id": {
