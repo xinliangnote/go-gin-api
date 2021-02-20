@@ -371,23 +371,24 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 					businessCode = err.GetBusinessCode()
 					businessCodeMsg = err.GetMsg()
 
-					reply := &code.Failure{
+					if x := context.Trace(); x != nil {
+						context.SetHeader(trace.Header, x.ID())
+						traceId = x.ID()
+					}
+
+					ctx.JSON(err.GetHttpCode(), &code.Failure{
 						Code:    businessCode,
 						Message: businessCodeMsg,
-					}
-					ctx.JSON(err.GetHttpCode(), reply)
+					})
 				}
 			} else {
 				response = context.getPayload()
 				if response != nil {
+					if x := context.Trace(); x != nil {
+						context.SetHeader(trace.Header, x.ID())
+						traceId = x.ID()
+					}
 					ctx.JSON(http.StatusOK, response)
-				}
-			}
-
-			if response != nil {
-				if x := context.Trace(); x != nil {
-					context.SetHeader(trace.Header, x.ID())
-					traceId = x.ID()
 				}
 			}
 
