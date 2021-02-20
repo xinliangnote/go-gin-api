@@ -18,7 +18,7 @@
 1. 支持 errno 统一定义错误码 
 1. 支持 [zap](https://go.uber.org/zap) 日志收集 
 1. 支持 [viper](https://github.com/spf13/viper) 配置文件解析
-1. 支持 [grom](https://gorm.io/gorm) 数据库组件
+1. 支持 [gorm](https://gorm.io/gorm) 数据库组件
 1. 支持 [go-redis](https://github.com/go-redis/redis/v7) 组件
 
 
