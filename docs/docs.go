@@ -169,7 +169,7 @@ var doc = `{
         },
         "/user/delete/{id}": {
             "patch": {
-                "description": "删除用户 - 更新 is_deleted = 1",
+                "description": "删除用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -179,7 +179,7 @@ var doc = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "删除用户 - 更新 is_deleted = 1",
+                "summary": "删除用户",
                 "parameters": [
                     {
                         "type": "integer",

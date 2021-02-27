@@ -77,3 +77,5 @@ xLYEFN9h2MWYgxLm9Z0rLMrWwMM+E2rCs8tsxAD5sO9RZMJPl1C0FIsMR53ngqbz
 owIDAQAB
 -----END PUBLIC KEY-----'
 
+[cmd]
+genTables = 'user_demo'

@@ -176,7 +176,7 @@ paths:
     patch:
       consumes:
       - application/json
-      description: 删除用户 - 更新 is_deleted = 1
+      description: 删除用户
       parameters:
       - description: 用户ID
         in: path
@@ -203,7 +203,7 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/code.Failure'
-      summary: 删除用户 - 更新 is_deleted = 1
+      summary: 删除用户
       tags:
       - User
   /user/info/{username}:

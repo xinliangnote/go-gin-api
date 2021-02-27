@@ -14,7 +14,7 @@ type detailRequest struct {
 }
 
 type detailResponse struct {
-	Id       uint       `json:"id"`        // 用户主键ID
+	Id       int32      `json:"id"`        // 用户主键ID
 	UserName string     `json:"user_name"` // 用户名
 	NickName string     `json:"nick_name"` // 昵称
 	Mobile   ddm.Mobile `json:"mobile"`    // 手机号（脱敏）

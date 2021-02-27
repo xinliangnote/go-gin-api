@@ -63,6 +63,10 @@ type Config struct {
 		Private string `toml:"private"`
 		Public  string `toml:"public"`
 	} `toml:"rsa"`
+
+	Cmd struct {
+		GenTables string `toml:"genTables"`
+	} `toml:"cmd"`
 }
 
 func init() {

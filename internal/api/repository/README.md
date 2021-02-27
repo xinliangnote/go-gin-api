@@ -1,16 +1,12 @@
 ## repository
 
-数据访问层。
+#### 数据访问层。
 
 - `./db_repo` 访问 DB 数据
 - `./cache_repo` 访问 Cache 数据
 - `./third_party_request` 访问外部 HTTP 接口数据。
 
-SQL 建议：
-- 禁止使用 SQL k v 拼接，好处是避免 SQL 注入；
-- 禁止使用连表查询，好处是易扩展，比如分库分表；
-- 禁止使用万能方法，好处是便于后期维护，比如字段调整；
-- 禁止使用删除方法，好处是避免数据丢失；
+#### SQL 建议：
 - 建议每张表需包含字段：主键(id)、标记删除(is_deteled)、创建时间(created_at)、更新时间(updated_at) 
 
 ```mysql
@@ -19,11 +15,18 @@ SQL 建议：
 `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 ```
-什么是万能方法？
 
-指的是特别灵活的查询，比如通过非固定的参数返回全部字段，建议做到需要什么返回什么，不要返回大而全的数据，更新时也不能传递什么参数更新什么参数，更新字段要提前约定好。
-
-命名规范：
+#### 命名规范：
 
 - 包名应以 `_repo` 结尾；
 - `./db_repo` 目录下的包名以 `数据表名`+ `_repo` 命名；
+
+#### 脚本生成 MySQL CURD
+
+1. 定义生成的表，设置 config 中 cmd.genTables，可以自定义设置多张表，为空表示生成库中所有的表，如果设置多个表可用','分割；
+1. 在根目录下执行脚本文件：`./scripts/gormgen.sh`；
+
+以用户表（user_demo）为例：
+- 结构体文件：user_demo_repo/gen_model.go；
+- CURD 方法文件：user_demo_repo/gen_user_demo.go；
+- 表结构 MD 文件：user_demo_repo/gen_table.md；

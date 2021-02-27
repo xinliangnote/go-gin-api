@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var _ Repo = (*dbRepo)(nil)
@@ -80,6 +81,9 @@ func dbConnect(user, pass, addr, dbName string) (*gorm.DB, error) {
 		"Local")
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
 		//Logger: logger.Default.LogMode(logger.Info), // 日志配置
 	})
 

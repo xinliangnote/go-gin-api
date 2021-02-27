@@ -18,7 +18,7 @@ type createRequest struct {
 }
 
 type createResponse struct {
-	Id uint `json:"id"` // 主键ID
+	Id int32 `json:"id"` // 主键ID
 }
 
 // 创建用户

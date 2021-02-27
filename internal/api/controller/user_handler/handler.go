@@ -18,7 +18,7 @@ type Handler interface {
 	Create() core.HandlerFunc
 	// UpdateNickNameByID 编辑用户 - 通过主键ID更新用户昵称
 	UpdateNickNameByID() core.HandlerFunc
-	// Delete 删除用户 - 通过主键ID更新 is_deleted = 1
+	// Delete 删除用户
 	Delete() core.HandlerFunc
 	// Detail 用户详情
 	Detail() core.HandlerFunc

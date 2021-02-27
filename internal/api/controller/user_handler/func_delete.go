@@ -9,16 +9,16 @@ import (
 )
 
 type deleteRequest struct {
-	Id uint `uri:"id"` // 用户ID
+	Id int32 `uri:"id"` // 用户ID
 }
 
 type deleteResponse struct {
-	Id uint `json:"id"` // 用户主键ID
+	Id int32 `json:"id"` // 用户主键ID
 }
 
-// 删除用户 - 更新 is_deleted = 1
-// @Summary 删除用户 - 更新 is_deleted = 1
-// @Description 删除用户 - 更新 is_deleted = 1
+// 删除用户
+// @Summary 删除用户
+// @Description 删除用户
 // @Tags User
 // @Accept  json
 // @Produce  json

@@ -9,12 +9,12 @@ import (
 )
 
 type updateNickNameByIDRequest struct {
-	Id       uint   `json:"id"`        // 用户主键ID
+	Id       int32  `json:"id"`        // 用户主键ID
 	NickName string `json:"nick_name"` // 昵称
 }
 
 type updateNickNameByIDResponse struct {
-	Id uint `json:"id"` // 用户主键ID
+	Id int32 `json:"id"` // 用户主键ID
 }
 
 // 编辑用户 - 通过用户主键ID更新用户昵称

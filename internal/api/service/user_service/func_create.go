@@ -11,14 +11,13 @@ type CreateUserInfo struct {
 	Mobile   string `json:"mobile"`    // 手机号
 }
 
-func (u *userSer) Create(ctx core.Context, user *CreateUserInfo) (id uint, err error) {
-	create := user_demo_repo.UserDemo{
-		UserName: user.UserName,
-		NickName: user.NickName,
-		Mobile:   user.Mobile,
-	}
+func (u *userSer) Create(ctx core.Context, user *CreateUserInfo) (id int32, err error) {
+	model := user_demo_repo.NewModel()
+	model.UserName = user.UserName
+	model.NickName = user.NickName
+	model.Mobile = user.Mobile
 
-	id, err = u.userRepo.Create(ctx, create)
+	id, err = model.Create(u.db.GetDbW().WithContext(ctx.RequestContext()))
 	if err != nil {
 		return 0, err
 	}
