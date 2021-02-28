@@ -21,6 +21,7 @@
 1. 支持 [gorm](https://gorm.io/gorm) 数据库组件
 1. 支持 [go-redis](https://github.com/go-redis/redis/v7) 组件
 1. 支持 RESTful API 返回值规范
+1. 支持 gormgen、handlergen 代码生成工具
 
 
 
