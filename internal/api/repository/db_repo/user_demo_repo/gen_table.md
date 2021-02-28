@@ -1,4 +1,4 @@
-#### xin_ceshi.user_demo 
+#### go_gin_api.user_demo 
 用户Demo表
 
 | 序号 | 名称 | 描述 | 类型 | 键 | 为空 | 额外 | 默认值 |
