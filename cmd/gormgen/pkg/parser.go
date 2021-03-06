@@ -78,7 +78,6 @@ func (p *Parser) parseTypes(file *ast.File) (ret []structConfig) {
 					optionField fieldConfig
 				)
 
-				// type is ident, get onlyField type
 				if t, _ok := v.Type.(*ast.Ident); _ok {
 					optionField.FieldType = t.String()
 				} else {
@@ -89,7 +88,6 @@ func (p *Parser) parseTypes(file *ast.File) (ret []structConfig) {
 					}
 				}
 
-				// get file name
 				if len(v.Names) > 0 {
 					optionField.FieldName = v.Names[0].String()
 					optionField.ColumnName = gorm.ToDBName(optionField.FieldName)

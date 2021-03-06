@@ -136,6 +136,28 @@ func (qb *{{$queryBuilderName}}) Where{{call $.Helpers.Titelize .FieldName}}(p d
 	return qb
 }
 
+func (qb *{{$queryBuilderName}}) Where{{call $.Helpers.Titelize .FieldName}}In(value []{{.FieldType}}) *{{$queryBuilderName}} {
+	 qb.where = append(qb.where, struct {
+		prefix string
+		value interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "{{.ColumnName}}", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *{{$queryBuilderName}}) Where{{call $.Helpers.Titelize .FieldName}}NotIn(value []{{.FieldType}}) *{{$queryBuilderName}} {
+	 qb.where = append(qb.where, struct {
+		prefix string
+		value interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "{{.ColumnName}}", "NOT IN"),
+		value,
+	})
+	return qb
+}
+
 func (qb *{{$queryBuilderName}}) OrderBy{{call $.Helpers.Titelize .FieldName}}(asc bool) *{{$queryBuilderName}} {
 	order := "DESC"
 	if asc {

@@ -120,6 +120,28 @@ func (qb *userDemoRepoQueryBuilder) WhereId(p db_repo.Predicate, value int32) *u
 	return qb
 }
 
+func (qb *userDemoRepoQueryBuilder) WhereIdIn(value []int32) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "id", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereIdNotIn(value []int32) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "id", "NOT IN"),
+		value,
+	})
+	return qb
+}
+
 func (qb *userDemoRepoQueryBuilder) OrderById(asc bool) *userDemoRepoQueryBuilder {
 	order := "DESC"
 	if asc {
@@ -136,6 +158,28 @@ func (qb *userDemoRepoQueryBuilder) WhereUserName(p db_repo.Predicate, value str
 		value  interface{}
 	}{
 		fmt.Sprintf("%v %v ?", "user_name", p),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereUserNameIn(value []string) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "user_name", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereUserNameNotIn(value []string) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "user_name", "NOT IN"),
 		value,
 	})
 	return qb
@@ -162,6 +206,28 @@ func (qb *userDemoRepoQueryBuilder) WhereNickName(p db_repo.Predicate, value str
 	return qb
 }
 
+func (qb *userDemoRepoQueryBuilder) WhereNickNameIn(value []string) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "nick_name", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereNickNameNotIn(value []string) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "nick_name", "NOT IN"),
+		value,
+	})
+	return qb
+}
+
 func (qb *userDemoRepoQueryBuilder) OrderByNickName(asc bool) *userDemoRepoQueryBuilder {
 	order := "DESC"
 	if asc {
@@ -178,6 +244,28 @@ func (qb *userDemoRepoQueryBuilder) WhereMobile(p db_repo.Predicate, value strin
 		value  interface{}
 	}{
 		fmt.Sprintf("%v %v ?", "mobile", p),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereMobileIn(value []string) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "mobile", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereMobileNotIn(value []string) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "mobile", "NOT IN"),
 		value,
 	})
 	return qb
@@ -204,6 +292,28 @@ func (qb *userDemoRepoQueryBuilder) WhereIsDeleted(p db_repo.Predicate, value in
 	return qb
 }
 
+func (qb *userDemoRepoQueryBuilder) WhereIsDeletedIn(value []int32) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "is_deleted", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereIsDeletedNotIn(value []int32) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "is_deleted", "NOT IN"),
+		value,
+	})
+	return qb
+}
+
 func (qb *userDemoRepoQueryBuilder) OrderByIsDeleted(asc bool) *userDemoRepoQueryBuilder {
 	order := "DESC"
 	if asc {
@@ -225,6 +335,28 @@ func (qb *userDemoRepoQueryBuilder) WhereCreatedAt(p db_repo.Predicate, value ti
 	return qb
 }
 
+func (qb *userDemoRepoQueryBuilder) WhereCreatedAtIn(value []time.Time) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "created_at", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereCreatedAtNotIn(value []time.Time) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "created_at", "NOT IN"),
+		value,
+	})
+	return qb
+}
+
 func (qb *userDemoRepoQueryBuilder) OrderByCreatedAt(asc bool) *userDemoRepoQueryBuilder {
 	order := "DESC"
 	if asc {
@@ -241,6 +373,28 @@ func (qb *userDemoRepoQueryBuilder) WhereUpdatedAt(p db_repo.Predicate, value ti
 		value  interface{}
 	}{
 		fmt.Sprintf("%v %v ?", "updated_at", p),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereUpdatedAtIn(value []time.Time) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "updated_at", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *userDemoRepoQueryBuilder) WhereUpdatedAtNotIn(value []time.Time) *userDemoRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "updated_at", "NOT IN"),
 		value,
 	})
 	return qb
