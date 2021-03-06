@@ -1,4 +1,4 @@
-package auth
+package middleware
 
 import (
 	"net/http"
@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func AuthHandler(ctx core.Context) (userId int64, userName string, err errno.Error) {
+func (m *middleware) Jwt(ctx core.Context) (userId int64, userName string, err errno.Error) {
 	auth := ctx.GetHeader("Authorization")
 	if auth == "" {
 		err = errno.NewError(
@@ -24,7 +24,7 @@ func AuthHandler(ctx core.Context) (userId int64, userName string, err errno.Err
 	}
 
 	cfg := configs.Get().JWT
-	claims, errParse := token.New(cfg.Secret).Parse(auth)
+	claims, errParse := token.New(cfg.Secret).JwtParse(auth)
 	if errParse != nil {
 		err = errno.NewError(
 			http.StatusUnauthorized,

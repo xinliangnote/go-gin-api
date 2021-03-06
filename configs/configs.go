@@ -54,15 +54,10 @@ type Config struct {
 		ExpireDuration time.Duration `toml:"expireDuration"`
 	} `toml:"jwt"`
 
-	Aes struct {
-		Key string `toml:"key"`
-		Iv  string `toml:"iv"`
-	} `toml:"aes"`
-
-	Rsa struct {
-		Private string `toml:"private"`
-		Public  string `toml:"public"`
-	} `toml:"rsa"`
+	URLToken struct {
+		Secret         string        `toml:"secret"`
+		ExpireDuration time.Duration `toml:"expireDuration"`
+	} `toml:"urlToken"`
 
 	Cmd struct {
 		GenTables string `toml:"genTables"`

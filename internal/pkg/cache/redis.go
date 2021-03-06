@@ -34,6 +34,7 @@ type Repo interface {
 	Expire(key string, ttl time.Duration) bool
 	ExpireAt(key string, ttl time.Time) bool
 	Del(keys ...string) bool
+	Exists(keys ...string) bool
 	Incr(key string, options ...Option) int64
 	Close() error
 }
@@ -146,6 +147,15 @@ func (c *cacheRepo) Expire(key string, ttl time.Duration) bool {
 func (c *cacheRepo) ExpireAt(key string, ttl time.Time) bool {
 	ok, _ := c.client.ExpireAt(key, ttl).Result()
 	return ok
+}
+
+//
+func (c *cacheRepo) Exists(keys ...string) bool {
+	if len(keys) == 0 {
+		return true
+	}
+	value, _ := c.client.Exists(keys...).Result()
+	return value > 0
 }
 
 // Del del some key from redis

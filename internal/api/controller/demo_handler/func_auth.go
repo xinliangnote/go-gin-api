@@ -28,7 +28,7 @@ type authResponse struct {
 func (h *handler) Auth() core.HandlerFunc {
 	return func(c core.Context) {
 		cfg := configs.Get().JWT
-		tokenString, err := token.New(cfg.Secret).Sign(1, "xinliangnote", time.Hour*cfg.ExpireDuration)
+		tokenString, err := token.New(cfg.Secret).JwtSign(1, "xinliangnote", time.Hour*cfg.ExpireDuration)
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

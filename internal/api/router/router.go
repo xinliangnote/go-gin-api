@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/demo_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/user_handler"
-	"github.com/xinliangnote/go-gin-api/internal/api/router/middleware/auth"
+	"github.com/xinliangnote/go-gin-api/internal/api/router/middleware"
 	"github.com/xinliangnote/go-gin-api/internal/graph/handler"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -33,6 +33,10 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.C
 		panic(err)
 	}
 
+	// 中间件
+	middles := middleware.New(logger, cache)
+
+	// graphQL 控制器
 	gqlHandler := handler.New(logger, db, cache)
 
 	gql := mux.Group("/graphql")
@@ -41,33 +45,31 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.C
 		gql.POST("/query", gqlHandler.Query())
 	}
 
+	// demo 控制器
 	demoHandler := demo_handler.New(logger, db, cache, grpConn)
-	userHandler := user_handler.New(logger, db, cache)
+	demo := mux.Group("/demo", core.WrapAuthHandler(middles.Jwt)) // 使用 jwt 验证
+	{
+		// 为了演示 Trace ，增加了一些看起来无意义的调试信息和 SQL 信息。
+		demo.GET("/trace", demoHandler.Trace())
 
-	// user_demo CURD
-	user := mux.Group("/user", core.WrapAuthHandler(auth.AuthHandler))
+		// 模拟数据
+		demo.GET("get/:name", core.AliasForRecordMetrics("/demo/get"), demoHandler.Get())
+		demo.POST("post", demoHandler.Post())
+	}
+
+	demoNoAuth := mux.Group("/auth") // 不使用 jwt 验证
+	{
+		demoNoAuth.POST("/get", demoHandler.Auth())
+	}
+
+	// user 控制器
+	userHandler := user_handler.New(logger, db, cache)
+	user := mux.Group("/user", core.WrapAuthHandler(middles.Jwt))
 	{
 		user.POST("/create", userHandler.Create())
 		user.PUT("/update", userHandler.UpdateNickNameByID())
 		user.PATCH("/delete/:id", userHandler.Delete())
 		user.GET("/info/:username", core.AliasForRecordMetrics("/user/info"), userHandler.Detail())
-	}
-
-	// auth
-	a := mux.Group("/auth")
-	{
-		a.POST("/get", demoHandler.Auth())
-	}
-
-	// demo
-	d := mux.Group("/demo", core.WrapAuthHandler(auth.AuthHandler)) //使用 auth 验证
-	{
-		// 为了演示 Trace ，增加了一些看起来无意义的调试信息和 SQL 信息。
-		d.GET("/trace", demoHandler.Trace())
-
-		// 模拟数据
-		d.GET("get/:name", core.AliasForRecordMetrics("/demo/get"), demoHandler.Get())
-		d.POST("post", demoHandler.Post())
 	}
 
 	return mux, nil

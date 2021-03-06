@@ -120,6 +120,10 @@ type Context interface {
 	Alias() string
 	setAlias(path string)
 
+	// RequestInputParams 获取所有参数
+	RequestInputParams() url.Values
+	// RequestPostFormParams  获取 PostForm 参数
+	RequestPostFormParams() url.Values
 	// Request 获取 Request 对象
 	Request() *http.Request
 	// RawData 获取 Request.Body
@@ -324,6 +328,18 @@ func (c *context) setAlias(path string) {
 	if path = strings.TrimSpace(path); path != "" {
 		c.ctx.Set(_Alias, path)
 	}
+}
+
+// RequestInputParams 获取所有参数
+func (c *context) RequestInputParams() url.Values {
+	_ = c.ctx.Request.ParseForm()
+	return c.ctx.Request.Form
+}
+
+// RequestPostFormParams 获取 PostForm 参数
+func (c *context) RequestPostFormParams() url.Values {
+	_ = c.ctx.Request.ParseForm()
+	return c.ctx.Request.PostForm
 }
 
 // Request 获取 Request

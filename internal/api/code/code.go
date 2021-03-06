@@ -13,6 +13,8 @@ const (
 	ParamBindError     = 10103
 	AuthorizationError = 10104
 	CallHTTPError      = 10105
+	ResubmitError      = 10106
+	ResubmitMsg        = 10107
 
 	// 模块级错误码 - 用户模块
 	IllegalUserName = 20101
@@ -29,6 +31,8 @@ var codeText = map[int]string{
 	ParamBindError:     "参数信息有误",
 	AuthorizationError: "签名信息有误",
 	CallHTTPError:      "调用第三方 HTTP 接口失败",
+	ResubmitError:      "Resubmit Error",
+	ResubmitMsg:        "请勿重复提交",
 
 	IllegalUserName: "非法用户名",
 	UserCreateError: "创建用户失败",
