@@ -1,4 +1,4 @@
-package go_gin_api_repo
+package go_gin_api
 
 import (
 	"encoding/json"
@@ -9,42 +9,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-type demoGetResponse struct {
-	Name string `json:"name"`
-	Job  string `json:"job"`
-}
+// 接口地址
+var demoPostApi = "http://127.0.0.1:9999/demo/post/"
 
+// 接口返回结构
 type demoPostResponse struct {
 	Name string `json:"name"`
 	Job  string `json:"job"`
 }
 
-func DemoGet(name string, opts ...httpclient.Option) (res *demoGetResponse, err error) {
-	api := "http://127.0.0.1:9999/demo/get/" + name
-	body, err := httpclient.Get(api, nil, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	res = new(demoGetResponse)
-	err = json.Unmarshal(body, res)
-	if err != nil {
-		return nil, errors.Wrap(err, "DemoGet json unmarshal error")
-	}
-
-	return res, nil
-}
-
-func DemoGetRetryVerify(body []byte) (shouldRetry bool) {
-	if len(body) == 0 {
-		return true
-	}
-
-	return false
-}
-
+// 发起请求
 func DemoPost(name string, opts ...httpclient.Option) (res *demoPostResponse, err error) {
-	api := "http://127.0.0.1:9999/demo/post"
+	api := demoPostApi
 	params := url.Values{}
 	params.Set("name", name)
 	body, err := httpclient.PostForm(api, params, opts...)
@@ -61,10 +37,30 @@ func DemoPost(name string, opts ...httpclient.Option) (res *demoPostResponse, er
 	return res, nil
 }
 
+// 设置重试规则
 func DemoPostRetryVerify(body []byte) (shouldRetry bool) {
 	if len(body) == 0 {
 		return true
 	}
 
 	return false
+}
+
+// 设置告警规则
+func DemoPostAlarmVerify(body []byte) (shouldAlarm bool) {
+	if len(body) == 0 {
+		return true
+	}
+
+	return false
+}
+
+// 设置 Mock 数据
+func DemoPostMock() (body []byte) {
+	res := new(demoPostResponse)
+	res.Name = "BB"
+	res.Job = "BB_JOB"
+
+	body, _ = json.Marshal(res)
+	return body
 }

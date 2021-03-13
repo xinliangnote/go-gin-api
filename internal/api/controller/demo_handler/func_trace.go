@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/third_party_request/go_gin_api_repo"
+	"github.com/xinliangnote/go-gin-api/internal/api/third_party_request/go_gin_api"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
@@ -34,12 +34,12 @@ type traceResponse []struct {
 func (h *handler) Trace() core.HandlerFunc {
 	return func(c core.Context) {
 		// 三方请求信息
-		res1, err := go_gin_api_repo.DemoGet("Tom",
+		res1, err := go_gin_api.DemoGet("Tom",
 			httpclient.WithTTL(time.Second*5),
 			httpclient.WithTrace(c.Trace()),
 			httpclient.WithLogger(c.Logger()),
 			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
-			httpclient.WithOnFailedRetry(3, time.Second*1, go_gin_api_repo.DemoGetRetryVerify),
+			httpclient.WithOnFailedRetry(3, time.Second*1, go_gin_api.DemoGetRetryVerify),
 		)
 
 		if err != nil {
@@ -56,12 +56,12 @@ func (h *handler) Trace() core.HandlerFunc {
 		p.Println("res1.Name", res1.Name, p.WithTrace(c.Trace()))
 
 		// 三方请求信息
-		res2, err := go_gin_api_repo.DemoPost("Jack",
+		res2, err := go_gin_api.DemoPost("Jack",
 			httpclient.WithTTL(time.Second*5),
 			httpclient.WithTrace(c.Trace()),
 			httpclient.WithLogger(c.Logger()),
 			httpclient.WithHeader("Authorization", c.GetHeader("Authorization")),
-			httpclient.WithOnFailedRetry(3, time.Second*1, go_gin_api_repo.DemoPostRetryVerify),
+			httpclient.WithOnFailedRetry(3, time.Second*1, go_gin_api.DemoPostRetryVerify),
 		)
 
 		if err != nil {

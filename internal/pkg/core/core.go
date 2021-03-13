@@ -273,13 +273,17 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	}
 
 	if !opt.disablePProf {
-		pprof.Register(mux.engine) // register pprof to gin
-		fmt.Println(color.Green("* [register pprof]"))
+		if !env.Active().IsPro() {
+			pprof.Register(mux.engine) // register pprof to gin
+			fmt.Println(color.Green("* [register pprof]"))
+		}
 	}
 
 	if !opt.disableSwagger {
-		mux.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
-		fmt.Println(color.Green("* [register swagger]"))
+		if !env.Active().IsPro() {
+			mux.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
+			fmt.Println(color.Green("* [register swagger]"))
+		}
 	}
 
 	if !opt.disablePrometheus {
