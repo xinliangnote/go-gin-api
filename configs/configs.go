@@ -58,10 +58,6 @@ type Config struct {
 		Secret         string        `toml:"secret"`
 		ExpireDuration time.Duration `toml:"expireDuration"`
 	} `toml:"urlToken"`
-
-	Cmd struct {
-		GenTables string `toml:"genTables"`
-	} `toml:"cmd"`
 }
 
 func init() {

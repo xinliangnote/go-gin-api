@@ -1,6 +1,15 @@
 ## 执行命令
-1. 定义生成的表，设置 config 中 cmd.genTables，可以自定义设置多张表，为空表示生成库中所有的表，如果设置多个表可用','分割；
-1. 在根目录下执行脚本文件：`./scripts/gormgen.sh`；
+在根目录下执行脚本：`./scripts/gormgen.sh addr user pass name tables`；
+- addr：数据库地址，例如：127.0.0.1:3306
+- user：账号，例如：root
+- pass：密码，例如：root
+- name：数据库名称，例如：go_gin_api
+- tables：表名，默认为 *，多个表名可用“,”分割，例如：user_demo
+
+例如：
+```
+./scripts/gormgen.sh 127.0.0.1:3306 root root go_gin_api user_demo
+```
 
 ## 参考
 - https://github.com/MohamedBassem/gormgen

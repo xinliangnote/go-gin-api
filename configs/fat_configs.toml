@@ -37,6 +37,3 @@ expireDuration = 24              # JWT ExpiresAt 过期时间(单位:小时)
 [urlToken]
 secret = 'i1ydX9RtHyuJTrw7frcu'  # URL Token secret
 expireDuration = 10              # URL Token ExpiresAt 过期时间(单位:分钟)
-
-[cmd]
-genTables = 'user_demo'

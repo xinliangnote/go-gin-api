@@ -2,17 +2,15 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strings"
 
-	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
-	"github.com/xinliangnote/go-gin-api/pkg/env"
-	"github.com/xinliangnote/go-gin-api/pkg/logger"
+	"github.com/xinliangnote/go-gin-api/cmd/mysqlmd/mysql"
 
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -33,39 +31,46 @@ type tableColumn struct {
 	ColumnDefault   sql.NullString `db:"COLUMN_DEFAULT"`   // default value
 }
 
-func main() {
-	// 初始化 logger
-	loggers, err := logger.NewJSONLogger(
-		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName(), env.Active().Value())),
-		logger.WithTimeLayout("2006-01-02 15:04:05"),
-		logger.WithFileP(configs.ProjectLogFile()),
-	)
-	if err != nil {
-		panic(err)
-	}
-	defer loggers.Sync()
+var (
+	dbAddr    string
+	dbUser    string
+	dbPass    string
+	dbName    string
+	genTables string
+)
 
+func init() {
+	addr := flag.String("addr", "", "请输入 db 地址，例如：127.0.0.1:3306\n")
+	user := flag.String("user", "", "请输入 db 用户名\n")
+	pass := flag.String("pass", "", "请输入 db 密码\n")
+	name := flag.String("name", "", "请输入 db 名称\n")
+	table := flag.String("tables", "*", "请输入 table 名称，默认为“*”，多个可用“,”分割\n")
+
+	flag.Parse()
+
+	dbAddr = *addr
+	dbUser = *user
+	dbPass = *pass
+	dbName = strings.ToLower(*name)
+	genTables = strings.ToLower(*table)
+}
+
+func main() {
 	// 初始化 DB
-	dbRepo, err := db.New()
+	db, err := mysql.New(dbAddr, dbUser, dbPass, dbName)
 	if err != nil {
-		loggers.Fatal("new db err", zap.Error(err))
+		log.Fatal("new db err", err)
 	}
 
 	defer func() {
-		if err := dbRepo.DbWClose(); err != nil {
-			loggers.Error("dbw close err", zap.Error(err))
-		}
-
-		if err := dbRepo.DbRClose(); err != nil {
-			loggers.Error("dbr close err", zap.Error(err))
+		if err := db.DbClose(); err != nil {
+			log.Println("db close err", err)
 		}
 	}()
 
-	dbName := configs.Get().MySQL.Read.Name
-	genTables := configs.Get().Cmd.GenTables
-	tables, err := queryTables(dbRepo.GetDbR(), dbName, genTables)
+	tables, err := queryTables(db.GetDb(), dbName, genTables)
 	if err != nil {
-		loggers.Error("query tables of database err", zap.Error(err))
+		log.Println("query tables of database err", err)
 		return
 	}
 
@@ -102,7 +107,7 @@ func main() {
 			"| 序号 | 名称 | 描述 | 类型 | 键 | 为空 | 额外 | 默认值 |\n" +
 			"| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |\n"
 
-		columnInfo, columnInfoErr := queryTableColumn(dbRepo.GetDbR(), dbName, table.Name)
+		columnInfo, columnInfoErr := queryTableColumn(db.GetDb(), dbName, table.Name)
 		if columnInfoErr != nil {
 			continue
 		}
@@ -163,7 +168,7 @@ func queryTables(db *gorm.DB, dbName string, tableName string) ([]tableInfo, err
 	}
 
 	// filter tables when specified tables params
-	if tableName != "" {
+	if tableName != "*" {
 		tableCollect = nil
 		chooseTables := strings.Split(tableName, ",")
 		indexMap := make(map[int]int)
