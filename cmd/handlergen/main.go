@@ -3,13 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go/ast"
-	"go/parser"
 	"go/token"
 	"log"
 	"os"
 	"strings"
 	"unicode"
+
+	"github.com/dave/dst"
+	"github.com/dave/dst/decorator"
 )
 
 var handlerName string
@@ -24,25 +25,25 @@ func init() {
 func main() {
 	fs := token.NewFileSet()
 	file := fmt.Sprintf("./internal/api/controller/%s/handler.go", handlerName)
-	parsedFile, err := parser.ParseFile(fs, file, nil, 0)
+	parsedFile, err := decorator.ParseFile(fs, file, nil, 0)
 	if err != nil {
 		log.Fatalf("parsing package: %s: %s\n", file, err)
 	}
 
-	ast.Inspect(parsedFile, func(n ast.Node) bool {
-		decl, ok := n.(*ast.GenDecl)
+	dst.Inspect(parsedFile, func(n dst.Node) bool {
+		decl, ok := n.(*dst.GenDecl)
 		if !ok || decl.Tok != token.TYPE {
 			return true
 		}
 
 		for _, spec := range decl.Specs {
-			typeSpec, _ok := spec.(*ast.TypeSpec)
+			typeSpec, _ok := spec.(*dst.TypeSpec)
 			if !_ok {
 				continue
 			}
 
-			var interfaceType *ast.InterfaceType
-			if interfaceType, ok = typeSpec.Type.(*ast.InterfaceType); !ok {
+			var interfaceType *dst.InterfaceType
+			if interfaceType, ok = typeSpec.Type.(*dst.InterfaceType); !ok {
 				continue
 			}
 
@@ -65,6 +66,22 @@ func main() {
 					funcContent += "\n)\n\n"
 					funcContent += fmt.Sprintf("\n\ntype %sRequest struct {}\n\n", Lcfirst(v.Names[0].String()))
 					funcContent += fmt.Sprintf("type %sResponse struct {}\n\n", Lcfirst(v.Names[0].String()))
+
+					// 首行注释
+					funcContent += fmt.Sprintf("%s\n", v.Decorations().Start.All()[0])
+
+					nameArr := strings.Split(v.Decorations().Start.All()[0], v.Names[0].String())
+					funcContent += fmt.Sprintf("// @Summary%s \n", nameArr[1])
+					funcContent += fmt.Sprintf("// @Description%s \n", nameArr[1])
+					// Tags
+					funcContent += fmt.Sprintf("%s \n", v.Decorations().Start.All()[1])
+					funcContent += fmt.Sprintf("// @Accept json \n")
+					funcContent += fmt.Sprintf("// @Produce json \n")
+					funcContent += fmt.Sprintf("// @Param Request body %sRequest true \"请求信息\" \n", Lcfirst(v.Names[0].String()))
+					funcContent += fmt.Sprintf("// @Success 200 {object} %sResponse \n", Lcfirst(v.Names[0].String()))
+					funcContent += fmt.Sprintf("// @Failure 400 {object} code.Failure \n")
+					// Router
+					funcContent += fmt.Sprintf("%s \n", v.Decorations().Start.All()[2])
 					funcContent += fmt.Sprintf("func (h *handler) %s() core.HandlerFunc { \n return func(c core.Context) {\n\n}}", v.Names[0].String())
 
 					funcFile.WriteString(funcContent)

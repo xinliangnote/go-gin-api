@@ -19,9 +19,15 @@ type Handler interface {
 	Get() core.HandlerFunc
 	// 示例：支持 post 请求的方法
 	Post() core.HandlerFunc
+
 	// 获取授权信息
+	// @Tags Demo
+	// @Router /auth/get [post]
 	Auth() core.HandlerFunc
+
 	// Trace 示例
+	// @Tags Demo
+	// @Router /demo/trace [get]
 	Trace() core.HandlerFunc
 }
 

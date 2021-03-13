@@ -14,13 +14,25 @@ var _ Handler = (*handler)(nil)
 type Handler interface {
 	// i 为了避免被其他包实现
 	i()
+
 	// Create 创建用户
+	// @Tags User
+	// @Router /user/create [post]
 	Create() core.HandlerFunc
+
 	// UpdateNickNameByID 编辑用户 - 通过主键ID更新用户昵称
+	// @Tags User
+	// @Router /user/update [put]
 	UpdateNickNameByID() core.HandlerFunc
+
 	// Delete 删除用户
+	// @Tags User
+	// @Router /user/delete/{id} [patch]
 	Delete() core.HandlerFunc
+
 	// Detail 用户详情
+	// @Tags User
+	// @Router /user/info/{username} [get]
 	Detail() core.HandlerFunc
 }
 

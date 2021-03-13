@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/99designs/gqlgen v0.13.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
+	github.com/dave/dst v0.26.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/pprof v1.2.1
 	github.com/gin-gonic/gin v1.6.3
