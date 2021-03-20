@@ -246,6 +246,9 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	fmt.Println(color.Green(fmt.Sprintf("* [register port %s]", configs.ProjectPort())))
 	fmt.Println(color.Green(fmt.Sprintf("* [register env %s]", env.Active().Value())))
 
+	mux.engine.StaticFS("bootstrap", http.Dir("./assets/bootstrap"))
+	mux.engine.LoadHTMLGlob("./assets/templates/**/*")
+
 	// withoutLogPaths 这些请求，默认不记录日志
 	withoutTracePaths := map[string]bool{
 		"/metrics": true,

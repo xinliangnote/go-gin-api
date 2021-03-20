@@ -78,13 +78,15 @@ func main() {
 
 		filepath := "./internal/api/repository/db_repo/" + table.Name + "_repo"
 		_ = os.Mkdir(filepath, 0766)
+		fmt.Println("create dir : ", filepath)
 
 		mdName := fmt.Sprintf("%s/gen_table.md", filepath)
 		mdFile, err := os.OpenFile(mdName, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0766)
 		if err != nil {
-			fmt.Printf("create and open markdown file error %v\n", err.Error())
+			fmt.Printf("markdown file error %v\n", err.Error())
 			return
 		}
+		fmt.Println("  └── file : ", table.Name+"_repo/gen_table.md")
 
 		modelName := fmt.Sprintf("%s/gen_model.go", filepath)
 		modelFile, err := os.OpenFile(modelName, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0766)
@@ -92,6 +94,7 @@ func main() {
 			fmt.Printf("create and open model file error %v\n", err.Error())
 			return
 		}
+		fmt.Println("  └── file : ", table.Name+"_repo/gen_model.go")
 
 		modelContent := fmt.Sprintf("package %s%s\n", table.Name, "_repo")
 		modelContent += fmt.Sprintf(`import "time"`)

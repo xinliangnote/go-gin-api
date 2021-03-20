@@ -13,7 +13,7 @@ time go run -v ./cmd/handlergen/main.go  -handler $1
 shellExit $?
 
 printf "\nFormatting code\n\n"
-time go run -v github.com/koketama/mfmt
+time go run -v ./cmd/mfmt/main.go
 shellExit $?
 
 printf "\nDone.\n\n"

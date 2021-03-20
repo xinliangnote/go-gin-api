@@ -22,7 +22,7 @@
 1. 支持 [go-redis](https://github.com/go-redis/redis/v7) 组件
 1. 支持 RESTful API 返回值规范
 1. 支持 gormgen、handlergen 代码生成工具
-
+1. 支持 web 界面，使用的 [Light Year Admin 模板](https://gitee.com/yinqi/Light-Year-Admin-Using-Iframe)
 
 
 ## 文档索引

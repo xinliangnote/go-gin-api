@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+  
+<body>
+<div class="container-fluid p-t-15">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <header class="card-header"><div class="card-title"> 配置信息</div></header>
+        <div class="card-body">
+          <h5 class="card-title">MySQL</h5>
+          <p>主库信息：{{.MySQL.Write.Addr}}，账号：{{.MySQL.Write.User}}，数据库：{{.MySQL.Write.Name}}</p>
+          <p>从库信息：{{.MySQL.Read.Addr}}，账号：{{.MySQL.Read.User}}，数据库：{{.MySQL.Read.Name}}</p>
+          <p>最大连接数：{{ .MySQL.Base.MaxOpenConn }}</p>
+          <p>空闲连接数：{{ .MySQL.Base.MaxIdleConn }}</p>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title">Redis</h5>
+          <p>地址：{{ .Redis.Addr }} </p>
+          <p>最大连接数：{{ .Redis.PoolSize }} </p>
+          <p>空闲连接数：{{ .Redis.MinIdleConns }} </p>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title">Mail</h5>
+          <p>邮箱服务器：{{ .Mail.Host }} </p>
+          <p>发件人邮箱地址：{{ .Mail.User }} </p>
+          <p>收件人邮箱地址：{{ .Mail.To }} </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

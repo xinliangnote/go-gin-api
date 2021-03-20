@@ -33,20 +33,19 @@ func main() {
 	// 初始化 DB
 	db, err := mysql.New(dbAddr, dbUser, dbPass, dbName)
 	if err != nil {
-		log.Fatal("new db err", err)
+		log.Fatal("new db err: ", err.Error())
 	}
 
 	defer func() {
 		if err := db.DbClose(); err != nil {
-			log.Println("db close err", err)
+			log.Fatal("db close err: ", err.Error())
 		}
 	}()
 
 	// 创建 user_demo 表
 	err = db.GetDb().Exec(mysql.CreateUserDemoTableSql()).Error
 	if err != nil {
-		log.Println("create user_demo table err", err)
-		return
+		log.Fatal("create user_demo table err: ", err.Error())
 	}
 
 	log.Println("create user_demo table success")

@@ -97,6 +97,9 @@ type Context interface {
 	GraphPayload(payload interface{})
 	getGraphPayload() interface{}
 
+	// HTML 返回界面
+	HTML(name string, obj interface{})
+
 	// AbortWithError 错误返回
 	AbortWithError(err errno.Error)
 	abortError() errno.Error
@@ -249,6 +252,10 @@ func (c *context) getGraphPayload() interface{} {
 
 func (c *context) GraphPayload(payload interface{}) {
 	c.ctx.Set(_GraphPayloadName, payload)
+}
+
+func (c *context) HTML(name string, obj interface{}) {
+	c.ctx.HTML(200, name+".html", obj)
 }
 
 func (c *context) Header() http.Header {

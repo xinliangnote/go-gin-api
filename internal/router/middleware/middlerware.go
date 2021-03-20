@@ -1,10 +1,8 @@
 package middleware
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/service/user_service"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/grpc"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"go.uber.org/zap"
@@ -21,13 +19,14 @@ type Middleware interface {
 
 	// Resubmit 中间件
 	Resubmit() core.HandlerFunc
+
+	// DisableLog 不记录日志
+	DisableLog() core.HandlerFunc
 }
 
 type middleware struct {
-	logger      *zap.Logger
-	cache       cache.Repo
-	grpConn     grpc.ClientConn
-	userService user_service.UserService
+	logger *zap.Logger
+	cache  cache.Repo
 }
 
 func New(logger *zap.Logger, cache cache.Repo) Middleware {

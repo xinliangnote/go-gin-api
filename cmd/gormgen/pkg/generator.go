@@ -3,6 +3,7 @@ package pkg
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"go/format"
 	"io/ioutil"
 	"log"
@@ -119,6 +120,7 @@ func (g *Generator) Flush() error {
 		if err := ioutil.WriteFile(filename, g.buf[k].Bytes(), 0777); err != nil {
 			log.Fatalln(err)
 		}
+		fmt.Println("  └── file : ", fmt.Sprintf("%s_repo/gen_%s.go", strings.ToLower(k), strings.ToLower(k)))
 	}
 	return nil
 }

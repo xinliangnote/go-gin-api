@@ -52,7 +52,7 @@ func (t *{{.StructName}}) Delete(db *gorm.DB) (err error) {
 }
 
 func (t *{{.StructName}}) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
-	if err = db.Model(&UserDemo{}).Where("id = ?", t.Id).Updates(m).Error; err != nil {
+	if err = db.Model(&{{.StructName}}{}).Where("id = ?", t.Id).Updates(m).Error; err != nil {
 		return errors.Wrap(err, "updates err")
 	}
 	return nil

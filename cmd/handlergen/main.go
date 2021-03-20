@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"go/token"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -24,10 +25,15 @@ func init() {
 
 func main() {
 	fs := token.NewFileSet()
-	file := fmt.Sprintf("./internal/api/controller/%s/handler.go", handlerName)
-	parsedFile, err := decorator.ParseFile(fs, file, nil, 0)
+	filePath := fmt.Sprintf("./internal/api/controller/%s", handlerName)
+	parsedFile, err := decorator.ParseFile(fs, filePath+"/handler.go", nil, 0)
 	if err != nil {
-		log.Fatalf("parsing package: %s: %s\n", file, err)
+		log.Fatalf("parsing package: %s: %s\n", filePath, err)
+	}
+
+	files, _ := ioutil.ReadDir(filePath)
+	if len(files) > 1 {
+		log.Fatalf("请先确保 %s 目录中，有且仅有 handler.go 一个文件。", filePath)
 	}
 
 	dst.Inspect(parsedFile, func(n dst.Node) bool {
@@ -59,6 +65,7 @@ func main() {
 					if err != nil {
 						fmt.Printf("create and open func file error %v\n", err.Error())
 					}
+					fmt.Println("  └── file : ", filename)
 
 					funcContent := fmt.Sprintf("package %s\n\n", handlerName)
 					funcContent += "import (\n"

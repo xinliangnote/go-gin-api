@@ -1,0 +1,114 @@
+.mt-wrapper{
+    position: relative;
+    z-index: 1;
+}
+.mt-nav-bar {
+    width : 100%;
+    z-index: 200;
+    position: absolute;
+    display: flex;
+}
+.mt-nav-bar .mt-nav{
+    background-color: #fff;
+}
+.mt-nav-panel{
+    overflow: hidden;
+}
+.mt-nav-panel ul{
+    width: 10000px;
+}
+.mt-nav-panel ul li {
+    position: relative;
+}
+.mt-tab-content{
+    height: 100%;
+}
+.mt-close-tab {
+    position: absolute;
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    top: 18px;
+    right: 10px;
+    color: #c2c2c2;
+    cursor: pointer;
+    display: none;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: 2px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transition: all .3s cubic-bezier(.645,.045,.355,1);
+    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    -webkit-transform-origin: 100% 50%;
+    transform-origin: 100% 50%;
+}
+.mt-close-tab:before {
+    -webkit-transform: scale(.8);
+    transform: scale(.8);
+    display: inline-block;
+    /*vertical-align: -1px;*/
+}
+li:hover .mt-close-tab {
+    display: inline;
+}
+.mt-hidden-list .mt-close-tab {
+    display: none !important;
+}
+.mt-nav-bar a {
+    cursor: pointer !important;
+    max-height: 48px;
+    padding-top: 14px;
+    padding-bottom: 13px;
+}
+@media (max-width: 767px){
+    .mt-tab-content{
+        /*padding-top: 0 !important;*/
+    }
+}
+.mt-tab-content{
+    -webkit-overflow-scrolling:touch;
+    overflow:auto;
+}
+.mt-dragging-tab{
+    left: auto;
+    position: absolute !important;
+    z-index: 9999 !important;
+}
+.mt-dragging-tab > a{
+    background: #FBFDFD !important;
+}
+
+/*新增*/
+.mt-nav-bar .mt-nav .nav-tabs {
+    margin-bottom: 0px;
+    border-color: #eceeef;
+}
+.mt-close-tab:hover {
+    color: #f96868;
+}
+.mt-dropdown .caret {
+    position: absolute;
+    top: 22px;
+}
+.mt-dropdown .dropdown-menu {
+    margin-top: 0px;
+}
+#contextify-menu {
+    min-width: 80px!important;
+}
+.mt-close-tab:hover {
+    background-color: #f96868;
+    color: #fff;
+}
+.mt-nav .nav-tabs a:not([data-type="main"]) {
+    padding-right: 40px;
+}
+.mt-nav-tools-left li a,
+.mt-nav-tools-right li a {
+    padding-right: 15px!important;
+}
+.mt-nav-bar .mt-nav .nav-tabs .mt-dragging {
+    margin-bottom: -1px;
+}
