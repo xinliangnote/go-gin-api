@@ -14,6 +14,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
+	_ "net/http/pprof"
 
 	"go.uber.org/zap"
 )
