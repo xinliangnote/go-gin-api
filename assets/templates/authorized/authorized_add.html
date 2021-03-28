@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-multitabs/multitabs.min.css" rel="stylesheet" type="text/css">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">新增调用方</div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">调用方</label>
+                            <input type="text" class="form-control" maxlength="25" id="business_key"
+                                   placeholder="请输入调用方标识">
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput2">调用方对接人</label>
+                            <input type="text" class="form-control" maxlength="50" id="business_developer"
+                                   placeholder="请输入调用方对接人">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1">备注</label>
+                            <textarea class="form-control" maxlength="225" rows="3" id="remark"
+                                      placeholder="备注"></textarea>
+                        </div>
+                        <button type="button" id="btnOk" class="btn btn-primary">确认</button>
+                        <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            执行中...
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/util.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("input#business_key").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        $("input#business_developer").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        $("textarea#remark").maxlength({
+            threshold: 255,
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        $('#btnOk').on('click', function () {
+            const businessKey = $("#business_key").val();
+            if (businessKey === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入调用方标识。',
+                });
+                return false;
+            }
+
+            const businessDeveloper = $("#business_developer").val();
+            if (businessDeveloper === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入调用方对接人。',
+                });
+                return false;
+            }
+
+            const remark = $("#remark").val();
+
+            $(this).hide();
+            $("#btnLoading").show();
+
+            const postData = {
+                business_key: businessKey,
+                business_developer: businessDeveloper,
+                remark: remark,
+            };
+
+            $.post("/api/authorized", JSON.stringify(postData), function (data) {
+                $("#btnLoading").hide();
+                $("#btnOk").show();
+
+                $.alert({
+                    title: '操作成功',
+                    icon: 'mdi mdi-check-decagram',
+                    type: 'green',
+                    content: '编号：' + data.id + ' 创建完成。',
+                    buttons: {
+                        okay: {
+                            text: '关闭',
+                            action: function () {
+                                location.href = "/authorized/list";
+                            }
+                        }
+                    }
+                });
+
+            }).fail(function (response) {
+                $("#btnLoading").hide();
+                $("#btnOk").show();
+
+                AjaxError(response);
+            })
+
+        });
+    })
+</script>
+</body>
+</html>

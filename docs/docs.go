@@ -28,6 +28,378 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/authorized": {
+            "get": {
+                "description": "调用方列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "调用方列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "第几页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "每页显示条数",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "调用方key",
+                        "name": "business_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "调用方secret",
+                        "name": "business_secret",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "调用方对接人",
+                        "name": "business_developer",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.listResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "新增调用方",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "新增调用方",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.createRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/authorized/used": {
+            "patch": {
+                "description": "更新调用方为启用/禁用",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "更新调用方为启用/禁用",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.updateUsedRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.updateUsedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/authorized/{id}": {
+            "delete": {
+                "description": "删除调用方",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "删除调用方",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.deleteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/authorized_api": {
+            "get": {
+                "description": "调用方接口地址列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "调用方接口地址列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "调用方key",
+                        "name": "business_key",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.listAPIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "授权调用方接口地址",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "授权调用方接口地址",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.createAPIRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.createAPIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/authorized_api/{id}": {
+            "delete": {
+                "description": "删除调用方接口地址",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.authorized"
+                ],
+                "summary": "删除调用方接口地址",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/authorized_handler.deleteAPIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/hashids/decode/{id}": {
+            "get": {
+                "description": "HashIds 解密",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "HashIds 解密",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "需解密的密文",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.hashIdsDecodeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/hashids/encode/{id}": {
+            "get": {
+                "description": "HashIds 加密",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "HashIds 加密",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "需加密的数字",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.hashIdsEncodeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/get": {
             "post": {
                 "description": "获取授权信息",
@@ -107,6 +479,166 @@ var doc = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/test/create": {
+            "post": {
+                "description": "创建用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "创建用户",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.createRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/test/delete": {
+            "post": {
+                "description": "删除用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "删除用户",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.deleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.deleteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/test/detail": {
+            "post": {
+                "description": "用户详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "用户详情",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.detailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/test/update": {
+            "post": {
+                "description": "编辑用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "编辑用户",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.updateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/test_handler.updateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/code.Failure"
                         }
@@ -324,6 +856,204 @@ var doc = `{
         }
     },
     "definitions": {
+        "authorized_handler.createAPIRequest": {
+            "type": "object",
+            "properties": {
+                "api": {
+                    "description": "请求地址",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "HashID",
+                    "type": "string"
+                },
+                "method": {
+                    "description": "请求方法",
+                    "type": "string"
+                }
+            }
+        },
+        "authorized_handler.createAPIResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "authorized_handler.createRequest": {
+            "type": "object",
+            "properties": {
+                "business_developer": {
+                    "description": "调用方对接人",
+                    "type": "string"
+                },
+                "business_key": {
+                    "description": "调用方key",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                }
+            }
+        },
+        "authorized_handler.createResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "authorized_handler.deleteAPIResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "authorized_handler.deleteResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "authorized_handler.listAPIData": {
+            "type": "object",
+            "properties": {
+                "api": {
+                    "description": "调用方对接人",
+                    "type": "string"
+                },
+                "business_key": {
+                    "description": "调用方key",
+                    "type": "string"
+                },
+                "hash_id": {
+                    "description": "hashID",
+                    "type": "string"
+                },
+                "method": {
+                    "description": "调用方secret",
+                    "type": "string"
+                }
+            }
+        },
+        "authorized_handler.listAPIResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/authorized_handler.listAPIData"
+                    }
+                }
+            }
+        },
+        "authorized_handler.listData": {
+            "type": "object",
+            "properties": {
+                "business_developer": {
+                    "description": "调用方对接人",
+                    "type": "string"
+                },
+                "business_key": {
+                    "description": "调用方key",
+                    "type": "string"
+                },
+                "business_secret": {
+                    "description": "调用方secret",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "created_user": {
+                    "description": "创建人",
+                    "type": "string"
+                },
+                "hashid": {
+                    "description": "hashid",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "is_used": {
+                    "description": "是否启用 1:是 -1:否",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "updated_user": {
+                    "description": "更新人",
+                    "type": "string"
+                }
+            }
+        },
+        "authorized_handler.listResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/authorized_handler.listData"
+                    }
+                },
+                "pagination": {
+                    "type": "object",
+                    "properties": {
+                        "current_page": {
+                            "type": "integer"
+                        },
+                        "pre_page_count": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "authorized_handler.updateUsedRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "string"
+                },
+                "used": {
+                    "description": "是否启用 1:是 -1:否",
+                    "type": "integer"
+                }
+            }
+        },
+        "authorized_handler.updateUsedResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
         "code.Failure": {
             "type": "object",
             "properties": {
@@ -347,6 +1077,48 @@ var doc = `{
                 "expire_time": {
                     "description": "过期时间",
                     "type": "integer"
+                }
+            }
+        },
+        "test_handler.createRequest": {
+            "type": "object"
+        },
+        "test_handler.createResponse": {
+            "type": "object"
+        },
+        "test_handler.deleteRequest": {
+            "type": "object"
+        },
+        "test_handler.deleteResponse": {
+            "type": "object"
+        },
+        "test_handler.detailRequest": {
+            "type": "object"
+        },
+        "test_handler.detailResponse": {
+            "type": "object"
+        },
+        "test_handler.updateRequest": {
+            "type": "object"
+        },
+        "test_handler.updateResponse": {
+            "type": "object"
+        },
+        "tool_handler.hashIdsDecodeResponse": {
+            "type": "object",
+            "properties": {
+                "val": {
+                    "description": "解密后的值",
+                    "type": "integer"
+                }
+            }
+        },
+        "tool_handler.hashIdsEncodeResponse": {
+            "type": "object",
+            "properties": {
+                "val": {
+                    "description": "加密后的值",
+                    "type": "string"
                 }
             }
         },

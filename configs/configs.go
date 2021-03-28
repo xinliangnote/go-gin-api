@@ -58,6 +58,11 @@ type Config struct {
 		Secret         string        `toml:"secret"`
 		ExpireDuration time.Duration `toml:"expireDuration"`
 	} `toml:"urlToken"`
+
+	HashIds struct {
+		Secret string `toml:"secret"`
+		Length int    `toml:"length"`
+	} `toml:"hashids"`
 }
 
 func init() {

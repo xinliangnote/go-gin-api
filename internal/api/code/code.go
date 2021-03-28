@@ -15,6 +15,7 @@ const (
 	CallHTTPError      = 10105
 	ResubmitError      = 10106
 	ResubmitMsg        = 10107
+	HashIdsDecodeError = 10108
 
 	// 模块级错误码 - 用户模块
 	IllegalUserName = 20101
@@ -22,7 +23,15 @@ const (
 	UserUpdateError = 20103
 	UserSearchError = 20104
 
-	// ...
+	// 授权调用方
+	AuthorizedCreateError    = 30101
+	AuthorizedListError      = 30102
+	AuthorizedDeleteError    = 30103
+	AuthorizedUpdateError    = 30104
+	AuthorizedDetailError    = 30105
+	AuthorizedCreateAPIError = 30106
+	AuthorizedListAPIError   = 30107
+	AuthorizedDeleteAPIError = 30108
 )
 
 var codeText = map[int]string{
@@ -33,11 +42,21 @@ var codeText = map[int]string{
 	CallHTTPError:      "调用第三方 HTTP 接口失败",
 	ResubmitError:      "Resubmit Error",
 	ResubmitMsg:        "请勿重复提交",
+	HashIdsDecodeError: "ID 参数有误",
 
 	IllegalUserName: "非法用户名",
 	UserCreateError: "创建用户失败",
 	UserUpdateError: "更新用户失败",
 	UserSearchError: "查询用户失败",
+
+	AuthorizedCreateError:    "创建调用方失败",
+	AuthorizedListError:      "获取调用方列表页失败",
+	AuthorizedDeleteError:    "删除调用方失败",
+	AuthorizedUpdateError:    "更新调用方失败",
+	AuthorizedDetailError:    "获取调用方详情失败",
+	AuthorizedCreateAPIError: "创建调用方API地址失败",
+	AuthorizedListAPIError:   "获取调用方API地址列表失败",
+	AuthorizedDeleteAPIError: "删除调用方API地址失败",
 }
 
 func Text(code int) string {

@@ -23,6 +23,7 @@ require (
 	github.com/prometheus/client_golang v0.9.3
 	github.com/rs/cors v1.7.0
 	github.com/shirou/gopsutil v3.21.2+incompatible
+	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/spf13/cast v1.3.0
 	github.com/spf13/viper v1.7.1
 	github.com/swaggo/gin-swagger v1.3.0

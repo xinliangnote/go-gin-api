@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 
@@ -42,11 +43,34 @@ func main() {
 		}
 	}()
 
+	// 开启事务
+	tx := db.GetDb().Begin()
+
 	// 创建 user_demo 表
-	err = db.GetDb().Exec(mysql.CreateUserDemoTableSql()).Error
+	err = tx.Exec(mysql.CreateUserDemoTableSql()).Error
 	if err != nil {
+		tx.Rollback()
 		log.Fatal("create user_demo table err: ", err.Error())
 	}
+	fmt.Println("create user_demo table success")
 
-	log.Println("create user_demo table success")
+	// 创建 authorized 表
+	err = tx.Exec(mysql.CreateAuthorizedTableSql()).Error
+	if err != nil {
+		tx.Rollback()
+		log.Fatal("create authorized table err: ", err.Error())
+	}
+	fmt.Println("create authorized table success")
+
+	// 创建 authorized_api 表
+	err = tx.Exec(mysql.CreateAuthorizedAPITableSql()).Error
+	if err != nil {
+		tx.Rollback()
+		log.Fatal("create authorized_api table err: ", err.Error())
+	}
+	fmt.Println("create authorized_api table success")
+
+	// 完成事务
+	tx.Commit()
+
 }

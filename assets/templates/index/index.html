@@ -32,21 +32,35 @@
         
         <nav class="sidebar-main">
           <ul class="nav-drawer">
-            <li class="nav-item active"> <a class="multitabs" href="/dashboard"><i class="mdi mdi-home"></i> <span>仪表盘</span></a> </li>
-            <li class="nav-item"> <a class="multitabs" href="/configinfo"><i class="mdi mdi-settings-box"></i> <span>配置信息</span></a> </li>
+              <li class="nav-item active"> <a class="multitabs" href="/dashboard"><i class="mdi mdi-home"></i> <span>仪表盘</span></a> </li>
+              <li class="nav-item"> <a class="multitabs" href="/configinfo"><i class="mdi mdi-settings-box"></i> <span>配置信息</span></a> </li>
 
-            <li class="nav-item nav-item-has-subnav">
-              <a href="javascript:void(0)"><i class="mdi mdi-code-not-equal-variant"></i> <span>代码生成</span></a>
-              <ul class="nav nav-subnav">
-                <li> <a class="multitabs" href="/init">初始化</a> </li>
-                <li> <a class="multitabs" href="/gormgen">gormgen</a> </li>
-                <li> <a class="multitabs" href="/handlergen">handlergen</a> </li>
-              </ul>
-            </li>
+              <li class="nav-item nav-item-has-subnav">
+                <a href="javascript:void(0)"><i class="mdi mdi-code-not-equal-variant"></i> <span>代码生成</span></a>
+                <ul class="nav nav-subnav">
+                  <li> <a class="multitabs" href="/init">初始化</a> </li>
+                  <li> <a class="multitabs" href="/gormgen">gormgen</a> </li>
+                  <li> <a class="multitabs" href="/handlergen">handlergen</a> </li>
+                </ul>
+              </li>
 
-            <li class="nav-item"> <a href="/swagger/index.html" target="_blank" ><i class="mdi mdi-file-document-box"></i> <span>接口文档</span></a> </li>
-            <li class="nav-item"> <a href="/graphql" target="_blank" ><i class="mdi mdi-file-document-box-search"></i> <span>GraphQL</span></a> </li>
-            <li class="nav-item"> <a href="/metrics" target="_blank" ><i class="mdi mdi-speedometer"></i> <span>接口指标</span></a> </li>
+              <li class="nav-item nav-item-has-subnav">
+                  <a href="javascript:void(0)"><i class="mdi mdi-playlist-check"></i> <span>授权调用方</span></a>
+                  <ul class="nav nav-subnav">
+                      <li> <a class="multitabs" href="/authorized/list">调用方</a> </li>
+                  </ul>
+              </li>
+
+              <li class="nav-item"> <a href="/swagger/index.html" target="_blank" ><i class="mdi mdi-file-document-box"></i> <span>接口文档</span></a> </li>
+              <li class="nav-item"> <a href="/graphql" target="_blank" ><i class="mdi mdi-file-document-box-search"></i> <span>GraphQL</span></a> </li>
+              <li class="nav-item"> <a href="/metrics" target="_blank" ><i class="mdi mdi-speedometer"></i> <span>接口指标</span></a> </li>
+
+              <li class="nav-item nav-item-has-subnav">
+                  <a href="javascript:void(0)"><i class="mdi mdi-tools"></i> <span>工具箱</span></a>
+                  <ul class="nav nav-subnav">
+                      <li> <a class="multitabs" href="/tool/hashids">hashids</a> </li>
+                  </ul>
+              </li>
 
           </ul>
         </nav>

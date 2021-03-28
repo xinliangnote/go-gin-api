@@ -1,7 +1,9 @@
 package router
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/api/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/demo_handler"
+	"github.com/xinliangnote/go-gin-api/internal/api/controller/tool_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/user_handler"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 )
@@ -32,5 +34,25 @@ func setApiRouter(r *resource) {
 		user.PUT("/update", userHandler.UpdateNickNameByID())
 		user.PATCH("/delete/:id", userHandler.Delete())
 		user.GET("/info/:username", core.AliasForRecordMetrics("/user/info"), userHandler.Detail())
+	}
+
+	// api
+	api := r.mux.Group("/api")
+	{
+		// authorized
+		authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
+		api.POST("/authorized", authorizedHandler.Create())
+		api.GET("/authorized", authorizedHandler.List())
+		api.PATCH("/authorized/used", authorizedHandler.UpdateUsed())
+		api.DELETE("/authorized/:id", authorizedHandler.Delete())
+
+		api.POST("/authorized_api", authorizedHandler.CreateAPI())
+		api.GET("/authorized_list", authorizedHandler.ListAPI())
+		api.DELETE("/authorized_api/:id", authorizedHandler.DeleteAPI())
+
+		// tool
+		toolHandler := tool_handler.New(r.logger, r.db, r.cache)
+		api.GET("/tool/hashids/encode/:id", toolHandler.HashIdsEncode())
+		api.GET("/tool/hashids/decode/:id", toolHandler.HashIdsDecode())
 	}
 }

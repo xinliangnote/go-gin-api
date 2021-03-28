@@ -1,4 +1,141 @@
 definitions:
+  authorized_handler.createAPIRequest:
+    properties:
+      api:
+        description: 请求地址
+        type: string
+      id:
+        description: HashID
+        type: string
+      method:
+        description: 请求方法
+        type: string
+    type: object
+  authorized_handler.createAPIResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  authorized_handler.createRequest:
+    properties:
+      business_developer:
+        description: 调用方对接人
+        type: string
+      business_key:
+        description: 调用方key
+        type: string
+      remark:
+        description: 备注
+        type: string
+    type: object
+  authorized_handler.createResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  authorized_handler.deleteAPIResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  authorized_handler.deleteResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  authorized_handler.listAPIData:
+    properties:
+      api:
+        description: 调用方对接人
+        type: string
+      business_key:
+        description: 调用方key
+        type: string
+      hash_id:
+        description: hashID
+        type: string
+      method:
+        description: 调用方secret
+        type: string
+    type: object
+  authorized_handler.listAPIResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/authorized_handler.listAPIData'
+        type: array
+    type: object
+  authorized_handler.listData:
+    properties:
+      business_developer:
+        description: 调用方对接人
+        type: string
+      business_key:
+        description: 调用方key
+        type: string
+      business_secret:
+        description: 调用方secret
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      created_user:
+        description: 创建人
+        type: string
+      hashid:
+        description: hashid
+        type: string
+      id:
+        description: ID
+        type: integer
+      is_used:
+        description: 是否启用 1:是 -1:否
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+      updated_user:
+        description: 更新人
+        type: string
+    type: object
+  authorized_handler.listResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/authorized_handler.listData'
+        type: array
+      pagination:
+        properties:
+          current_page:
+            type: integer
+          pre_page_count:
+            type: integer
+          total:
+            type: integer
+        type: object
+    type: object
+  authorized_handler.updateUsedRequest:
+    properties:
+      id:
+        description: 主键ID
+        type: string
+      used:
+        description: 是否启用 1:是 -1:否
+        type: integer
+    type: object
+  authorized_handler.updateUsedResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
   code.Failure:
     properties:
       code:
@@ -16,6 +153,34 @@ definitions:
       expire_time:
         description: 过期时间
         type: integer
+    type: object
+  test_handler.createRequest:
+    type: object
+  test_handler.createResponse:
+    type: object
+  test_handler.deleteRequest:
+    type: object
+  test_handler.deleteResponse:
+    type: object
+  test_handler.detailRequest:
+    type: object
+  test_handler.detailResponse:
+    type: object
+  test_handler.updateRequest:
+    type: object
+  test_handler.updateResponse:
+    type: object
+  tool_handler.hashIdsDecodeResponse:
+    properties:
+      val:
+        description: 解密后的值
+        type: integer
+    type: object
+  tool_handler.hashIdsEncodeResponse:
+    properties:
+      val:
+        description: 加密后的值
+        type: string
     type: object
   user_handler.createRequest:
     properties:
@@ -80,6 +245,250 @@ info:
   title: swagger 接口文档
   version: "2.0"
 paths:
+  /api/authorized:
+    get:
+      consumes:
+      - application/json
+      description: 调用方列表
+      parameters:
+      - description: 第几页
+        in: query
+        name: page
+        type: integer
+      - description: 每页显示条数
+        in: query
+        name: page_size
+        type: string
+      - description: 调用方key
+        in: query
+        name: business_key
+        type: string
+      - description: 调用方secret
+        in: query
+        name: business_secret
+        type: string
+      - description: 调用方对接人
+        in: query
+        name: business_developer
+        type: string
+      - description: 备注
+        in: path
+        name: remark
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.listResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 调用方列表
+      tags:
+      - API.authorized
+    post:
+      consumes:
+      - application/json
+      description: 新增调用方
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/authorized_handler.createRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 新增调用方
+      tags:
+      - API.authorized
+  /api/authorized/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除调用方
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.deleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 删除调用方
+      tags:
+      - API.authorized
+  /api/authorized/used:
+    patch:
+      consumes:
+      - application/json
+      description: 更新调用方为启用/禁用
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/authorized_handler.updateUsedRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.updateUsedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 更新调用方为启用/禁用
+      tags:
+      - API.authorized
+  /api/authorized_api:
+    get:
+      consumes:
+      - application/json
+      description: 调用方接口地址列表
+      parameters:
+      - description: 调用方key
+        in: query
+        name: business_key
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.listAPIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 调用方接口地址列表
+      tags:
+      - API.authorized
+    post:
+      consumes:
+      - application/json
+      description: 授权调用方接口地址
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/authorized_handler.createAPIRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.createAPIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 授权调用方接口地址
+      tags:
+      - API.authorized
+  /api/authorized_api/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除调用方接口地址
+      parameters:
+      - description: 主键ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/authorized_handler.deleteAPIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 删除调用方接口地址
+      tags:
+      - API.authorized
+  /api/tool/hashids/decode/{id}:
+    get:
+      consumes:
+      - application/json
+      description: HashIds 解密
+      parameters:
+      - description: 需解密的密文
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.hashIdsDecodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: HashIds 解密
+      tags:
+      - API.tool
+  /api/tool/hashids/encode/{id}:
+    get:
+      consumes:
+      - application/json
+      description: HashIds 加密
+      parameters:
+      - description: 需加密的数字
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.hashIdsEncodeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: HashIds 加密
+      tags:
+      - API.tool
   /auth/get:
     post:
       consumes:
@@ -137,6 +546,110 @@ paths:
       summary: Trace 示例
       tags:
       - Demo
+  /test/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建用户
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/test_handler.createRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/test_handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 创建用户
+      tags:
+      - Test
+  /test/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除用户
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/test_handler.deleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/test_handler.deleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 删除用户
+      tags:
+      - Test
+  /test/detail:
+    post:
+      consumes:
+      - application/json
+      description: 用户详情
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/test_handler.detailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/test_handler.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 用户详情
+      tags:
+      - Test
+  /test/update:
+    post:
+      consumes:
+      - application/json
+      description: 编辑用户
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/test_handler.updateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/test_handler.updateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 编辑用户
+      tags:
+      - Test
   /user/create:
     post:
       consumes:

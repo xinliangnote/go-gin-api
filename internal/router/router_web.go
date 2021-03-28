@@ -1,10 +1,12 @@
 package router
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/web/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/configinfo_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/dashboard_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/gencode_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/index_handler"
+	"github.com/xinliangnote/go-gin-api/internal/web/controller/tool_handler"
 )
 
 func setWebRouter(r *resource) {
@@ -13,6 +15,8 @@ func setWebRouter(r *resource) {
 	dashboardHandler := dashboard_handler.New(r.logger, r.db, r.cache)
 	genCodeHandler := gencode_handler.New(r.logger, r.db, r.cache)
 	configInfoHandler := configinfo_handler.New(r.logger, r.db, r.cache)
+	authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
+	toolHandler := tool_handler.New(r.logger, r.db, r.cache)
 
 	web := r.mux.Group("", r.middles.DisableLog())
 	{
@@ -34,6 +38,14 @@ func setWebRouter(r *resource) {
 
 		web.GET("/handlergen", genCodeHandler.HandlerView())
 		web.POST("/handlergen_exec", genCodeHandler.HandlerExecute())
+
+		// 调用方
+		web.GET("/authorized/list", authorizedHandler.ListView())
+		web.GET("/authorized/add", authorizedHandler.AddView())
+		web.GET("/authorized/api/:id", authorizedHandler.ApiView())
+
+		// 工具箱
+		web.GET("/tool/hashids", toolHandler.HashIdsView())
 
 	}
 }
