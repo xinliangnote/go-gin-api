@@ -16,6 +16,7 @@ type Handler interface {
 	AddView() core.HandlerFunc
 	ApiView() core.HandlerFunc
 	ListView() core.HandlerFunc
+	DemoView() core.HandlerFunc
 }
 
 type handler struct {

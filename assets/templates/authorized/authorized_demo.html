@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">如何给调用方开通 KEY 和 SECRET？</div>
+                </header>
+
+                <div class="card-body">
+                    <p>1. 新增调用方，输入调用方标识、调用方对接人、备注等信息；</p>
+                    <p>2. 授权调用方可调用的接口；</p>
+                    <p>3. 查看详情，将调用方的 <code>KEY</code>、<code>SECRET</code> 发给调用方；</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">调用方如何传递 Token？</div>
+                </header>
+
+                <div class="card-body">
+                    <p>1. 基于 HTTP Header 中的两个参数 <code>Authorization</code>、<code>Date</code> 存储签名信息，Authorization 存储签名信息，格式：调用方 KEY + 空格分隔符 + 摘要(加密串)，例如：</p>
+                    <pre>Authorization:blog MjJjMDE1MWFkZjMwOWFmYjFlNzViNDFjYjYwMWFlMmM=</pre>
+                    <p>2. Date 存储时间信息，格式：GMT 格林尼治标准时间，使用 <code>Asia/Shanghai</code> 时区，例如；</p>
+                    <pre>Date:Sat, 03 Apr 2021 10:14:43 GMT</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header"><div class="card-title">不同语言生成签名的方法，供参考</div></header>
+                <div class="card-body">
+
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#go" aria-selected="true">Go 语言</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#php" aria-selected="false">PHP 语言</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="go">
+                            <pre>
+func New(key, secret string, ttl time.Duration) Signature {
+	return &signature{
+		key:    key,
+		secret: secret,
+		ttl:    ttl,
+	}
+}
+
+// Generate
+// path 请求的路径 (不附带 querystring)
+func (s *signature) Generate(path string, method string, params url.Values) (authorization, date string, err error) {
+	if path == "" {
+		err = errors.New("path required")
+		return
+	}
+
+	if method == "" {
+		err = errors.New("method required")
+		return
+	}
+
+	methodName := strings.ToUpper(method)
+	if !methods[methodName] {
+		err = errors.New("method param error")
+		return
+	}
+
+	// Date
+	date = time_parse.GMTLayoutString()
+
+	// Encode() 方法中自带 sorted by key
+	sortParamsEncode := params.Encode()
+
+	// 加密字符串规则
+	buffer := bytes.NewBuffer(nil)
+	buffer.WriteString(path)
+	buffer.WriteString(delimiter)
+	buffer.WriteString(methodName)
+	buffer.WriteString(delimiter)
+	buffer.WriteString(sortParamsEncode)
+	buffer.WriteString(delimiter)
+	buffer.WriteString(date)
+
+	// 对数据进行 hmac 加密，并进行 base64 encode
+	hash := hmac.New(sha256.New, []byte(s.secret))
+	hash.Write(buffer.Bytes())
+	digest := base64.StdEncoding.EncodeToString(hash.Sum(nil))
+
+	authorization = fmt.Sprintf("%s %s", s.key, digest)
+	return
+}
+
+// 模拟数据
+const (
+	key    = "blog"
+	secret = "i1ydX9RtHyuJTrw7frcu"
+	ttl    = time.Minute * 10
+)
+
+func TestSignature_Generate(t *testing.T) {
+	path := "/echo"
+	method := "POST"
+
+	params := url.Values{}
+	params.Add("a", "a1")
+	params.Add("d", "d1")
+	params.Add("c", "c1")
+
+	authorization, date, err := New(key, secret, ttl).Generate(path, method, params)
+	t.Log("authorization:", authorization)
+	t.Log("date:", date)
+	t.Log("err:", err)
+}
+                            </pre>
+                        </div>
+                        <div class="tab-pane fade" id="php">
+                            <pre>
+// 模拟数据
+$key    = "blog";
+$secret = "i1ydX9RtHyuJTrw7frcu";
+
+$path = "/echo";
+$method = "POST";
+
+$params['a'] = "a1";
+$params['d'] = "d1";
+$params['c'] = "c1";
+
+// 对 params key 进行排序
+ksort($params);
+
+// 对 sortParams 进行 Encode
+$sortParamsEncode = http_build_query($params);
+
+// GMT 格林尼治标准时间，使用 Asia/Shanghai 时区
+$date = gmdate('D, d M Y H:i:s T',time() + 8*3600);
+
+// 加密字符串规则
+$encryptStr = $path."|".strtoupper($method)."|".$sortParamsEncode."|".$date;
+
+// 对数据进行 sha256 加密，并进行 base64 encode
+$digest = base64_encode(hash_hmac("sha256", $encryptStr, $secret, true));
+
+$authorization = $key." ".$digest;
+
+echo "authorization:{$authorization}";
+echo "---";
+echo "date:{$date}";
+                            </pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/main.min.js"></script>
+</body>
+</html>

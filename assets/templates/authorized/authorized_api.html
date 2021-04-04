@@ -79,10 +79,10 @@
 
         const hash_id = {{ .HashID }}
 
-        $("input#request_api").maxlength({
-            warningClass: "badge badge-info",
-            limitReachedClass: "badge badge-warning"
-        });
+            $("input#request_api").maxlength({
+                warningClass: "badge badge-info",
+                limitReachedClass: "badge badge-warning"
+            });
 
         // 加载列表页数据
         getListData();
@@ -91,12 +91,28 @@
             $.get("/api/authorized_list", {id: hash_id}, function (data) {
                 // 成功
                 if (data.list.length > 0) {
+                    var badgeMethodClass = "";
+
                     $.each(data.list, function (index, value) {
+                        if (value.method === "GET") {
+                            badgeMethodClass = "badge-primary";
+                        } else if (value.method === "POST") {
+                            badgeMethodClass = "badge-success";
+                        } else if (value.method === "DELETE") {
+                            badgeMethodClass = "badge-danger";
+                        } else if (value.method === "PUT") {
+                            badgeMethodClass = "badge-yellow";
+                        } else if (value.method === "PATCH") {
+                            badgeMethodClass = "badge-cyan";
+                        } else {
+                            badgeMethodClass = "badge-dark";
+                        }
+
                         const p = '<p>\n' +
                             '<a href="#!" data-id="' + value.hash_id + '" data-api="' + value.api + '" class="del">' +
-                            '<span class="badge badge-secondary"><i class="mdi mdi-window-close"></i></span>\n' +
+                            '<span class="badge badge-dark"><i class="mdi mdi-window-close"></i></span>\n' +
                             '</a>\n' +
-                            '<span class="badge badge-success">' + value.method + '</span>\n' + value.api
+                            '<span class="badge ' + badgeMethodClass + '">' + value.method + '</span>\n' + value.api
                         ;
 
                         $(".apis").append(p);

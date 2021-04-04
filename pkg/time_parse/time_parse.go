@@ -1,6 +1,10 @@
 package time_parse
 
-import "time"
+import (
+	"math"
+	"net/http"
+	"time"
+)
 
 var (
 	cst *time.Location
@@ -42,4 +46,20 @@ func CSTLayoutStringToUnix(cstLayoutString string) (int64, error) {
 		return 0, err
 	}
 	return stamp.Unix(), nil
+}
+
+// GMTLayoutString 格式化时间
+// 返回 "Mon, 02 Jan 2006 15:04:05 GMT" 格式的时间
+func GMTLayoutString() string {
+	return time.Now().In(cst).Format(http.TimeFormat)
+}
+
+// ParseGMTInLocation 格式化时间
+func ParseGMTInLocation(date string) (time.Time, error) {
+	return time.ParseInLocation(http.TimeFormat, date, cst)
+}
+
+// SubInLocation 计算时间差
+func SubInLocation(ts time.Time) float64 {
+	return math.Abs(time.Now().In(cst).Sub(ts).Seconds())
 }

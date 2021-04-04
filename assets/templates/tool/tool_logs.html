@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+
+    <div class="alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <p>推荐使用： <code>ELK 组件</code> ，本功能仅仅是读取文本进行展示。</p>
+    </div>
+
+    <div class="card">
+        <header class="card-header">
+            <div class="card-title">日志列表 <code>仅展示最新的 100 条日志。</code></div>
+            <ul class="card-actions">
+                <li>
+                    <a href="#!" onclick="location.reload();" data-toggle="tooltip" title="" data-original-title="刷新"><i class="mdi mdi-refresh"></i></a>
+                </li>
+            </ul>
+        </header>
+        <div class="card-body">
+            <div class="accordion">
+                {{range $key, $value := .Logs}}
+                    {{$badgeLevelClass := ""}}
+                    {{$badgeMethodClass := ""}}
+                    {{$badgeCodeClass := ""}}
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                {{if eq $value.Level "info"}}
+                                    {{$badgeLevelClass = "badge-info"}}
+                                {{else if eq $value.Level "error"}}
+                                    {{$badgeLevelClass = "badge-danger"}}
+                                {{else if eq $value.Level "warn"}}
+                                    {{$badgeLevelClass = "badge-warning"}}
+                                {{else}}
+                                    {{$badgeLevelClass = "badge-dark"}}
+                                {{end}}
+
+                                {{if eq $value.Method "GET"}}
+                                    {{$badgeMethodClass = "badge-primary"}}
+                                {{else if eq $value.Method "POST"}}
+                                    {{$badgeMethodClass = "badge-success"}}
+                                {{else if eq $value.Method "DELETE"}}
+                                    {{$badgeMethodClass = "badge-danger"}}
+                                {{else if eq $value.Method "PUT"}}
+                                    {{$badgeMethodClass = "badge-yellow"}}
+                                {{else if eq $value.Method "PATCH"}}
+                                    {{$badgeMethodClass = "badge-cyan"}}
+                                {{else}}
+                                    {{$badgeMethodClass = "badge-dark"}}
+                                {{end}}
+
+                                {{if eq $value.HTTPCode 200}}
+                                    {{$badgeCodeClass = "badge-success"}}
+                                {{else}}
+                                    {{$badgeCodeClass = "badge-dark"}}
+                                {{end}}
+
+
+                                {{if eq $value.HTTPCode 0}}
+                                    <a data-toggle="collapse" data-target="#collapse{{$key}}" aria-expanded="false" href="#!" class="collapsed">
+                                        <span class="badge {{$badgeLevelClass}}">{{$value.Level}}</span>
+                                        <span class="badge badge-brown">{{$value.Time}}</span>
+                                        <code>{{$value.Msg}}</code>
+                                    </a>
+                                {{else}}
+                                    <a data-toggle="collapse" data-target="#collapse{{$key}}" aria-expanded="false" href="#!" class="collapsed">
+                                        <span class="badge {{$badgeLevelClass}}">{{$value.Level}}</span>
+                                        <span class="badge badge-brown">{{$value.Time}}</span>
+                                        <span class="badge {{$badgeMethodClass}}">{{$value.Method}}</span>
+                                        <span class="badge {{$badgeCodeClass}}">{{$value.HTTPCode}}</span>
+                                        <span class="badge badge-muted">{{$value.TraceID}}</span>
+                                        <code>{{$value.Path}}</code>
+                                    </a>
+                                {{end}}
+
+
+
+                            </div>
+                        </div>
+
+                        <div id="collapse{{$key}}" class="collapse">
+                            <div class="card-body">
+                                <pre>{{$value.Content}}</pre>
+                            </div>
+                        </div>
+                    </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

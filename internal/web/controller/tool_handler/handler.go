@@ -14,6 +14,7 @@ type Handler interface {
 	i()
 
 	HashIdsView() core.HandlerFunc
+	LogsView() core.HandlerFunc
 }
 
 type handler struct {

@@ -43,9 +43,11 @@ func setWebRouter(r *resource) {
 		web.GET("/authorized/list", authorizedHandler.ListView())
 		web.GET("/authorized/add", authorizedHandler.AddView())
 		web.GET("/authorized/api/:id", authorizedHandler.ApiView())
+		web.GET("/authorized/demo", authorizedHandler.DemoView())
 
 		// 工具箱
 		web.GET("/tool/hashids", toolHandler.HashIdsView())
+		web.GET("/tool/logs", toolHandler.LogsView())
 
 	}
 }

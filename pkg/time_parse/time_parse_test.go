@@ -13,3 +13,7 @@ func TestCSTLayoutString(t *testing.T) {
 func TestCSTLayoutStringToUnix(t *testing.T) {
 	t.Log(CSTLayoutStringToUnix("2020-01-24 21:11:11"))
 }
+
+func TestGMTLayoutString(t *testing.T) {
+	t.Log(GMTLayoutString())
+}
