@@ -94,3 +94,7 @@ func ProjectPort() string {
 func ProjectLogFile() string {
 	return fmt.Sprintf("./logs/%s-access.log", ProjectName())
 }
+
+func InitDBLockFile() string {
+	return "cmd/init/db/init_db.lock"
+}

@@ -23,6 +23,12 @@ type ReadLineFromEnd struct {
 	isFirst bool
 }
 
+// Exists
+func IsExists(path string) (os.FileInfo, bool) {
+	f, err := os.Stat(path)
+	return f, err == nil || os.IsExist(err)
+}
+
 // NewReadLineFromEnd
 func NewReadLineFromEnd(filename string) (rd *ReadLineFromEnd, err error) {
 	f, err := os.Open(filename)

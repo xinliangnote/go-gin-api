@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
@@ -8,6 +9,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
 	"github.com/xinliangnote/go-gin-api/internal/router/middleware"
+	"github.com/xinliangnote/go-gin-api/pkg/file"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -23,13 +25,19 @@ type resource struct {
 }
 
 func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.ClientConn) (core.Mux, error) {
+	var openBrowserUri = "http://127.0.0.1:9999"
+
+	_, ok := file.IsExists(configs.InitDBLockFile())
+	if !ok {
+		openBrowserUri = "http://127.0.0.1:9999/init?init=db"
+	}
 
 	if logger == nil {
 		return nil, errors.New("logger required")
 	}
 
 	mux, err := core.New(logger,
-		core.WithEnableOpenBrowser("http://127.0.0.1:9999"),
+		core.WithEnableOpenBrowser(openBrowserUri),
 		core.WithEnableCors(),
 		core.WithEnableRate(),
 		core.WithPanicNotify(notify.OnPanicNotify),

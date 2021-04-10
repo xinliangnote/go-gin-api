@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<link href="bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
 <link href="bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="bootstrap/css/style.min.css" rel="stylesheet">
@@ -46,6 +47,7 @@
 
 <script type="text/javascript" src="bootstrap/js/jquery.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     $("#btnOk").click(function(){
@@ -58,9 +60,34 @@
         $("#resultDiv").text(data);
         $("#btnLoading").hide();
         $("#btnOk").show();
+
+        if (getQueryString("init")) {
+          $.alert({
+            title: '操作成功',
+            icon: 'mdi mdi-check-decagram',
+            type: 'green',
+            content: '初始化完成。',
+            buttons: {
+              okay: {
+                text: '系统首页',
+                action: function () {
+                  location.href = "/";
+                }
+              }
+            }
+          });
+        }
       })
 
-    })
+    });
+
+    function getQueryString(name) {
+      let reg = new RegExp('(?:(?:&|\\?)' + name + '=([^&]*))|(?:/' + name + '/([^/]*))', 'i');
+      let r = window.location.href.match(reg);
+      if (r != null)
+        return decodeURI(r[1] || r[2]);
+      return null;
+    }
   })
 </script>
 </body>

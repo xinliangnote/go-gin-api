@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/xinliangnote/go-gin-api/cmd/init/db/mysql"
@@ -98,6 +99,13 @@ func main() {
 		log.Fatal("create admin table data err: ", err.Error())
 	}
 	fmt.Println("create admin table data success")
+
+	// 生成已完成 init 的标识，生成 init_db.lock
+	f, err := os.Create("cmd/init/db/init_db.lock")
+	if err != nil {
+		log.Fatal("create init_db.lock err: ", err.Error())
+	}
+	defer f.Close()
 
 	// 完成事务
 	tx.Commit()
