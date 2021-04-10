@@ -51,7 +51,7 @@
 <script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
-<script type="text/javascript" src="../../bootstrap/js/util.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -94,43 +94,47 @@
                 return false;
             }
 
-            const remark = $("#remark").val();
-
-            $(this).hide();
-            $("#btnLoading").show();
-
             const postData = {
                 business_key: businessKey,
                 business_developer: businessDeveloper,
-                remark: remark,
+                remark: $("#remark").val(),
             };
 
-            $.post("/api/authorized", JSON.stringify(postData), function (data) {
-                $("#btnLoading").hide();
-                $("#btnOk").show();
 
-                $.alert({
-                    title: '操作成功',
-                    icon: 'mdi mdi-check-decagram',
-                    type: 'green',
-                    content: '编号：' + data.id + ' 创建完成。',
-                    buttons: {
-                        okay: {
-                            text: '关闭',
-                            action: function () {
-                                location.href = "/authorized/list";
+            AjaxForm(
+                "POST",
+                "/api/authorized",
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function (data) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '编号：' + data.id + ' 创建完成。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.href = "/authorized/list";
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
 
-            }).fail(function (response) {
-                $("#btnLoading").hide();
-                $("#btnOk").show();
-
-                AjaxError(response);
-            })
-
+                    AjaxError(response);
+                }
+            );
         });
     })
 </script>

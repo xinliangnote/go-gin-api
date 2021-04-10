@@ -80,7 +80,7 @@
 <script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
-<script type="text/javascript" src="../../bootstrap/js/util.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -101,21 +101,25 @@
                 return false;
             }
 
-            $(this).hide();
-            $("#btnEncodeLoading").show();
-
-            $.get("/api/tool/hashids/encode/" + number, "", function (data) {
-                $("#btnEncodeLoading").hide();
-                $("#btnEncode").show();
-
-                $("#NumberToEncodeValue").val(data.val)
-
-            }).fail(function (response) {
-                $("#btnEncodeLoading").hide();
-                $("#btnEncode").show();
-
-                AjaxError(response);
-            })
+            AjaxForm(
+                "GET",
+                "/api/tool/hashids/encode/" + number,
+                "",
+                function () {
+                    $(this).hide();
+                    $("#btnEncodeLoading").show();
+                },
+                function (data) {
+                    $("#btnEncodeLoading").hide();
+                    $("#btnEncode").show();
+                    $("#NumberToEncodeValue").val(data.val)
+                },
+                function (response) {
+                    $("#btnEncodeLoading").hide();
+                    $("#btnEncode").show();
+                    AjaxError(response);
+                }
+            );
         });
 
         $('#btnDecode').on('click', function () {
@@ -130,21 +134,25 @@
                 return false;
             }
 
-            $(this).hide();
-            $("#btnDecodeLoading").show();
-
-            $.get("/api/tool/hashids/decode/" + encodeValue, "", function (data) {
-                $("#btnDecodeLoading").hide();
-                $("#btnDecode").show();
-
-                $("#DecodeValueToNumber").val(data.val)
-
-            }).fail(function (response) {
-                $("#btnDecodeLoading").hide();
-                $("#btnDecode").show();
-
-                AjaxError(response);
-            })
+            AjaxForm(
+                "GET",
+                "/api/tool/hashids/decode/" + encodeValue,
+                "",
+                function () {
+                    $(this).hide();
+                    $("#btnDecodeLoading").show();
+                },
+                function (data) {
+                    $("#btnDecodeLoading").hide();
+                    $("#btnDecode").show();
+                    $("#DecodeValueToNumber").val(data.val)
+                },
+                function (response) {
+                    $("#btnDecodeLoading").hide();
+                    $("#btnDecode").show();
+                    AjaxError(response);
+                }
+            );
         });
 
     })

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-toolbar d-flex flex-column flex-md-row">
+                    <div class="toolbar-btn-action">
+                        <a class="btn btn-primary m-r-5" href="/admin/add"><i class="mdi mdi-plus"></i> 新增</a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>用户名</th>
+                                <th>昵称</th>
+                                <th>手机号</th>
+                                <th>创建日期</th>
+                                <th>更新日期</th>
+                                <th style="text-align: center; ">状态</th>
+                                <th style="text-align: center; ">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tbody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul class="pagination">
+                        <ul class="pagination" id="paginationDiv">
+
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery.pagination.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // 加载列表页数据
+        getPageListData();
+
+        function getPageListData(page = 0, page_size = 0) {
+
+            if (parseInt(page) < 1) {
+                page = 1;
+            }
+
+            if (parseInt(page_size) < 1) {
+                page_size = 10;
+            }
+
+            AjaxForm(
+                "GET",
+                "/api/admin",
+                {page: page, page_size: page_size},
+                function () {},
+                function (data) {
+                    if (data.list.length > 0) {
+                        var totalNum = data.pagination.total; //总条数
+                        var pageNum = Math.ceil(totalNum / data.pagination.pre_page_count); //分页的总页数
+
+                        $("#paginationDiv").pagination({
+                            current: data.pagination.current_page,
+                            pageCount: pageNum,
+                            coping: true,
+                            homePage: '首页',
+                            endPage: '末页',
+                            mode: 'fixed',
+                            prevContent: '上一页',
+                            nextContent: '下一页',
+                            activeCls: 'pageActive',
+                            prevCls: 'pagePrev',
+                            nextCls: 'pageNext',
+                            callback: function (api) {
+                                $(".tbody").html("");
+                                getPageListData(api.getCurrent());
+                            }
+                        });
+
+                        $.each(data.list, function (index, value) {
+                            var showUsedBadge = "";
+                            var optionUsedName = "";
+
+                            if (value.is_used === 1) {
+                                optionUsedName = '禁用';
+                                showUsedBadge = '<span class="badge badge-success">启用</span></td>'
+                            }
+
+                            if (value.is_used === -1) {
+                                optionUsedName = '启用';
+                                showUsedBadge = '<span class="badge badge-danger">禁用</span></td>'
+                            }
+
+                            const tr = '<tr>\n' +
+                                '<td>' + value.id + '</td>\n' +
+                                '<td>' + value.username + '</td>\n' +
+                                '<td>' + value.nickname + '</td>\n' +
+                                '<td>' + value.mobile + '</td>\n' +
+                                '<td>' + value.created_at + '</td>\n' +
+                                '<td>' + value.updated_at + '</td>\n' +
+                                '<td style="text-align: center; ">' + showUsedBadge + '</td>\n' +
+                                '<td style="text-align: center; ">\n' +
+                                '<div class="btn-group">\n' +
+                                '    <a class="btn btn-xs btn-default btn-option" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-is-used="' + value.is_used + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="' + optionUsedName + '">' + optionUsedName + '</a>\n' +
+                                '    <a class="btn btn-xs btn-default btn-resetPassword" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="重置密码">重置密码</a>\n' +
+                                '    <a class="btn btn-xs btn-default btn-confirm" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="删除">删除</a>\n' +
+                                '</div>\n' +
+                                '</td>\n' +
+                                '</tr>';
+
+                            $(".tbody").append(tr);
+                        })
+                    } else {
+                        // 数据为空
+                        const tr = '<tr><td colspan="8" style="text-align: center">暂无数据</td></tr>';
+                        $(".tbody").append(tr);
+                    }
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+
+            );
+        }
+
+        // 启用/禁用
+        $(document).on('click', '.btn-option', function () {
+            const id = $(this).attr('data-id');
+            const isUsed = $(this).attr('data-is-used');
+
+            var tipMessage = "";
+            var wantUsed = 0;
+            if (isUsed === "1") { // 1=当前为启用状态，需要改成禁用
+                tipMessage = "禁用";
+                wantUsed = -1;
+            }
+            if (isUsed === "-1") { // -1=当前为禁用状态，需要改成启用
+                tipMessage = "启用";
+                wantUsed = 1;
+            }
+
+            const patchData = {
+                id: id,
+                used: wantUsed,
+            };
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">' + tipMessage + '</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                "/api/admin/used",
+                                patchData,
+                                function () {},
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 已' + tipMessage + '。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+
+        // 重置密码
+        $(document).on('click', '.btn-resetPassword', function () {
+            const id = $(this).attr('data-id');
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">重置密码</strong> 吗？' + '<hr>' + '重置后密码为：123456',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                '/api/admin/reset_password/' + id,
+                                "",
+                                function () {},
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 密码重置完成。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+
+        // 删除
+        $(document).on('click', '.btn-confirm', function () {
+            const id = $(this).attr('data-id');
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">删除</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "DELETE",
+                                '/api/admin/' + id,
+                                "",
+                                function () {},
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 已删除。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>

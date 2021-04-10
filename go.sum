@@ -232,8 +232,10 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/kisielk/errcheck v1.1.0/go.mod h1:EZBBE59ingxPouuu3KfxchcWSUPOHkagtvWXihfKN4Q=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
-github.com/koketama/errors v1.0.0 h1:4JO7SGSkBROkTuacd+cgPtBDr7fisixXoajkNh4eW3M=
-github.com/koketama/errors v1.0.0/go.mod h1:SIU03UGMkhp6tyB5+EvhDI9i9ZDa4rQolJCt9ZrFrbU=
+github.com/koketama/errors v1.0.2 h1:v8C8MDiz9QHqzQX587dQpD0bjro8n4GPm4leOELYPyo=
+github.com/koketama/errors v1.0.2/go.mod h1:SIU03UGMkhp6tyB5+EvhDI9i9ZDa4rQolJCt9ZrFrbU=
+github.com/koketama/urltable v0.1.3 h1:pEuk4/SaqYiTVs70p8GVZeZaLdGCO2Rq8xxKRgMwYwo=
+github.com/koketama/urltable v0.1.3/go.mod h1:ime2hsHLQKb3AAJTLulUmYMIEb9YsF2RGSixT9z9ChA=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=

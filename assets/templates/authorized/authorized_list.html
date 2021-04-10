@@ -54,14 +54,15 @@
 <script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
-<script type="text/javascript" src="../../bootstrap/js/util.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/jquery.pagination.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         // 加载列表页数据
         getPageListData();
 
-        function getPageListData(page, page_size) {
+        function getPageListData(page = 0, page_size = 0) {
+
             if (parseInt(page) < 1) {
                 page = 1;
             }
@@ -70,82 +71,88 @@
                 page_size = 10;
             }
 
-            $.get("/api/authorized", {page: page, page_size: page_size}, function (data) {
-                // 成功
-                if (data.list.length > 0) {
-                    var totalNum = data.pagination.total; //总条数
-                    var pageNum = Math.ceil(totalNum / data.pagination.pre_page_count); //分页的总页数
+            AjaxForm(
+                "GET",
+                "/api/authorized",
+                {page: page, page_size: page_size},
+                function () {},
+                function (data) {
+                    if (data.list.length > 0) {
+                        var totalNum = data.pagination.total; //总条数
+                        var pageNum = Math.ceil(totalNum / data.pagination.pre_page_count); //分页的总页数
 
-                    $("#paginationDiv").pagination({
-                        current: data.pagination.current_page,
-                        pageCount: pageNum,
-                        coping: true,
-                        homePage: '首页',
-                        endPage: '末页',
-                        mode: 'fixed',
-                        prevContent: '上一页',
-                        nextContent: '下一页',
-                        activeCls: 'pageActive',
-                        prevCls: 'pagePrev',
-                        nextCls: 'pageNext',
-                        callback: function (api) {
-                            $(".tbody").html("");
-                            getPageListData(api.getCurrent());
-                        }
-                    });
+                        $("#paginationDiv").pagination({
+                            current: data.pagination.current_page,
+                            pageCount: pageNum,
+                            coping: true,
+                            homePage: '首页',
+                            endPage: '末页',
+                            mode: 'fixed',
+                            prevContent: '上一页',
+                            nextContent: '下一页',
+                            activeCls: 'pageActive',
+                            prevCls: 'pagePrev',
+                            nextCls: 'pageNext',
+                            callback: function (api) {
+                                $(".tbody").html("");
+                                getPageListData(api.getCurrent());
+                            }
+                        });
 
-                    $.each(data.list, function (index, value) {
-                        var showUsedBadge = "";
-                        var optionUsedName = "";
+                        $.each(data.list, function (index, value) {
+                            var showUsedBadge = "";
+                            var optionUsedName = "";
 
-                        if (value.is_used === 1) {
-                            optionUsedName = '禁用';
-                            showUsedBadge = '<span class="badge badge-success">启用</span></td>'
-                        }
+                            if (value.is_used === 1) {
+                                optionUsedName = '禁用';
+                                showUsedBadge = '<span class="badge badge-success">启用</span></td>'
+                            }
 
-                        if (value.is_used === -1) {
-                            optionUsedName = '启用';
-                            showUsedBadge = '<span class="badge badge-danger">禁用</span></td>'
-                        }
+                            if (value.is_used === -1) {
+                                optionUsedName = '启用';
+                                showUsedBadge = '<span class="badge badge-danger">禁用</span></td>'
+                            }
 
-                        const tr = '<tr>\n' +
-                            '<td>' + value.id + '</td>\n' +
-                            '<td>' + value.business_key + '</td>\n' +
-                            '<td>' + value.business_developer + '</td>\n' +
-                            '<td>' + value.created_at + '</td>\n' +
-                            '<td>' + value.updated_at + '</td>\n' +
-                            '<td style="text-align: center; ">' + showUsedBadge + '</td>\n' +
-                            '<td style="text-align: center; ">\n' +
-                            '<div class="btn-group">\n' +
-                            '    <a class="btn btn-xs btn-default btn-detail" href="#!" title=""\n' +
-                            '                                           data-business-key="' + value.business_key + '"' +
-                            '                                           data-business-secret="' + value.business_secret + '"' +
-                            '                                           data-remark="' + value.remark + '"' +
-                            '                                           data-toggle="tooltip" data-original-title="详情">详情</a>\n' +
-                            '    <a class="btn btn-xs btn-default btn-option" href="#!" title=""\n' +
-                            '                                           data-id="' + value.hashid + '"' +
-                            '                                           data-is-used="' + value.is_used + '"' +
-                            '                                           data-toggle="tooltip" data-original-title="' + optionUsedName + '">' + optionUsedName + '</a>\n' +
-                            '    <a class="btn btn-xs btn-default" href="/authorized/api/'+value.hashid+'" title=""\n' +
-                            '                                           data-toggle="tooltip" data-original-title="接口">接口</a>\n' +
-                            '    <a class="btn btn-xs btn-default btn-confirm" href="#!" title=""\n' +
-                            '                                           data-id="' + value.hashid + '"' +
-                            '                                           data-toggle="tooltip" data-original-title="删除">删除</a>\n' +
-                            '</div>\n' +
-                            '</td>\n' +
-                            '</tr>';
+                            const tr = '<tr>\n' +
+                                '<td>' + value.id + '</td>\n' +
+                                '<td>' + value.business_key + '</td>\n' +
+                                '<td>' + value.business_developer + '</td>\n' +
+                                '<td>' + value.created_at + '</td>\n' +
+                                '<td>' + value.updated_at + '</td>\n' +
+                                '<td style="text-align: center; ">' + showUsedBadge + '</td>\n' +
+                                '<td style="text-align: center; ">\n' +
+                                '<div class="btn-group">\n' +
+                                '    <a class="btn btn-xs btn-default btn-detail" href="#!" title=""\n' +
+                                '                                           data-business-key="' + value.business_key + '"' +
+                                '                                           data-business-secret="' + value.business_secret + '"' +
+                                '                                           data-remark="' + value.remark + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="详情">详情</a>\n' +
+                                '    <a class="btn btn-xs btn-default btn-option" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-is-used="' + value.is_used + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="' + optionUsedName + '">' + optionUsedName + '</a>\n' +
+                                '    <a class="btn btn-xs btn-default" href="/authorized/api/'+value.hashid+'" title=""\n' +
+                                '                                           data-toggle="tooltip" data-original-title="接口">接口</a>\n' +
+                                '    <a class="btn btn-xs btn-default btn-confirm" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="删除">删除</a>\n' +
+                                '</div>\n' +
+                                '</td>\n' +
+                                '</tr>';
 
+                            $(".tbody").append(tr);
+                        })
+                    } else {
+                        // 数据为空
+                        const tr = '<tr><td colspan="7" style="text-align: center">暂无数据</td></tr>';
                         $(".tbody").append(tr);
-                    })
-                } else {
-                    // 数据为空
-                    const tr = '<tr><td colspan="7" style="text-align: center">暂无数据</td></tr>';
-                    $(".tbody").append(tr);
+                    }
+                },
+                function (response) {
+                    AjaxError(response);
                 }
-            }).fail(function (response) {
-                // 失败
-                AjaxError(response);
-            })
+
+            );
         }
 
         // 详情
@@ -196,16 +203,17 @@
                         keys: ['enter'],
                         btnClass: 'btn-orange',
                         action: function () {
-                            $.ajax({
-                                url: '/api/authorized/used',
-                                type: 'PATCH',
-                                data: JSON.stringify(patchData),
-                                success: function (result) {
+                            AjaxForm(
+                                "PATCH",
+                                "/api/authorized/used",
+                                patchData,
+                                function () {},
+                                function (data) {
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
                                         type: 'green',
-                                        content: '编号：' + result.id + ' 已' + tipMessage + '。',
+                                        content: '编号：' + data.id + ' 已' + tipMessage + '。',
                                         buttons: {
                                             okay: {
                                                 text: '关闭',
@@ -216,11 +224,10 @@
                                         }
                                     });
                                 },
-                                error: function (response) {
+                                function (response) {
                                     AjaxError(response);
                                 }
-
-                            });
+                            );
                         }
                     },
                     cancel: {
@@ -247,15 +254,17 @@
                         keys: ['enter'],
                         btnClass: 'btn-orange',
                         action: function () {
-                            $.ajax({
-                                url: '/api/authorized/' + id,
-                                type: 'DELETE',
-                                success: function (result) {
+                            AjaxForm(
+                                "DELETE",
+                                '/api/authorized/' + id,
+                                "",
+                                function () {},
+                                function (data) {
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
                                         type: 'green',
-                                        content: '编号：' + result.id + ' 已删除。',
+                                        content: '编号：' + data.id + ' 已删除。',
                                         buttons: {
                                             okay: {
                                                 text: '关闭',
@@ -266,11 +275,10 @@
                                         }
                                     });
                                 },
-                                error: function (response) {
+                                function (response) {
                                     AjaxError(response);
-                                },
-
-                            });
+                                }
+                            );
                         }
                     },
                     cancel: {

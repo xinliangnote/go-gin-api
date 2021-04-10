@@ -29,3 +29,14 @@ func CreateAuthorizedAPITableSql() (sql string) {
 
 	return
 }
+
+func CreateAuthorizedAPITableDataSql() (sql string) {
+	sql = "INSERT INTO `authorized_api` (`id`, `business_key`, `method`, `api`,`created_user`) VALUES"
+	sql += "(1, 'admin', 'GET', '/api/**', 'init'),"
+	sql += "(2, 'admin', 'POST', '/api/**', 'init'),"
+	sql += "(3, 'admin', 'PUT', '/api/**', 'init'),"
+	sql += "(4, 'admin', 'DELETE', '/api/**', 'init'),"
+	sql += "(5, 'admin', 'PATCH', '/api/**', 'init');"
+
+	return
+}

@@ -62,6 +62,13 @@ func main() {
 	}
 	fmt.Println("create authorized table success")
 
+	err = tx.Exec(mysql.CreateAuthorizedTableDataSql()).Error
+	if err != nil {
+		tx.Rollback()
+		log.Fatal("create authorized table data err: ", err.Error())
+	}
+	fmt.Println("create authorized table data success")
+
 	// 创建 authorized_api 表
 	err = tx.Exec(mysql.CreateAuthorizedAPITableSql()).Error
 	if err != nil {
@@ -69,6 +76,28 @@ func main() {
 		log.Fatal("create authorized_api table err: ", err.Error())
 	}
 	fmt.Println("create authorized_api table success")
+
+	err = tx.Exec(mysql.CreateAuthorizedAPITableDataSql()).Error
+	if err != nil {
+		tx.Rollback()
+		log.Fatal("create authorized_api table data err: ", err.Error())
+	}
+	fmt.Println("create authorized_api table data success")
+
+	// 创建 admin 表
+	err = tx.Exec(mysql.CreateAdminTableSql()).Error
+	if err != nil {
+		tx.Rollback()
+		log.Fatal("create admin table err: ", err.Error())
+	}
+	fmt.Println("create admin table success")
+
+	err = tx.Exec(mysql.CreateAdminTableDataSql()).Error
+	if err != nil {
+		tx.Rollback()
+		log.Fatal("create admin table data err: ", err.Error())
+	}
+	fmt.Println("create admin table data success")
 
 	// 完成事务
 	tx.Commit()

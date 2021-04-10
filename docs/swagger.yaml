@@ -1,33 +1,118 @@
 definitions:
-  authorized_handler.createAPIRequest:
+  admin_handler.createResponse:
     properties:
-      api:
-        description: 请求地址
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  admin_handler.deleteResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  admin_handler.detailResponse:
+    properties:
+      mobile:
+        description: 手机号
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  admin_handler.listData:
+    properties:
+      created_at:
+        description: 创建时间
+        type: string
+      created_user:
+        description: 创建人
+        type: string
+      hashid:
+        description: hashid
         type: string
       id:
-        description: HashID
+        description: ID
+        type: integer
+      is_used:
+        description: 是否启用 1:是 -1:否
+        type: integer
+      mobile:
+        description: 手机号
         type: string
-      method:
-        description: 请求方法
+      nickname:
+        description: 昵称
         type: string
+      updated_at:
+        description: 更新时间
+        type: string
+      updated_user:
+        description: 更新人
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  admin_handler.listResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/admin_handler.listData'
+        type: array
+      pagination:
+        properties:
+          current_page:
+            type: integer
+          pre_page_count:
+            type: integer
+          total:
+            type: integer
+        type: object
+    type: object
+  admin_handler.loginResponse:
+    properties:
+      token:
+        description: 用户身份标识
+        type: string
+    type: object
+  admin_handler.logoutResponse:
+    properties:
+      username:
+        description: 用户账号
+        type: string
+    type: object
+  admin_handler.modifyPasswordResponse:
+    properties:
+      username:
+        description: 用户账号
+        type: string
+    type: object
+  admin_handler.modifyPersonalInfoResponse:
+    properties:
+      username:
+        description: 用户账号
+        type: string
+    type: object
+  admin_handler.resetPasswordResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  admin_handler.updateUsedResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
     type: object
   authorized_handler.createAPIResponse:
     properties:
       id:
         description: 主键ID
         type: integer
-    type: object
-  authorized_handler.createRequest:
-    properties:
-      business_developer:
-        description: 调用方对接人
-        type: string
-      business_key:
-        description: 调用方key
-        type: string
-      remark:
-        description: 备注
-        type: string
     type: object
   authorized_handler.createResponse:
     properties:
@@ -121,15 +206,6 @@ definitions:
             type: integer
         type: object
     type: object
-  authorized_handler.updateUsedRequest:
-    properties:
-      id:
-        description: 主键ID
-        type: string
-      used:
-        description: 是否启用 1:是 -1:否
-        type: integer
-    type: object
   authorized_handler.updateUsedResponse:
     properties:
       id:
@@ -153,22 +229,6 @@ definitions:
       expire_time:
         description: 过期时间
         type: integer
-    type: object
-  test_handler.createRequest:
-    type: object
-  test_handler.createResponse:
-    type: object
-  test_handler.deleteRequest:
-    type: object
-  test_handler.deleteResponse:
-    type: object
-  test_handler.detailRequest:
-    type: object
-  test_handler.detailResponse:
-    type: object
-  test_handler.updateRequest:
-    type: object
-  test_handler.updateResponse:
     type: object
   tool_handler.hashIdsDecodeResponse:
     properties:
@@ -245,6 +305,233 @@ info:
   title: swagger 接口文档
   version: "2.0"
 paths:
+  /api/admin:
+    get:
+      consumes:
+      - application/json
+      description: 管理员列表
+      parameters:
+      - description: 第几页
+        in: query
+        name: page
+        type: integer
+      - description: 每页显示条数
+        in: query
+        name: page_size
+        type: string
+      - description: 用户名
+        in: query
+        name: username
+        type: string
+      - description: 昵称
+        in: query
+        name: nickname
+        type: string
+      - description: 手机号
+        in: query
+        name: mobile
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.listResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 管理员列表
+      tags:
+      - API.admin
+    post:
+      consumes:
+      - multipart/form-data
+      description: 新增管理员
+      parameters:
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: 昵称
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 手机号
+        in: formData
+        name: mobile
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 新增管理员
+      tags:
+      - API.admin
+  /api/admin/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除管理员
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.deleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 删除管理员
+      tags:
+      - API.admin
+  /api/admin/info:
+    get:
+      consumes:
+      - application/json
+      description: 管理员详情
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 管理员详情
+      tags:
+      - API.admin
+  /api/admin/login:
+    post:
+      consumes:
+      - application/json
+      description: 管理员登出
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.logoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 管理员登出
+      tags:
+      - API.admin
+  /api/admin/modify_password:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 修改个人信息
+      parameters:
+      - description: 昵称
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 手机号
+        in: formData
+        name: mobile
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.modifyPersonalInfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 修改个人信息
+      tags:
+      - API.admin
+  /api/admin/reset_password/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 重置密码
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.resetPasswordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 重置密码
+      tags:
+      - API.admin
+  /api/admin/used:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 更新管理员为启用/禁用
+      parameters:
+      - description: Hashid
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: 是否启用 1:是 -1:否
+        in: formData
+        name: used
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.updateUsedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 更新管理员为启用/禁用
+      tags:
+      - API.admin
   /api/authorized:
     get:
       consumes:
@@ -291,15 +578,24 @@ paths:
       - API.authorized
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: 新增调用方
       parameters:
-      - description: 请求信息
-        in: body
-        name: Request
+      - description: 调用方key
+        in: formData
+        name: business_key
         required: true
-        schema:
-          $ref: '#/definitions/authorized_handler.createRequest'
+        type: string
+      - description: 调用方对接人
+        in: formData
+        name: business_developer
+        required: true
+        type: string
+      - description: 备注
+        in: formData
+        name: remark
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -342,15 +638,19 @@ paths:
   /api/authorized/used:
     patch:
       consumes:
-      - application/json
+      - multipart/form-data
       description: 更新调用方为启用/禁用
       parameters:
-      - description: 请求信息
-        in: body
-        name: Request
+      - description: Hashid
+        in: formData
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/authorized_handler.updateUsedRequest'
+        type: string
+      - description: 是否启用 1:是 -1:否
+        in: formData
+        name: used
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -391,15 +691,24 @@ paths:
       - API.authorized
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: 授权调用方接口地址
       parameters:
-      - description: 请求信息
-        in: body
-        name: Request
+      - description: HashID
+        in: formData
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/authorized_handler.createAPIRequest'
+        type: string
+      - description: 请求方法
+        in: formData
+        name: method
+        required: true
+        type: string
+      - description: 请求地址
+        in: formData
+        name: api
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -424,7 +733,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -546,110 +855,6 @@ paths:
       summary: Trace 示例
       tags:
       - Demo
-  /test/create:
-    post:
-      consumes:
-      - application/json
-      description: 创建用户
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/test_handler.createRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/test_handler.createResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 创建用户
-      tags:
-      - Test
-  /test/delete:
-    post:
-      consumes:
-      - application/json
-      description: 删除用户
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/test_handler.deleteRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/test_handler.deleteResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 删除用户
-      tags:
-      - Test
-  /test/detail:
-    post:
-      consumes:
-      - application/json
-      description: 用户详情
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/test_handler.detailRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/test_handler.detailResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 用户详情
-      tags:
-      - Test
-  /test/update:
-    post:
-      consumes:
-      - application/json
-      description: 编辑用户
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/test_handler.updateRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/test_handler.updateResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 编辑用户
-      tags:
-      - Test
   /user/create:
     post:
       consumes:

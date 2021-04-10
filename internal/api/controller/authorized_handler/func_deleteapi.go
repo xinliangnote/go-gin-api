@@ -22,7 +22,7 @@ type deleteAPIResponse struct {
 // @Tags API.authorized
 // @Accept json
 // @Produce json
-// @Param id path int true "主键ID"
+// @Param id path string true "主键ID"
 // @Success 200 {object} deleteAPIResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized_api/{id} [delete]

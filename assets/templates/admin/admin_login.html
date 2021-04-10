@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>登录页面</title>
+    <link rel="shortcut icon" type="image/x-icon" href="bootstrap/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css">
+    <link rel="stylesheet" type="text/css" href="../../bootstrap/css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="../../bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../bootstrap/css/style.min.css">
+
+    <style>
+        .login-form .has-feedback {
+            position: relative;
+        }
+        .login-form .has-feedback .form-control {
+            padding-left: 36px;
+        }
+        .login-form .has-feedback .mdi {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: auto;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            z-index: 4;
+            color: #dcdcdc;
+            display: block;
+            text-align: center;
+            pointer-events: none;
+        }
+        .login-form .has-feedback.row .mdi {
+            left: 15px;
+        }
+    </style>
+</head>
+
+<body class="center-vh">
+<div class="card card-shadowed p-5 w-420 mb-0 mr-2 ml-2">
+    <div class="text-center mb-3">
+        <img src="../../bootstrap/images/logo-sidebar.png">
+    </div>
+    <form class="login-form">
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-account" aria-hidden="true"></span>
+            <input type="text" class="form-control" id="username" placeholder="用户名">
+        </div>
+
+        <div class="form-group has-feedback">
+            <span class="mdi mdi-lock" aria-hidden="true"></span>
+            <input type="password" class="form-control" id="password" placeholder="密码">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-block btn-primary" id="btnOk" type="button">立即登录</button>
+        </div>
+        <div class="alert alert-primary" style="text-align: center;" role="alert">
+            默认
+            <span class="mdi mdi-account" aria-hidden="true"></span> admin
+            <span class="mdi mdi-lock" aria-hidden="true"></span> admin
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/authorization/md5.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnOk').on('click', function () {
+            const username = $("#username").val();
+            if (username === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入用户名。',
+                });
+                return false;
+            }
+
+            const password = $("#password").val();
+            if (password === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入密码。',
+                });
+                return false;
+            }
+
+            const postData = {
+                username: username,
+                password: md5(password),
+            };
+
+            AjaxForm(
+                "POST",
+                "/login/web",
+                postData,
+                function () {},
+                function (data) {
+                    let date = new Date();
+                    date.setTime(date.getTime() + 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 表示 24 小时
+                    $.cookie('_login_token_', data.token, {expires: date});
+
+                    location.href = "/";
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

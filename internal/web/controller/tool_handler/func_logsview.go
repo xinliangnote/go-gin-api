@@ -15,14 +15,15 @@ type logsViewResponse struct {
 }
 
 type logData struct {
-	Level    string `json:"level"`
-	Time     string `json:"time"`
-	Path     string `json:"path"`
-	HTTPCode int    `json:"http_code"`
-	Method   string `json:"method"`
-	Msg      string `json:"msg"`
-	TraceID  string `json:"trace_id"`
-	Content  string `json:"content"`
+	Level       string  `json:"level"`
+	Time        string  `json:"time"`
+	Path        string  `json:"path"`
+	HTTPCode    int     `json:"http_code"`
+	Method      string  `json:"method"`
+	Msg         string  `json:"msg"`
+	TraceID     string  `json:"trace_id"`
+	Content     string  `json:"content"`
+	CostSeconds float64 `json:"cost_seconds"`
 }
 
 func (h *handler) LogsView() core.HandlerFunc {
@@ -59,14 +60,15 @@ func (h *handler) LogsView() core.HandlerFunc {
 			var logParse logParseData
 			_ = json.Unmarshal(content, &logParse)
 			data := logData{
-				Content:  string(content),
-				Level:    logParse.Level,
-				Time:     logParse.Time,
-				Path:     logParse.Path,
-				Method:   logParse.Method,
-				Msg:      logParse.Msg,
-				HTTPCode: logParse.HTTPCode,
-				TraceID:  logParse.TraceID,
+				Content:     string(content),
+				Level:       logParse.Level,
+				Time:        logParse.Time,
+				Path:        logParse.Path,
+				Method:      logParse.Method,
+				Msg:         logParse.Msg,
+				HTTPCode:    logParse.HTTPCode,
+				TraceID:     logParse.TraceID,
+				CostSeconds: logParse.CostSeconds,
 			}
 
 			if string(content) != "" {

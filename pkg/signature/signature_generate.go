@@ -34,10 +34,14 @@ func (s *signature) Generate(path string, method string, params url.Values) (aut
 	}
 
 	// Date
-	date = time_parse.GMTLayoutString()
+	date = time_parse.CSTLayoutString()
 
 	// Encode() 方法中自带 sorted by key
-	sortParamsEncode := params.Encode()
+	sortParamsEncode, err := url.QueryUnescape(params.Encode())
+	if err != nil {
+		err = errors.Errorf("url QueryUnescape error %v", err)
+		return
+	}
 
 	// 加密字符串规则
 	buffer := bytes.NewBuffer(nil)
@@ -48,8 +52,6 @@ func (s *signature) Generate(path string, method string, params url.Values) (aut
 	buffer.WriteString(sortParamsEncode)
 	buffer.WriteString(delimiter)
 	buffer.WriteString(date)
-
-	fmt.Println(string(buffer.Bytes()))
 
 	// 对数据进行 sha256 加密，并进行 base64 encode
 	hash := hmac.New(sha256.New, []byte(s.secret))

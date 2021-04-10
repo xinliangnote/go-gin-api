@@ -10,6 +10,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/configs"
 	_ "github.com/xinliangnote/go-gin-api/docs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/pkg/browser"
 	"github.com/xinliangnote/go-gin-api/pkg/color"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
@@ -48,6 +49,7 @@ type option struct {
 	recordMetrics     RecordMetrics
 	enableCors        bool
 	enableRate        bool
+	enableOpenBrowser string
 }
 
 // OnPanicNotify 发生panic时通知用
@@ -90,6 +92,13 @@ func WithPanicNotify(notify OnPanicNotify) Option {
 func WithRecordMetrics(record RecordMetrics) Option {
 	return func(opt *option) {
 		opt.recordMetrics = record
+	}
+}
+
+// WithEnableOpenBrowser 启动后在浏览器中打开 uri
+func WithEnableOpenBrowser(uri string) Option {
+	return func(opt *option) {
+		opt.enableOpenBrowser = uri
 	}
 }
 
@@ -309,6 +318,11 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			AllowCredentials:   true,
 			OptionsPassthrough: true,
 		}))
+	}
+
+	if opt.enableOpenBrowser != "" {
+		_ = browser.Open(opt.enableOpenBrowser)
+		fmt.Println(color.Green("* [register open browser '" + opt.enableOpenBrowser + "']"))
 	}
 
 	// recover两次，防止处理时发生panic，尤其是在OnPanicNotify中。

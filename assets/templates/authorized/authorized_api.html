@@ -73,7 +73,7 @@
 <script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
-<script type="text/javascript" src="../../bootstrap/js/util.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -88,44 +88,52 @@
         getListData();
 
         function getListData() {
-            $.get("/api/authorized_list", {id: hash_id}, function (data) {
-                // 成功
-                if (data.list.length > 0) {
-                    var badgeMethodClass = "";
+            AjaxForm(
+                "GET",
+                "/api/authorized_api",
+                {id: hash_id},
+                function () {
+                    
+                },
+                function (data) {
+                    if (data.list.length > 0) {
+                        var badgeMethodClass = "";
 
-                    $.each(data.list, function (index, value) {
-                        if (value.method === "GET") {
-                            badgeMethodClass = "badge-primary";
-                        } else if (value.method === "POST") {
-                            badgeMethodClass = "badge-success";
-                        } else if (value.method === "DELETE") {
-                            badgeMethodClass = "badge-danger";
-                        } else if (value.method === "PUT") {
-                            badgeMethodClass = "badge-yellow";
-                        } else if (value.method === "PATCH") {
-                            badgeMethodClass = "badge-cyan";
-                        } else {
-                            badgeMethodClass = "badge-dark";
-                        }
+                        $.each(data.list, function (index, value) {
+                            if (value.method === "GET") {
+                                badgeMethodClass = "badge-primary";
+                            } else if (value.method === "POST") {
+                                badgeMethodClass = "badge-success";
+                            } else if (value.method === "DELETE") {
+                                badgeMethodClass = "badge-danger";
+                            } else if (value.method === "PUT") {
+                                badgeMethodClass = "badge-yellow";
+                            } else if (value.method === "PATCH") {
+                                badgeMethodClass = "badge-cyan";
+                            } else {
+                                badgeMethodClass = "badge-dark";
+                            }
 
-                        const p = '<p>\n' +
-                            '<a href="#!" data-id="' + value.hash_id + '" data-api="' + value.api + '" class="del">' +
-                            '<span class="badge badge-dark"><i class="mdi mdi-window-close"></i></span>\n' +
-                            '</a>\n' +
-                            '<span class="badge ' + badgeMethodClass + '">' + value.method + '</span>\n' + value.api
-                        ;
+                            const p = '<p>\n' +
+                                '<a href="#!" data-id="' + value.hash_id + '" data-api="' + value.api + '" class="del">' +
+                                '<span class="badge badge-dark"><i class="mdi mdi-window-close"></i></span>\n' +
+                                '</a>\n' +
+                                '<span class="badge ' + badgeMethodClass + '">' + value.method + '</span>\n' + value.api
+                            ;
 
+                            $(".apis").append(p);
+                        })
+                    } else {
+                        // 数据为空
+                        const p = '<p>暂无授权接口</p>';
                         $(".apis").append(p);
-                    })
-                } else {
-                    // 数据为空
-                    const p = '<p>暂无授权接口</p>';
-                    $(".apis").append(p);
+                    }
+                },
+                function (response) {
+                    AjaxError(response);
                 }
-            }).fail(function (response) {
-                // 失败
-                AjaxError(response);
-            })
+                
+            );
         }
 
         $('#btnOk').on('click', function () {
@@ -151,40 +159,46 @@
                 return false;
             }
 
-            $(this).hide();
-            $("#btnLoading").show();
-
             const postData = {
                 method: requestMethod,
                 api: requestApi,
                 id: hash_id,
             };
 
-            $.post("/api/authorized_api", JSON.stringify(postData), function () {
-                $("#btnLoading").hide();
-                $("#btnOk").show();
+            AjaxForm(
+                "POST",
+                "/api/authorized_api",
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function () {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
 
-                $.alert({
-                    title: '操作成功',
-                    icon: 'mdi mdi-check-decagram',
-                    type: 'green',
-                    content: '接口：' + requestApi + ' 授权完成。',
-                    buttons: {
-                        okay: {
-                            text: '关闭',
-                            action: function () {
-                                location.reload();
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '接口：' + requestApi + ' 授权完成。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.reload();
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
 
-            }).fail(function (response) {
-                $("#btnLoading").hide();
-                $("#btnOk").show();
-
-                AjaxError(response);
-            })
+                    AjaxError(response);
+                }
+            );
         });
 
         $(document).on('click', '.del', function () {
@@ -203,10 +217,14 @@
                         keys: ['enter'],
                         btnClass: 'btn-orange',
                         action: function () {
-                            $.ajax({
-                                url: '/api/authorized_api/' + id,
-                                type: 'DELETE',
-                                success: function () {
+                            AjaxForm(
+                                "DELETE",
+                                '/api/authorized_api/' + id,
+                                "",
+                                function () {
+
+                                },
+                                function () {
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
@@ -222,11 +240,10 @@
                                         }
                                     });
                                 },
-                                error: function (response) {
+                                function (response) {
                                     AjaxError(response);
-                                },
-
-                            });
+                                }
+                            );
                         }
                     },
                     cancel: {

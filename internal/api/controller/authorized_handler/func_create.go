@@ -10,9 +10,9 @@ import (
 )
 
 type createRequest struct {
-	BusinessKey       string `json:"business_key"`       // 调用方key
-	BusinessDeveloper string `json:"business_developer"` // 调用方对接人
-	Remark            string `json:"remark"`             // 备注
+	BusinessKey       string `form:"business_key"`       // 调用方key
+	BusinessDeveloper string `form:"business_developer"` // 调用方对接人
+	Remark            string `form:"remark"`             // 备注
 }
 
 type createResponse struct {
@@ -23,9 +23,11 @@ type createResponse struct {
 // @Summary 新增调用方
 // @Description 新增调用方
 // @Tags API.authorized
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param Request body createRequest true "请求信息"
+// @Param business_key formData string true "调用方key"
+// @Param business_developer formData string true "调用方对接人"
+// @Param remark formData string true "备注"
 // @Success 200 {object} createResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized [post]
@@ -33,7 +35,7 @@ func (h *handler) Create() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(createRequest)
 		res := new(createResponse)
-		if err := c.ShouldBindJSON(req); err != nil {
+		if err := c.ShouldBindForm(req); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ParamBindError,

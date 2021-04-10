@@ -1,6 +1,7 @@
 package authorized_service
 
 import (
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
@@ -9,6 +10,9 @@ import (
 )
 
 var _ Service = (*service)(nil)
+
+// 定义缓存前缀
+var cacheKeyPrefix = configs.ProjectName() + ":authorized:"
 
 type Service interface {
 	i()
@@ -20,6 +24,7 @@ type Service interface {
 	UpdateUsed(ctx core.Context, id int32, used int32) (err error)
 	Delete(ctx core.Context, id int32) (err error)
 	Detail(ctx core.Context, id int32) (info *authorized_repo.Authorized, err error)
+	DetailByKey(ctx core.Context, key string) (data *CacheAuthorizedData, err error)
 
 	CreateAPI(ctx core.Context, authorizedAPIData *CreateAuthorizedAPIData) (id int32, err error)
 	ListAPI(ctx core.Context, searchAPIData *SearchAPIData) (listData []*authorized_api_repo.AuthorizedApi, err error)

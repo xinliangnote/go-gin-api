@@ -16,22 +16,35 @@ const (
 	ResubmitError      = 10106
 	ResubmitMsg        = 10107
 	HashIdsDecodeError = 10108
+	SignatureError     = 10109
 
-	// 模块级错误码 - 用户模块
+	// 业务模块级错误码
+	// 用户模块
 	IllegalUserName = 20101
 	UserCreateError = 20102
 	UserUpdateError = 20103
 	UserSearchError = 20104
 
 	// 授权调用方
-	AuthorizedCreateError    = 30101
-	AuthorizedListError      = 30102
-	AuthorizedDeleteError    = 30103
-	AuthorizedUpdateError    = 30104
-	AuthorizedDetailError    = 30105
-	AuthorizedCreateAPIError = 30106
-	AuthorizedListAPIError   = 30107
-	AuthorizedDeleteAPIError = 30108
+	AuthorizedCreateError    = 20201
+	AuthorizedListError      = 20202
+	AuthorizedDeleteError    = 20203
+	AuthorizedUpdateError    = 20204
+	AuthorizedDetailError    = 20205
+	AuthorizedCreateAPIError = 20206
+	AuthorizedListAPIError   = 20207
+	AuthorizedDeleteAPIError = 20208
+
+	// 管理员
+	AdminCreateError             = 20301
+	AdminListError               = 20302
+	AdminDeleteError             = 20303
+	AdminUpdateError             = 20304
+	AdminResetPasswordError      = 20305
+	AdminLoginError              = 20307
+	AdminLogOutError             = 20308
+	AdminModifyPasswordError     = 20309
+	AdminModifyPersonalInfoError = 20310
 )
 
 var codeText = map[int]string{
@@ -43,6 +56,7 @@ var codeText = map[int]string{
 	ResubmitError:      "Resubmit Error",
 	ResubmitMsg:        "请勿重复提交",
 	HashIdsDecodeError: "ID 参数有误",
+	SignatureError:     "Signature Error",
 
 	IllegalUserName: "非法用户名",
 	UserCreateError: "创建用户失败",
@@ -57,6 +71,16 @@ var codeText = map[int]string{
 	AuthorizedCreateAPIError: "创建调用方API地址失败",
 	AuthorizedListAPIError:   "获取调用方API地址列表失败",
 	AuthorizedDeleteAPIError: "删除调用方API地址失败",
+
+	AdminCreateError:             "创建管理员失败",
+	AdminListError:               "获取管理员列表页失败",
+	AdminDeleteError:             "删除管理员失败",
+	AdminUpdateError:             "更新管理员失败",
+	AdminResetPasswordError:      "重置密码失败",
+	AdminLoginError:              "登录失败",
+	AdminLogOutError:             "退出失败",
+	AdminModifyPasswordError:     "修改密码失败",
+	AdminModifyPersonalInfoError: "修改个人信息失败",
 }
 
 func Text(code int) string {

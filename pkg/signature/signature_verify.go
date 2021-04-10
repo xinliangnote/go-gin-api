@@ -37,9 +37,9 @@ func (s *signature) Verify(authorization, date string, path string, method strin
 		return
 	}
 
-	ts, err := time_parse.ParseGMTInLocation(date)
+	ts, err := time_parse.ParseCSTInLocation(date)
 	if err != nil {
-		err = errors.New("date must follow 'Mon, 02 Jan 2006 15:04:05 GMT'")
+		err = errors.New("date must follow '2006-01-02 15:04:05'")
 		return
 	}
 
@@ -49,7 +49,11 @@ func (s *signature) Verify(authorization, date string, path string, method strin
 	}
 
 	// Encode() 方法中自带 sorted by key
-	sortParamsEncode := params.Encode()
+	sortParamsEncode, err := url.QueryUnescape(params.Encode())
+	if err != nil {
+		err = errors.Errorf("url QueryUnescape error %v", err)
+		return
+	}
 
 	buffer := bytes.NewBuffer(nil)
 	buffer.WriteString(path)

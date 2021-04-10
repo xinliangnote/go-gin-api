@@ -35,3 +35,9 @@ func CreateAuthorizedTableSql() (sql string) {
 
 	return
 }
+
+func CreateAuthorizedTableDataSql() (sql string) {
+	sql = "INSERT INTO `authorized` (`id`, `business_key`, `business_secret`, `business_developer`, `remark`, `created_user`) VALUES (1, 'admin', '12878dd962115106db6d', '管理员', '管理面板调用', 'init');"
+
+	return
+}

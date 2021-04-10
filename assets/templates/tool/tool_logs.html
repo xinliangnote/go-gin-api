@@ -78,11 +78,10 @@
                                         <span class="badge {{$badgeMethodClass}}">{{$value.Method}}</span>
                                         <span class="badge {{$badgeCodeClass}}">{{$value.HTTPCode}}</span>
                                         <span class="badge badge-muted">{{$value.TraceID}}</span>
+                                        <span class="badge badge-purple-light">{{$value.CostSeconds}} s</span>
                                         <code>{{$value.Path}}</code>
                                     </a>
                                 {{end}}
-
-
 
                             </div>
                         </div>

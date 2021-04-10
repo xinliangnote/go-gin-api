@@ -10,9 +10,9 @@ import (
 )
 
 type createAPIRequest struct {
-	Id     string `json:"id"`     // HashID
-	Method string `json:"method"` // 请求方法
-	API    string `json:"api"`    // 请求地址
+	Id     string `form:"id"`     // HashID
+	Method string `form:"method"` // 请求方法
+	API    string `form:"api"`    // 请求地址
 }
 
 type createAPIResponse struct {
@@ -23,9 +23,11 @@ type createAPIResponse struct {
 // @Summary 授权调用方接口地址
 // @Description 授权调用方接口地址
 // @Tags API.authorized
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param Request body createAPIRequest true "请求信息"
+// @Param id formData string true "HashID"
+// @Param method formData string true "请求方法"
+// @Param api formData string true "请求地址"
 // @Success 200 {object} createAPIResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized_api [post]
@@ -33,7 +35,7 @@ func (h *handler) CreateAPI() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(createAPIRequest)
 		res := new(createAPIResponse)
-		if err := c.ShouldBindJSON(req); err != nil {
+		if err := c.ShouldBindForm(req); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ParamBindError,

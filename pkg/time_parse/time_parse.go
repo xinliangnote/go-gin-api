@@ -38,6 +38,11 @@ func CSTLayoutString() string {
 	return ts.In(cst).Format(CSTLayout)
 }
 
+// ParseCSTInLocation 格式化时间
+func ParseCSTInLocation(date string) (time.Time, error) {
+	return time.ParseInLocation(CSTLayout, date, cst)
+}
+
 // CSTLayoutStringToUnix 返回 unix 时间戳
 // 2020-01-24 21:11:11 => 1579871471
 func CSTLayoutStringToUnix(cstLayoutString string) (int64, error) {

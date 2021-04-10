@@ -9,8 +9,8 @@ import (
 )
 
 type updateUsedRequest struct {
-	Id   string `json:"id"`   // 主键ID
-	Used int32  `json:"used"` // 是否启用 1:是 -1:否
+	Id   string `form:"id"`   // 主键ID
+	Used int32  `form:"used"` // 是否启用 1:是 -1:否
 }
 
 type updateUsedResponse struct {
@@ -21,9 +21,10 @@ type updateUsedResponse struct {
 // @Summary 更新调用方为启用/禁用
 // @Description 更新调用方为启用/禁用
 // @Tags API.authorized
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param Request body updateUsedRequest true "请求信息"
+// @Param id formData string true "Hashid"
+// @Param used formData int true "是否启用 1:是 -1:否"
 // @Success 200 {object} updateUsedResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized/used [patch]
@@ -31,7 +32,7 @@ func (h *handler) UpdateUsed() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(updateUsedRequest)
 		res := new(updateUsedResponse)
-		if err := c.ShouldBindJSON(req); err != nil {
+		if err := c.ShouldBindForm(req); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ParamBindError,

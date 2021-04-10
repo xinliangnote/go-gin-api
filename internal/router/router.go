@@ -29,6 +29,7 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.C
 	}
 
 	mux, err := core.New(logger,
+		core.WithEnableOpenBrowser("http://127.0.0.1:9999"),
 		core.WithEnableCors(),
 		core.WithEnableRate(),
 		core.WithPanicNotify(notify.OnPanicNotify),
@@ -45,7 +46,7 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.C
 	r.db = db
 	r.cache = cache
 	r.grpConn = grpConn
-	r.middles = middleware.New(logger, cache)
+	r.middles = middleware.New(logger, cache, db)
 
 	// 设置 WEB 路由
 	setWebRouter(r)

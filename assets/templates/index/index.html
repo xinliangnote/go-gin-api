@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" type="text/css" href="bootstrap/js/jquery-confirm/jquery-confirm.min.css">
 <link rel="stylesheet" type="text/css" href="bootstrap/css/materialdesignicons.min.css">
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="bootstrap/js/bootstrap-multitabs/multitabs.min.css">
@@ -36,7 +37,7 @@
               <li class="nav-item"> <a class="multitabs" href="/configinfo"><i class="mdi mdi-settings-box"></i> <span>配置信息</span></a> </li>
 
               <li class="nav-item nav-item-has-subnav">
-                <a href="javascript:void(0)"><i class="mdi mdi-code-not-equal-variant"></i> <span>代码生成</span></a>
+                <a href="javascript:void(0)"><i class="mdi mdi-code-not-equal-variant"></i> <span>代码生成器</span></a>
                 <ul class="nav nav-subnav">
                   <li> <a class="multitabs" href="/init">初始化</a> </li>
                   <li> <a class="multitabs" href="/gormgen">gormgen</a> </li>
@@ -53,16 +54,23 @@
               </li>
 
               <li class="nav-item nav-item-has-subnav">
-                  <a href="javascript:void(0)"><i class="mdi mdi-tools"></i> <span>工具箱</span></a>
+                  <a href="javascript:void(0)"><i class="mdi mdi-account"></i> <span>系统管理员</span></a>
                   <ul class="nav nav-subnav">
-                      <li> <a class="multitabs" href="/tool/hashids">Hashids</a> </li>
-                      <li> <a class="multitabs" href="/tool/logs">调用日志</a> </li>
+                      <li> <a class="multitabs" href="/admin/list">管理员</a> </li>
                   </ul>
               </li>
 
-              <li class="nav-item"> <a href="/swagger/index.html" target="_blank" ><i class="mdi mdi-file-document-box"></i> <span>接口文档</span></a> </li>
-              <li class="nav-item"> <a href="/graphql" target="_blank" ><i class="mdi mdi-file-document-box-search"></i> <span>GraphQL</span></a> </li>
-              <li class="nav-item"> <a href="/metrics" target="_blank" ><i class="mdi mdi-speedometer"></i> <span>接口指标</span></a> </li>
+              <li class="nav-item nav-item-has-subnav">
+                  <a href="javascript:void(0)"><i class="mdi mdi-tools"></i> <span>实用工具箱</span></a>
+                  <ul class="nav nav-subnav">
+                      <li> <a class="multitabs" href="/tool/hashids">Hashids</a> </li>
+                      <li> <a class="multitabs" href="/tool/logs">调用日志</a> </li>
+                      <li> <a target="_blank" href="/swagger/index.html">接口文档</a> </li>
+                      <li> <a target="_blank" href="/graphql">GraphQL</a> </li>
+                      <li> <a target="_blank" href="/metrics">接口指标</a> </li>
+
+                  </ul>
+              </li>
 
           </ul>
         </nav>
@@ -199,6 +207,31 @@
 		  </li>
           <!--切换主题配色-->
 
+            <li class="dropdown dropdown-profile">
+                <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+                    <img class="img-avatar img-avatar-48 m-r-10" src="bootstrap/images/users/avatar.png">
+                    <span id="nickname"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a class="multitabs dropdown-item" data-url="/admin/modify_info" href="javascript:void(0)">
+                            <i class="mdi mdi-account"></i> 个人信息
+                        </a>
+                    </li>
+                    <li>
+                        <a class="multitabs dropdown-item" data-url="/admin/modify_password" href="javascript:void(0)">
+                            <i class="mdi mdi-lock-outline"></i> 修改密码
+                        </a>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="javascript:void(0)" id="logout">
+                            <i class="mdi mdi-logout-variant"></i> 退出登录
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
         </ul>
         
       </nav>
@@ -222,6 +255,45 @@
 <script type="text/javascript" src="bootstrap/js/perfect-scrollbar.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/index.min.js"></script>
+<script type="text/javascript" src="bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        AjaxForm(
+            "GET",
+            "/api/admin/info",
+            "",
+            function () {},
+            function (data) {
+                $("#nickname").html(data.nickname);
+            },
+            function (response) {
+                AjaxError(response);
+            }
+        );
+
+        $("#logout").on('click', function () {
+            AjaxForm(
+                "POST",
+                "/api/admin/logout",
+                "",
+                function () {},
+                function () {
+                    // 清空 cookie
+                    $.cookie('_nav_url_', '');
+                    $.cookie('_nav_title_', '');
+                    $.cookie('_login_token_', '');
+
+                    parent.window.close();
+                    window.open("/login");
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+        })
+    })
+</script>
 </body>
 </html>

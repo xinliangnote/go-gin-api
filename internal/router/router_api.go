@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/api/controller/admin_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/demo_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/tool_handler"
@@ -36,19 +37,39 @@ func setApiRouter(r *resource) {
 		user.GET("/info/:username", core.AliasForRecordMetrics("/user/info"), userHandler.Detail())
 	}
 
-	// api
-	api := r.mux.Group("/api")
+	// authorized
+	authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
+
+	// admin
+	adminHandler := admin_handler.New(r.logger, r.db, r.cache)
+
+	// 登录
+	login := r.mux.Group("/login", r.middles.Signature())
 	{
-		// authorized
-		authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
+		login.POST("/web", adminHandler.Login())
+	}
+
+	// api
+	api := r.mux.Group("/api", core.WrapAuthHandler(r.middles.Token), r.middles.Signature())
+	{
 		api.POST("/authorized", authorizedHandler.Create())
 		api.GET("/authorized", authorizedHandler.List())
 		api.PATCH("/authorized/used", authorizedHandler.UpdateUsed())
 		api.DELETE("/authorized/:id", authorizedHandler.Delete())
 
 		api.POST("/authorized_api", authorizedHandler.CreateAPI())
-		api.GET("/authorized_list", authorizedHandler.ListAPI())
+		api.GET("/authorized_api", authorizedHandler.ListAPI())
 		api.DELETE("/authorized_api/:id", authorizedHandler.DeleteAPI())
+
+		api.POST("/admin", adminHandler.Create())
+		api.GET("/admin", adminHandler.List())
+		api.PATCH("/admin/used", adminHandler.UpdateUsed())
+		api.PATCH("/admin/reset_password/:id", adminHandler.ResetPassword())
+		api.DELETE("/admin/:id", adminHandler.Delete())
+		api.POST("/admin/logout", adminHandler.Logout())
+		api.PATCH("/admin/modify_password", adminHandler.ModifyPassword())
+		api.GET("/admin/info", adminHandler.Detail())
+		api.PATCH("/admin/modify_personal_info", adminHandler.ModifyPersonalInfo())
 
 		// tool
 		toolHandler := tool_handler.New(r.logger, r.db, r.cache)

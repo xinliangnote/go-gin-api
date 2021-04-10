@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/web/controller/admin_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/configinfo_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/dashboard_handler"
@@ -17,6 +18,7 @@ func setWebRouter(r *resource) {
 	configInfoHandler := configinfo_handler.New(r.logger, r.db, r.cache)
 	authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
 	toolHandler := tool_handler.New(r.logger, r.db, r.cache)
+	adminHandler := admin_handler.New(r.logger, r.db, r.cache)
 
 	web := r.mux.Group("", r.middles.DisableLog())
 	{
@@ -44,6 +46,13 @@ func setWebRouter(r *resource) {
 		web.GET("/authorized/add", authorizedHandler.AddView())
 		web.GET("/authorized/api/:id", authorizedHandler.ApiView())
 		web.GET("/authorized/demo", authorizedHandler.DemoView())
+
+		// 管理员
+		web.GET("/admin/list", adminHandler.ListView())
+		web.GET("/admin/add", adminHandler.AddView())
+		web.GET("/admin/modify_password", adminHandler.ModifyPasswordView())
+		web.GET("/admin/modify_info", adminHandler.ModifyInfoView())
+		web.GET("/login", adminHandler.LoginView())
 
 		// 工具箱
 		web.GET("/tool/hashids", toolHandler.HashIdsView())

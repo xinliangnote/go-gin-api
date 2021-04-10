@@ -33,7 +33,7 @@ type Repo interface {
 	TTL(key string) (time.Duration, error)
 	Expire(key string, ttl time.Duration) bool
 	ExpireAt(key string, ttl time.Time) bool
-	Del(keys ...string) bool
+	Del(key string, options ...Option) bool
 	Exists(keys ...string) bool
 	Incr(key string, options ...Option) int64
 	Close() error
@@ -158,13 +158,28 @@ func (c *cacheRepo) Exists(keys ...string) bool {
 	return value > 0
 }
 
-// Del del some key from redis
-func (c *cacheRepo) Del(keys ...string) bool {
-	if len(keys) == 0 {
+func (c *cacheRepo) Del(key string, options ...Option) bool {
+	ts := time.Now()
+	opt := newOption()
+	defer func() {
+		if opt.Trace != nil {
+			opt.Redis.Timestamp = time_parse.CSTLayoutString()
+			opt.Redis.Handle = "del"
+			opt.Redis.Key = key
+			opt.Redis.CostSeconds = time.Since(ts).Seconds()
+			opt.Trace.AppendRedis(opt.Redis)
+		}
+	}()
+
+	for _, f := range options {
+		f(opt)
+	}
+
+	if key == "" {
 		return true
 	}
 
-	value, _ := c.client.Del(keys...).Result()
+	value, _ := c.client.Del(key).Result()
 	return value > 0
 }
 

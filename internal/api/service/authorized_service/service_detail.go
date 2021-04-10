@@ -8,8 +8,7 @@ import (
 
 func (s *service) Detail(ctx core.Context, id int32) (info *authorized_repo.Authorized, err error) {
 	qb := authorized_repo.NewQueryBuilder()
-	qb = qb.WhereIsDeleted(db_repo.EqualPredicate, -1)
-
+	qb.WhereIsDeleted(db_repo.EqualPredicate, -1)
 	qb.WhereId(db_repo.EqualPredicate, id)
 
 	info, err = qb.First(s.db.GetDbR().WithContext(ctx.RequestContext()))
