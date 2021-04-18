@@ -221,14 +221,11 @@ definitions:
         description: 描述信息
         type: string
     type: object
-  demo_handler.authResponse:
+  config_handler.emailResponse:
     properties:
-      authorization:
-        description: 签名
+      email:
+        description: 邮箱地址
         type: string
-      expire_time:
-        description: 过期时间
-        type: integer
     type: object
   tool_handler.hashIdsDecodeResponse:
     properties:
@@ -241,60 +238,6 @@ definitions:
       val:
         description: 加密后的值
         type: string
-    type: object
-  user_handler.createRequest:
-    properties:
-      mobile:
-        description: 手机号
-        type: string
-      nick_name:
-        description: 昵称
-        type: string
-      user_name:
-        description: 用户名
-        type: string
-    type: object
-  user_handler.createResponse:
-    properties:
-      id:
-        description: 主键ID
-        type: integer
-    type: object
-  user_handler.deleteResponse:
-    properties:
-      id:
-        description: 用户主键ID
-        type: integer
-    type: object
-  user_handler.detailResponse:
-    properties:
-      id:
-        description: 用户主键ID
-        type: integer
-      mobile:
-        description: 手机号（脱敏）
-        type: string
-      nick_name:
-        description: 昵称
-        type: string
-      user_name:
-        description: 用户名
-        type: string
-    type: object
-  user_handler.updateNickNameByIDRequest:
-    properties:
-      id:
-        description: 用户主键ID
-        type: integer
-      nick_name:
-        description: 昵称
-        type: string
-    type: object
-  user_handler.updateNickNameByIDResponse:
-    properties:
-      id:
-        description: 用户主键ID
-        type: integer
     type: object
 host: 127.0.0.1:9999
 info:
@@ -451,16 +394,16 @@ paths:
     patch:
       consumes:
       - multipart/form-data
-      description: 修改个人信息
+      description: 修改密码
       parameters:
-      - description: 昵称
+      - description: 旧密码
         in: formData
-        name: nickname
+        name: old_password
         required: true
         type: string
-      - description: 手机号
+      - description: 新密码
         in: formData
-        name: mobile
+        name: new_password
         required: true
         type: string
       produces:
@@ -469,12 +412,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.modifyPersonalInfoResponse'
+            $ref: '#/definitions/admin_handler.modifyPasswordResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
-      summary: 修改个人信息
+      summary: 修改密码
       tags:
       - API.admin
   /api/admin/reset_password/{id}:
@@ -748,6 +691,51 @@ paths:
       summary: 删除调用方接口地址
       tags:
       - API.authorized
+  /api/config/email:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 修改邮件配置
+      parameters:
+      - description: 邮箱服务器
+        in: formData
+        name: host
+        required: true
+        type: string
+      - description: 端口
+        in: formData
+        name: port
+        required: true
+        type: string
+      - description: 发件人邮箱
+        in: formData
+        name: user
+        required: true
+        type: string
+      - description: 发件人密码
+        in: formData
+        name: pass
+        required: true
+        type: string
+      - description: 收件人邮箱地址，多个用,分割
+        in: formData
+        name: to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config_handler.emailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 修改邮件配置
+      tags:
+      - API.config
   /api/tool/hashids/decode/{id}:
     get:
       consumes:
@@ -798,199 +786,4 @@ paths:
       summary: HashIds 加密
       tags:
       - API.tool
-  /auth/get:
-    post:
-      consumes:
-      - application/json
-      description: 获取授权信息
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/demo_handler.authResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 获取授权信息
-      tags:
-      - Demo
-  /demo/trace:
-    get:
-      consumes:
-      - application/json
-      description: Trace 示例
-      parameters:
-      - description: 签名
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              properties:
-                job:
-                  description: 工作
-                  type: string
-                name:
-                  description: 用户名
-                  type: string
-              type: object
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: Trace 示例
-      tags:
-      - Demo
-  /user/create:
-    post:
-      consumes:
-      - application/json
-      description: 创建用户
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/user_handler.createRequest'
-      - description: 签名
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/user_handler.createResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 创建用户
-      tags:
-      - User
-  /user/delete/{id}:
-    patch:
-      consumes:
-      - application/json
-      description: 删除用户
-      parameters:
-      - description: 用户ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: 签名
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/user_handler.deleteResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 删除用户
-      tags:
-      - User
-  /user/info/{username}:
-    get:
-      consumes:
-      - application/json
-      description: 用户详情
-      parameters:
-      - description: 用户名
-        in: path
-        name: username
-        required: true
-        type: string
-      - description: 签名
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/user_handler.detailResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 用户详情
-      tags:
-      - User
-  /user/update:
-    put:
-      consumes:
-      - application/json
-      description: 编辑用户 - 通过用户主键ID更新用户昵称
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/user_handler.updateNickNameByIDRequest'
-      - description: 签名
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/user_handler.updateNickNameByIDResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 编辑用户 - 通过用户主键ID更新用户昵称
-      tags:
-      - User
 swagger: "2.0"

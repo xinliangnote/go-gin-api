@@ -1,4 +1,4 @@
-package mysql
+package mysql_table
 
 //CREATE TABLE `admin` (
 //`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',

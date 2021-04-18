@@ -3,38 +3,43 @@ package router
 import (
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/admin_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/authorized_handler"
-	"github.com/xinliangnote/go-gin-api/internal/web/controller/configinfo_handler"
+	"github.com/xinliangnote/go-gin-api/internal/web/controller/config_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/dashboard_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/gencode_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/index_handler"
+	"github.com/xinliangnote/go-gin-api/internal/web/controller/install_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/tool_handler"
 )
 
 func setWebRouter(r *resource) {
 
+	installHandler := install_handler.New(r.logger)
 	indexHandler := index_handler.New(r.logger, r.db, r.cache)
 	dashboardHandler := dashboard_handler.New(r.logger, r.db, r.cache)
 	genCodeHandler := gencode_handler.New(r.logger, r.db, r.cache)
-	configInfoHandler := configinfo_handler.New(r.logger, r.db, r.cache)
+	configInfoHandler := config_handler.New(r.logger, r.db, r.cache)
 	authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
 	toolHandler := tool_handler.New(r.logger, r.db, r.cache)
 	adminHandler := admin_handler.New(r.logger, r.db, r.cache)
 
 	web := r.mux.Group("", r.middles.DisableLog())
 	{
-		// 首页侧边栏
+		// 首页
 		web.GET("", indexHandler.View())
+
+		// 安装
+		web.GET("/install", installHandler.View())
+		web.POST("/install/execute", installHandler.Execute())
+		web.POST("/install/restart", installHandler.Restart())
 
 		// 仪表盘
 		web.GET("/dashboard", dashboardHandler.View())
 
 		// 配置信息
-		web.GET("/configinfo", configInfoHandler.View())
+		web.GET("/config/email", configInfoHandler.EmailView())
+		web.GET("/config/code", configInfoHandler.CodeView())
 
-		// 代码生成
-		web.GET("/init", genCodeHandler.InitView())
-		web.POST("/init_exec", genCodeHandler.InitExecute())
-
+		// 代码生成工具
 		web.GET("/gormgen", genCodeHandler.GormView())
 		web.POST("/gormgen_exec", genCodeHandler.GormExecute())
 

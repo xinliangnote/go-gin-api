@@ -3,7 +3,6 @@ package resolvers
 import (
 	"context"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/user_service"
 	"github.com/xinliangnote/go-gin-api/internal/graph/generated"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -21,17 +20,17 @@ type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 
 type Resolver struct {
-	logger      *zap.Logger
-	cache       cache.Repo
-	userService user_service.UserService
+	logger *zap.Logger
+	cache  cache.Repo
+	//userService user_service.UserService
 }
 
 func NewRootResolvers(logger *zap.Logger, db db.Repo, cache cache.Repo) generated.Config {
 	c := generated.Config{
 		Resolvers: &Resolver{
-			logger:      logger,
-			cache:       cache,
-			userService: user_service.NewUserService(db, cache),
+			logger: logger,
+			cache:  cache,
+			//userService: user_service.NewUserService(db, cache),
 		},
 	}
 	return c

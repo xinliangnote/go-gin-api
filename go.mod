@@ -8,6 +8,7 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/dave/dst v0.26.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gin-contrib/pprof v1.2.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-ole/go-ole v1.2.5 // indirect

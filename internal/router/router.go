@@ -24,16 +24,47 @@ type resource struct {
 	middles middleware.Middleware
 }
 
-func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.ClientConn) (core.Mux, error) {
-	var openBrowserUri = "http://127.0.0.1:9999"
+type Server struct {
+	Mux       core.Mux
+	Db        db.Repo
+	Cache     cache.Repo
+	GrpClient grpc.ClientConn
+}
 
-	_, ok := file.IsExists(configs.InitDBLockFile())
-	if !ok {
-		openBrowserUri = "http://127.0.0.1:9999/init?init=db"
-	}
-
+func NewHTTPServer(logger *zap.Logger) (*Server, error) {
 	if logger == nil {
 		return nil, errors.New("logger required")
+	}
+
+	r := new(resource)
+	r.logger = logger
+
+	openBrowserUri := "http://127.0.0.1" + configs.ProjectPort()
+
+	_, ok := file.IsExists(configs.ProjectInstallFile())
+	if !ok { // 未安装
+		openBrowserUri += "/install"
+	} else { // 已安装
+		// 初始化 DB
+		dbRepo, err := db.New()
+		if err != nil {
+			logger.Fatal("new db err", zap.Error(err))
+		}
+		r.db = dbRepo
+
+		// 初始化 Cache
+		cacheRepo, err := cache.New()
+		if err != nil {
+			logger.Fatal("new cache err", zap.Error(err))
+		}
+		r.cache = cacheRepo
+
+		// 初始化 gRPC client
+		gRPCRepo, err := grpc.New()
+		if err != nil {
+			logger.Fatal("new grpc err", zap.Error(err))
+		}
+		r.grpConn = gRPCRepo
 	}
 
 	mux, err := core.New(logger,
@@ -48,13 +79,8 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.C
 		panic(err)
 	}
 
-	r := new(resource)
 	r.mux = mux
-	r.logger = logger
-	r.db = db
-	r.cache = cache
-	r.grpConn = grpConn
-	r.middles = middleware.New(logger, cache, db)
+	r.middles = middleware.New(logger, r.cache, r.db)
 
 	// 设置 WEB 路由
 	setWebRouter(r)
@@ -65,5 +91,11 @@ func NewHTTPMux(logger *zap.Logger, db db.Repo, cache cache.Repo, grpConn grpc.C
 	// 设置 GraphQL 路由
 	setGraphQLRouter(r)
 
-	return mux, nil
+	s := new(Server)
+	s.Mux = mux
+	s.Db = r.db
+	s.Cache = r.cache
+	s.GrpClient = r.grpConn
+
+	return s, nil
 }

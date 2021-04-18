@@ -1,27 +1,16 @@
-package gencode_handler
+package install_handler
 
 import (
 	"bytes"
-	"fmt"
 	"os/exec"
 	"runtime"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 )
 
-type handlerExecuteRequest struct {
-	Name string `form:"name"`
-}
-
-func (h *handler) HandlerExecute() core.HandlerFunc {
+func (h *handler) Restart() core.HandlerFunc {
 	return func(c core.Context) {
-		req := new(handlerExecuteRequest)
-		if err := c.ShouldBindPostForm(req); err != nil {
-			c.Payload("参数传递有误")
-			return
-		}
-
-		shellPath := fmt.Sprintf("./scripts/handlergen.sh %s", req.Name)
+		shellPath := "./scripts/restart.sh"
 
 		// runtime.GOOS = linux or darwin
 		command := exec.Command("/bin/bash", "-c", shellPath)
@@ -32,13 +21,17 @@ func (h *handler) HandlerExecute() core.HandlerFunc {
 
 		var stderr bytes.Buffer
 		command.Stderr = &stderr
+		outPutString := ""
 
 		output, err := command.Output()
 		if err != nil {
-			c.Payload(stderr.String())
+			outPutString += stderr.String()
+			c.Payload(outPutString)
 			return
 		}
 
-		c.Payload(string(output))
+		outPutString += string(output)
+
+		c.Payload(outPutString)
 	}
 }

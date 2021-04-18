@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">服务初始化</div>
+                </header>
+                <div class="card-body text-center">
+                    <h4 class="card-title">配置 · Redis</h4>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">地址</span>
+                        </div>
+                        <input type="text" class="form-control" id="redis_addr" value="{{ .Redis.Addr }}"
+                               placeholder="请输入地址，例如：127.0.0.1:6379">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">密码</span>
+                        </div>
+                        <input type="password" class="form-control" id="redis_pass" value="{{ .Redis.Pass }}"
+                               placeholder="请输入密码">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">DB </span>
+                        </div>
+                        <input type="text" class="form-control" id="redis_db" value="{{ .Redis.Db }}"
+                               placeholder="请输入 DB ，序号从 0 开始，默认是 0">
+                    </div>
+
+                    <h4 class="card-title">配置 · MySQL</h4>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">地址</span>
+                        </div>
+                        <input type="text" class="form-control" id="mysql_addr" value="{{ .MySQL.Write.Addr }}"
+                               placeholder="请输入服务器地址，例如：127.0.0.1:3306">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">用户</span>
+                        </div>
+                        <input type="text" class="form-control" id="mysql_user" value="{{ .MySQL.Write.User }}"
+                               placeholder="请输入用户名">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">密码</span>
+                        </div>
+                        <input type="password" class="form-control" id="mysql_pass" value="{{ .MySQL.Write.Pass }}"
+                               placeholder="请输入密码">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">DB </span>
+                        </div>
+                        <input type="text" class="form-control" id="mysql_name" value="{{ .MySQL.Write.Name }}"
+                               placeholder="请输入数据库名">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <small><i class="mdi mdi-checkbox-marked-circle"></i> 初始化 MySQL 数据表：<code>authorized</code>
+                            、<code>authorized_api</code> 、<code>admin</code>；
+                        </small>
+                    </div>
+
+                    <button type="button" id="btnOk" class="btn btn-primary">初始化</button>
+                    <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        执行中...
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">执行结果</div>
+                </header>
+                <div class="card-body">
+                    <pre id="resultDiv"></pre>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnOk").click(function () {
+
+            const redis_addr = $("#redis_addr").val();
+            if (redis_addr === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 Redis 服务器地址。',
+                });
+                return false;
+            }
+
+            const redis_db = $("#redis_db").val();
+            if (redis_db === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 Redis DB。',
+                });
+                return false;
+            }
+
+            const mysql_addr = $("#mysql_addr").val();
+            if (mysql_addr === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 MySQL 服务器地址。',
+                });
+                return false;
+            }
+
+            const mysql_user = $("#mysql_user").val();
+            if (mysql_user === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 MySQL 用户名。',
+                });
+                return false;
+            }
+
+            const mysql_pass = $("#mysql_pass").val();
+            if (mysql_pass === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 MySQL 密码。',
+                });
+                return false;
+            }
+
+            const mysql_name = $("#mysql_name").val();
+            if (mysql_name === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 MySQL 数据库名。',
+                });
+                return false;
+            }
+
+            const postData = {
+                redis_addr: redis_addr,
+                redis_pass: $("#redis_pass").val(),
+                redis_db: redis_db,
+
+                mysql_addr: mysql_addr,
+                mysql_user: mysql_user,
+                mysql_pass: mysql_pass,
+                mysql_name: mysql_name,
+            };
+
+            AjaxForm(
+                "POST",
+                "/install/execute",
+                postData,
+                function () {
+                    $("#resultDiv").text("");
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function (data) {
+                    $("#resultDiv").text(data);
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '服务初始化成功，<strong style="color: red">请重新启动服务！</strong>',
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+
+        })
+    });
+</script>
+</body>
+</html>

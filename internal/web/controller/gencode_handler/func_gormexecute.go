@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"runtime"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -25,10 +26,12 @@ func (h *handler) GormExecute() core.HandlerFunc {
 		mysqlConf := configs.Get().MySQL.Read
 		shellPath := fmt.Sprintf("./scripts/gormgen.sh %s %s %s %s %s", mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
 
-		command := exec.Command("/bin/bash", "-c", shellPath) //初始化 Cmd
+		// runtime.GOOS = linux or darwin
+		command := exec.Command("/bin/bash", "-c", shellPath)
 
-		// windows 版本
-		//command := exec.Command("cmd", "/C", shellPath)
+		if runtime.GOOS == "windows" {
+			command = exec.Command("cmd", "/C", shellPath)
+		}
 
 		var stderr bytes.Buffer
 		command.Stderr = &stderr

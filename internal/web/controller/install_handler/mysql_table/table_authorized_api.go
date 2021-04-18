@@ -1,4 +1,4 @@
-package mysql
+package mysql_table
 
 //CREATE TABLE `authorized_api` (
 //`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -11,7 +11,7 @@ package mysql
 //`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 //`updated_user` varchar(60) NOT NULL DEFAULT '' COMMENT '更新人',
 //PRIMARY KEY (`id`)
-//) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已授权接口地址';
+//) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已授权接口地址表';
 
 func CreateAuthorizedAPITableSql() (sql string) {
 	sql = "CREATE TABLE `authorized_api` ("
@@ -25,7 +25,7 @@ func CreateAuthorizedAPITableSql() (sql string) {
 	sql += "`updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',"
 	sql += "`updated_user` varchar(60) NOT NULL DEFAULT '' COMMENT '更新人',"
 	sql += "PRIMARY KEY (`id`)"
-	sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已授权的调用方表';"
+	sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已授权接口地址表';"
 
 	return
 }

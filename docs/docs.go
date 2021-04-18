@@ -206,7 +206,7 @@ var doc = `{
         },
         "/api/admin/modify_password": {
             "patch": {
-                "description": "修改个人信息",
+                "description": "修改密码",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -216,19 +216,19 @@ var doc = `{
                 "tags": [
                     "API.admin"
                 ],
-                "summary": "修改个人信息",
+                "summary": "修改密码",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "昵称",
-                        "name": "nickname",
+                        "description": "旧密码",
+                        "name": "old_password",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "手机号",
-                        "name": "mobile",
+                        "description": "新密码",
+                        "name": "new_password",
                         "in": "formData",
                         "required": true
                     }
@@ -237,7 +237,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.modifyPersonalInfoResponse"
+                            "$ref": "#/definitions/admin_handler.modifyPasswordResponse"
                         }
                     },
                     "400": {
@@ -695,6 +695,72 @@ var doc = `{
                 }
             }
         },
+        "/api/config/email": {
+            "patch": {
+                "description": "修改邮件配置",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.config"
+                ],
+                "summary": "修改邮件配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "邮箱服务器",
+                        "name": "host",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "端口",
+                        "name": "port",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "发件人邮箱",
+                        "name": "user",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "发件人密码",
+                        "name": "pass",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "收件人邮箱地址，多个用,分割",
+                        "name": "to",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/config_handler.emailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/tool/hashids/decode/{id}": {
             "get": {
                 "description": "HashIds 解密",
@@ -764,300 +830,6 @@ var doc = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/get": {
-            "post": {
-                "description": "获取授权信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Demo"
-                ],
-                "summary": "获取授权信息",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/demo_handler.authResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/demo/trace": {
-            "get": {
-                "description": "Trace 示例",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Demo"
-                ],
-                "summary": "Trace 示例",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "签名",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "job": {
-                                        "description": "工作",
-                                        "type": "string"
-                                    },
-                                    "name": {
-                                        "description": "用户名",
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/create": {
-            "post": {
-                "description": "创建用户",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "创建用户",
-                "parameters": [
-                    {
-                        "description": "请求信息",
-                        "name": "Request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user_handler.createRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "签名",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user_handler.createResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/delete/{id}": {
-            "patch": {
-                "description": "删除用户",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "删除用户",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "用户ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "签名",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user_handler.deleteResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/info/{username}": {
-            "get": {
-                "description": "用户详情",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "用户详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户名",
-                        "name": "username",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "签名",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user_handler.detailResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/update": {
-            "put": {
-                "description": "编辑用户 - 通过用户主键ID更新用户昵称",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "编辑用户 - 通过用户主键ID更新用户昵称",
-                "parameters": [
-                    {
-                        "description": "请求信息",
-                        "name": "Request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user_handler.updateNickNameByIDRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "签名",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/user_handler.updateNickNameByIDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/code.Failure"
                         }
@@ -1390,16 +1162,12 @@ var doc = `{
                 }
             }
         },
-        "demo_handler.authResponse": {
+        "config_handler.emailResponse": {
             "type": "object",
             "properties": {
-                "authorization": {
-                    "description": "签名",
+                "email": {
+                    "description": "邮箱地址",
                     "type": "string"
-                },
-                "expire_time": {
-                    "description": "过期时间",
-                    "type": "integer"
                 }
             }
         },
@@ -1418,84 +1186,6 @@ var doc = `{
                 "val": {
                     "description": "加密后的值",
                     "type": "string"
-                }
-            }
-        },
-        "user_handler.createRequest": {
-            "type": "object",
-            "properties": {
-                "mobile": {
-                    "description": "手机号",
-                    "type": "string"
-                },
-                "nick_name": {
-                    "description": "昵称",
-                    "type": "string"
-                },
-                "user_name": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "user_handler.createResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "主键ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "user_handler.deleteResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "用户主键ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "user_handler.detailResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "用户主键ID",
-                    "type": "integer"
-                },
-                "mobile": {
-                    "description": "手机号（脱敏）",
-                    "type": "string"
-                },
-                "nick_name": {
-                    "description": "昵称",
-                    "type": "string"
-                },
-                "user_name": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "user_handler.updateNickNameByIDRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "用户主键ID",
-                    "type": "integer"
-                },
-                "nick_name": {
-                    "description": "昵称",
-                    "type": "string"
-                }
-            }
-        },
-        "user_handler.updateNickNameByIDResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "用户主键ID",
-                    "type": "integer"
                 }
             }
         }

@@ -1,4 +1,4 @@
-package configinfo_handler
+package install_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
@@ -7,6 +7,6 @@ import (
 
 func (h *handler) View() core.HandlerFunc {
 	return func(c core.Context) {
-		c.HTML("configinfo", configs.Get())
+		c.HTML("install_view", configs.Get())
 	}
 }

@@ -1,4 +1,4 @@
-package gencode_handler
+package config_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
@@ -13,15 +13,13 @@ var _ Handler = (*handler)(nil)
 type Handler interface {
 	i()
 
-	HandlerView() core.HandlerFunc
-	HandlerExecute() core.HandlerFunc
-
-	GormView() core.HandlerFunc
-	GormExecute() core.HandlerFunc
+	// Email 修改邮件配置
+	// @Tags API.config
+	// @Router /api/config/email [patch]
+	Email() core.HandlerFunc
 }
 
 type handler struct {
-	db     db.Repo
 	logger *zap.Logger
 	cache  cache.Repo
 }
@@ -30,7 +28,6 @@ func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,
-		db:     db,
 	}
 }
 

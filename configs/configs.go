@@ -6,6 +6,7 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
@@ -77,6 +78,13 @@ func init() {
 	if err := viper.Unmarshal(config); err != nil {
 		panic(err)
 	}
+
+	viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		if err := viper.Unmarshal(config); err != nil {
+			panic(err)
+		}
+	})
 }
 
 func Get() Config {
@@ -95,6 +103,6 @@ func ProjectLogFile() string {
 	return fmt.Sprintf("./logs/%s-access.log", ProjectName())
 }
 
-func InitDBLockFile() string {
-	return "cmd/init/db/init_db.lock"
+func ProjectInstallFile() string {
+	return "INSTALL.lock"
 }

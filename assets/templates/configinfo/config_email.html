@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title"> 邮箱告警配置</div>
+                </header>
+                <div class="card-body">
+                    <form class="site-form">
+                        <div class="form-group">
+                            <label>邮箱服务器：</label>
+                            <input type="text" class="form-control" id="host" value="{{ .Mail.Host }}">
+                        </div>
+                        <div class="form-group">
+                            <label>端口：</label>
+                            <input type="text" class="form-control" id="port" value="{{ .Mail.Port }}">
+                        </div>
+                        <div class="form-group">
+                            <label>发件人邮箱</label>
+                            <input type="text" class="form-control" id="user" value="{{ .Mail.User }}">
+                        </div>
+                        <div class="form-group">
+                            <label>发件人密码</label> <small>（发件人邮箱密码或授权码，根据邮箱服务器而定）</small>
+                            <input type="password" class="form-control" id="pass" value="{{ .Mail.Pass }}">
+                        </div>
+                        <div class="form-group">
+                            <label>收件人</label> <small>（添加多个收件人邮箱，用英文,分割）</small>
+                            <input type="text" class="form-control" id="to" value="{{ .Mail.To }}"
+                                   placeholder="请输入收件人邮箱，多个用,分割">
+                        </div>
+                        <div class="form-group">
+                            <small>为了验证邮箱配置的准确性，点击保存后会给收件人发送邮件以确保配置可用。</small>
+                        </div>
+                        <button type="button" id="btnOk" class="btn btn-primary">保存</button>
+                        <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            执行中...
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#btnOk').on('click', function () {
+            const host = $("#host").val();
+            if (host === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入邮箱服务器。',
+                });
+                return false;
+            }
+
+            const port = $("#port").val();
+            if (port === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入端口。',
+                });
+                return false;
+            }
+
+            const user = $("#user").val();
+            if (user === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入发件人邮箱。',
+                });
+                return false;
+            }
+
+            const pass = $("#pass").val();
+            if (pass === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入发件人密码。',
+                });
+                return false;
+            }
+
+            const to = $("#to").val();
+            if (to === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入收件人邮箱。',
+                });
+                return false;
+            }
+
+            const postData = {
+                host: host,
+                port: port,
+                user: user,
+                pass: pass,
+                to: to,
+            };
+
+
+            AjaxForm(
+                "PATCH",
+                "/api/config/email",
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function () {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '配置修改完成',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.reload();
+                                }
+                            }
+                        }
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

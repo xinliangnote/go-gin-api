@@ -1,4 +1,4 @@
-package configinfo_handler
+package config_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
@@ -13,7 +13,8 @@ var _ Handler = (*handler)(nil)
 type Handler interface {
 	i()
 
-	View() core.HandlerFunc
+	EmailView() core.HandlerFunc
+	CodeView() core.HandlerFunc
 }
 
 type handler struct {

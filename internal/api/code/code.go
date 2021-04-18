@@ -41,10 +41,17 @@ const (
 	AdminDeleteError             = 20303
 	AdminUpdateError             = 20304
 	AdminResetPasswordError      = 20305
-	AdminLoginError              = 20307
-	AdminLogOutError             = 20308
-	AdminModifyPasswordError     = 20309
-	AdminModifyPersonalInfoError = 20310
+	AdminLoginError              = 20306
+	AdminLogOutError             = 20307
+	AdminModifyPasswordError     = 20308
+	AdminModifyPersonalInfoError = 20309
+
+	// 配置
+	ConfigEmailError        = 20401
+	ConfigSaveError         = 20402
+	ConfigRedisConnectError = 20403
+	ConfigMySQLConnectError = 20404
+	ConfigMySQLInstallError = 20405
 )
 
 var codeText = map[int]string{
@@ -81,6 +88,12 @@ var codeText = map[int]string{
 	AdminLogOutError:             "退出失败",
 	AdminModifyPasswordError:     "修改密码失败",
 	AdminModifyPersonalInfoError: "修改个人信息失败",
+
+	ConfigEmailError:        "修改邮箱配置失败",
+	ConfigSaveError:         "写入配置文件失败",
+	ConfigRedisConnectError: "Redis 连接失败",
+	ConfigMySQLConnectError: "MySQL 连接失败",
+	ConfigMySQLInstallError: "MySQL 初始化数据失败",
 }
 
 func Text(code int) string {
