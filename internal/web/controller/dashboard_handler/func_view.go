@@ -70,9 +70,14 @@ func (h *handler) View() core.HandlerFunc {
 		obj.HostOS = fmt.Sprintf("%s(%s) %s", hostInfo.Platform, hostInfo.PlatformFamily, hostInfo.PlatformVersion)
 		obj.HostName = hostInfo.Hostname
 
-		obj.CpuName = cpuInfo[0].ModelName
-		obj.CpuCores = cpuInfo[0].Cores
-		obj.CpuUsedPercent, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", cpuPercent[0]), 64)
+		if len(cpuInfo) > 0 {
+			obj.CpuName = cpuInfo[0].ModelName
+			obj.CpuCores = cpuInfo[0].Cores
+		}
+
+		if len(cpuPercent) > 0 {
+			obj.CpuUsedPercent, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", cpuPercent[0]), 64)
+		}
 
 		obj.GoPath = runtime.GOROOT()
 		obj.GoVersion = runtime.Version()

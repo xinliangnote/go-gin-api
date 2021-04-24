@@ -384,10 +384,11 @@ func (c *context) URI() string {
 	return uri
 }
 
-// RequestContext 获取请求的 context (当client关闭后，会自动canceled)
+// RequestContext (包装 Trace + Logger) 获取请求的 context (当client关闭后，会自动canceled)
 func (c *context) RequestContext() StdContext {
 	return StdContext{
-		c.ctx.Request.Context(),
+		//c.ctx.Request.Context(),
+		stdctx.Background(),
 		c.Trace(),
 		c.Logger(),
 	}
