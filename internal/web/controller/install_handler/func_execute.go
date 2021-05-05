@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"runtime"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
@@ -39,6 +40,17 @@ func (h *handler) Execute() core.HandlerFunc {
 				http.StatusBadRequest,
 				code.ParamBindError,
 				code.Text(code.ParamBindError)).WithErr(err),
+			)
+			return
+		}
+
+		versionStr := runtime.Version()
+		version := cast.ToFloat32(versionStr[2:])
+		if version < 1.15 {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigGoVersionError,
+				code.Text(code.ConfigGoVersionError)),
 			)
 			return
 		}
@@ -186,6 +198,16 @@ func (h *handler) Execute() core.HandlerFunc {
 			return
 		}
 		outPutString += "初始化 MySQL 数据表：admin 默认数据成功。\n"
+
+		if err = db.Exec(mysql_table.CreateMenuTableSql()).Error; err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigMySQLInstallError,
+				"MySQL "+err.Error()).WithErr(err),
+			)
+			return
+		}
+		outPutString += "初始化 MySQL 数据表：menu 成功。\n"
 
 		// 生成 install 完成标识
 		f, err := os.Create(configs.ProjectInstallFile())

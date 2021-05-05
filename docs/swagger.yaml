@@ -227,6 +227,105 @@ definitions:
         description: 邮箱地址
         type: string
     type: object
+  menu_handler.createRequest:
+    properties:
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: ID
+        type: string
+      level:
+        description: 菜单类型 1:一级菜单 2:二级菜单
+        type: integer
+      link:
+        description: 链接地址
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      pid:
+        description: 父类ID
+        type: integer
+    type: object
+  menu_handler.createResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  menu_handler.deleteResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  menu_handler.detailResponse:
+    properties:
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      link:
+        description: 链接地址
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+    type: object
+  menu_handler.listData:
+    properties:
+      hashid:
+        description: hashid
+        type: string
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: ID
+        type: integer
+      is_used:
+        description: 是否启用 1=启用 -1=禁用
+        type: integer
+      link:
+        description: 链接地址
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      pid:
+        description: 父类ID
+        type: integer
+    type: object
+  menu_handler.listResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/menu_handler.listData'
+        type: array
+    type: object
+  menu_handler.updateUsedResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  tool_handler.dbData:
+    properties:
+      db_name:
+        description: 数据库名称
+        type: string
+    type: object
+  tool_handler.dbsResponse:
+    properties:
+      list:
+        description: 数据库列表
+        items:
+          $ref: '#/definitions/tool_handler.dbData'
+        type: array
+    type: object
   tool_handler.hashIdsDecodeResponse:
     properties:
       val:
@@ -238,6 +337,60 @@ definitions:
       val:
         description: 加密后的值
         type: string
+    type: object
+  tool_handler.searchCacheResponse:
+    properties:
+      ttl:
+        description: 过期时间
+        type: string
+      val:
+        description: 查询后的值
+        type: string
+    type: object
+  tool_handler.searchMySQLResponse:
+    properties:
+      cols:
+        description: 查询后的行
+        items:
+          type: string
+        type: array
+      cols_info:
+        description: 行信息
+        items:
+          $ref: '#/definitions/tool_handler.tableColumn'
+        type: array
+      list:
+        description: 查询后的数据
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+    type: object
+  tool_handler.tableColumn:
+    properties:
+      column_comment:
+        description: 字段注释
+        type: string
+      column_name:
+        description: 字段名称
+        type: string
+    type: object
+  tool_handler.tableData:
+    properties:
+      table_comment:
+        description: 数据表备注
+        type: string
+      table_name:
+        description: 数据表名称
+        type: string
+    type: object
+  tool_handler.tablesResponse:
+    properties:
+      list:
+        description: 数据表列表
+        items:
+          $ref: '#/definitions/tool_handler.tableData'
+        type: array
     type: object
 host: 127.0.0.1:9999
 info:
@@ -374,20 +527,31 @@ paths:
   /api/admin/login:
     post:
       consumes:
-      - application/json
-      description: 管理员登出
+      - multipart/form-data
+      description: 管理员登录
+      parameters:
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.logoutResponse'
+            $ref: '#/definitions/admin_handler.loginResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
-      summary: 管理员登出
+      summary: 管理员登录
       tags:
       - API.admin
   /api/admin/modify_password:
@@ -736,6 +900,258 @@ paths:
       summary: 修改邮件配置
       tags:
       - API.config
+  /api/menu:
+    get:
+      consumes:
+      - application/json
+      description: 菜单列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.listResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 菜单列表
+      tags:
+      - API.menu
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建/编辑菜单
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/menu_handler.createRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 创建/编辑菜单
+      tags:
+      - API.menu
+  /api/menu/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除菜单
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.deleteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 删除菜单
+      tags:
+      - API.menu
+    get:
+      consumes:
+      - application/json
+      description: 菜单详情
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 菜单详情
+      tags:
+      - API.menu
+  /api/menu/used:
+    patch:
+      consumes:
+      - application/json
+      description: 更新菜单为启用/禁用
+      parameters:
+      - description: Hashid
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: 是否启用 1:是 -1:否
+        in: formData
+        name: used
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.updateUsedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 更新菜单为启用/禁用
+      tags:
+      - API.menu
+  /api/tool/cache/clear:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 清空缓存
+      parameters:
+      - description: Redis Key
+        in: formData
+        name: redis_key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.searchCacheResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 清空缓存
+      tags:
+      - API.tool
+  /api/tool/cache/search:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 查询缓存
+      parameters:
+      - description: Redis Key
+        in: formData
+        name: redis_key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.searchCacheResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 查询缓存
+      tags:
+      - API.tool
+  /api/tool/data/dbs:
+    get:
+      consumes:
+      - multipart/form-data
+      description: 查询 DB
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.dbsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 查询 DB
+      tags:
+      - API.tool
+  /api/tool/data/mysql:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 执行 SQL 语句
+      parameters:
+      - description: 数据库名称
+        in: formData
+        name: db_name
+        required: true
+        type: string
+      - description: 数据表名称
+        in: formData
+        name: table_name
+        required: true
+        type: string
+      - description: SQL 语句
+        in: formData
+        name: sql
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.searchMySQLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 执行 SQL 语句
+      tags:
+      - API.tool
+  /api/tool/data/tables:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 查询 Table
+      parameters:
+      - description: 数据库名称
+        in: formData
+        name: db_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.tablesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 查询 Table
+      tags:
+      - API.tool
   /api/tool/hashids/decode/{id}:
     get:
       consumes:

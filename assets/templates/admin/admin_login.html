@@ -18,9 +18,11 @@
         .login-form .has-feedback {
             position: relative;
         }
+
         .login-form .has-feedback .form-control {
             padding-left: 36px;
         }
+
         .login-form .has-feedback .mdi {
             position: absolute;
             top: 0;
@@ -35,6 +37,7 @@
             text-align: center;
             pointer-events: none;
         }
+
         .login-form .has-feedback.row .mdi {
             left: 15px;
         }
@@ -74,6 +77,14 @@
 <script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        // 回车触发按钮事件
+        $(document).keyup(function (event) {
+            if (event.keyCode === 13) {
+                $("#btnOk").trigger("click");
+            }
+        });
+
         $('#btnOk').on('click', function () {
             const username = $("#username").val();
             if (username === "") {
@@ -106,7 +117,8 @@
                 "POST",
                 "/login/web",
                 postData,
-                function () {},
+                function () {
+                },
                 function (data) {
                     let date = new Date();
                     date.setTime(date.getTime() + 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 表示 24 小时

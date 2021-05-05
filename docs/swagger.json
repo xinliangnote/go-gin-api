@@ -160,9 +160,9 @@
         },
         "/api/admin/login": {
             "post": {
-                "description": "管理员登出",
+                "description": "管理员登录",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -170,12 +170,28 @@
                 "tags": [
                     "API.admin"
                 ],
-                "summary": "管理员登出",
+                "summary": "管理员登录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.logoutResponse"
+                            "$ref": "#/definitions/admin_handler.loginResponse"
                         }
                     },
                     "400": {
@@ -744,6 +760,387 @@
                 }
             }
         },
+        "/api/menu": {
+            "get": {
+                "description": "菜单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "菜单列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.listResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建/编辑菜单",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "创建/编辑菜单",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.createRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/menu/used": {
+            "patch": {
+                "description": "更新菜单为启用/禁用",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "更新菜单为启用/禁用",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hashid",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "是否启用 1:是 -1:否",
+                        "name": "used",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.updateUsedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/menu/{id}": {
+            "get": {
+                "description": "菜单详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "菜单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.deleteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/cache/clear": {
+            "patch": {
+                "description": "清空缓存",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "清空缓存",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Redis Key",
+                        "name": "redis_key",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.searchCacheResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/cache/search": {
+            "post": {
+                "description": "查询缓存",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "查询缓存",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Redis Key",
+                        "name": "redis_key",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.searchCacheResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/data/dbs": {
+            "get": {
+                "description": "查询 DB",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "查询 DB",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.dbsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/data/mysql": {
+            "post": {
+                "description": "执行 SQL 语句",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "执行 SQL 语句",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "数据库名称",
+                        "name": "db_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据表名称",
+                        "name": "table_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "SQL 语句",
+                        "name": "sql",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.searchMySQLResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/data/tables": {
+            "post": {
+                "description": "查询 Table",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "查询 Table",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "数据库名称",
+                        "name": "db_name",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.tablesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/tool/hashids/decode/{id}": {
             "get": {
                 "description": "HashIds 解密",
@@ -1154,6 +1551,148 @@
                 }
             }
         },
+        "menu_handler.createRequest": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "description": "图标",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "string"
+                },
+                "level": {
+                    "description": "菜单类型 1:一级菜单 2:二级菜单",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "menu_handler.createResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "menu_handler.deleteResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "menu_handler.detailResponse": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "description": "图标",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                }
+            }
+        },
+        "menu_handler.listData": {
+            "type": "object",
+            "properties": {
+                "hashid": {
+                    "description": "hashid",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "图标",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "is_used": {
+                    "description": "是否启用 1=启用 -1=禁用",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "menu_handler.listResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/menu_handler.listData"
+                    }
+                }
+            }
+        },
+        "menu_handler.updateUsedResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "tool_handler.dbData": {
+            "type": "object",
+            "properties": {
+                "db_name": {
+                    "description": "数据库名称",
+                    "type": "string"
+                }
+            }
+        },
+        "tool_handler.dbsResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "description": "数据库列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tool_handler.dbData"
+                    }
+                }
+            }
+        },
         "tool_handler.hashIdsDecodeResponse": {
             "type": "object",
             "properties": {
@@ -1169,6 +1708,84 @@
                 "val": {
                     "description": "加密后的值",
                     "type": "string"
+                }
+            }
+        },
+        "tool_handler.searchCacheResponse": {
+            "type": "object",
+            "properties": {
+                "ttl": {
+                    "description": "过期时间",
+                    "type": "string"
+                },
+                "val": {
+                    "description": "查询后的值",
+                    "type": "string"
+                }
+            }
+        },
+        "tool_handler.searchMySQLResponse": {
+            "type": "object",
+            "properties": {
+                "cols": {
+                    "description": "查询后的行",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cols_info": {
+                    "description": "行信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tool_handler.tableColumn"
+                    }
+                },
+                "list": {
+                    "description": "查询后的数据",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                }
+            }
+        },
+        "tool_handler.tableColumn": {
+            "type": "object",
+            "properties": {
+                "column_comment": {
+                    "description": "字段注释",
+                    "type": "string"
+                },
+                "column_name": {
+                    "description": "字段名称",
+                    "type": "string"
+                }
+            }
+        },
+        "tool_handler.tableData": {
+            "type": "object",
+            "properties": {
+                "table_comment": {
+                    "description": "数据表备注",
+                    "type": "string"
+                },
+                "table_name": {
+                    "description": "数据表名称",
+                    "type": "string"
+                }
+            }
+        },
+        "tool_handler.tablesResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "description": "数据表列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tool_handler.tableData"
+                    }
                 }
             }
         }

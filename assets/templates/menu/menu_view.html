@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/jquery-treegrid/jquery.treegrid.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">配置菜单栏</div>
+                </div>
+                <div class="card-body">
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">上级菜单</span>
+                        </div>
+                        <select class="form-control select-picker col-lg-3" data-width="auto"
+                                data-live-search="true" id="level">
+                        </select>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">菜单名称</span>
+                        </div>
+                        <input type="text" class="form-control" id="name" placeholder="请输入菜单名称">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">菜单图标</span>
+                        </div>
+                        <input type="text" class="form-control" id="icon" placeholder="请输入菜单图标">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">链接地址</span>
+                        </div>
+                        <input type="text" class="form-control" id="link" placeholder="请输入链接地址">
+                    </div>
+
+                    <input type="hidden" id="id">
+
+                    <button type="button" id="btnOk" class="btn btn-primary">提交</button>
+                    <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        提交中...
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">菜单栏列表</div>
+                </header>
+                <div class="card-body">
+                    <table class="tree-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-treegrid/jquery.treegrid.min.js"></script>
+<script type="text/javascript"
+        src="../../bootstrap/js/bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select/i18n/defaults-zh_CN.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.select-picker').selectpicker();
+        let menuData = "";
+
+        AjaxFormNoAsync(
+            "GET",
+            "/api/menu",
+            "",
+            function () {
+            },
+            function (data) {
+                $("#level").append("<option value='-1'>一级目录</option>");
+                $.each(data.list, function (index, value) {
+                    $("#level").append("<option value='" + value.id + "'>" + value.name + "</option>");
+                });
+
+                $("#level option:eq(0)").attr('selected', 'selected'); //选中第一个
+                $("#level").selectpicker('refresh');
+
+                menuData = data.list;
+            },
+            function (response) {
+                AjaxError(response);
+            }
+        );
+
+        const $treeTable = $('.tree-table');
+        $treeTable.bootstrapTable({
+            data: menuData,
+            idField: 'id',
+            uniqueId: 'id',
+            dataType: 'jsonp',
+            //toolbar: '#toolbar2',
+            columns: [
+                {
+                    field: 'id',
+                    title: '编号'
+                },
+                {
+                    field: 'name',
+                    title: '名称',
+                    formatter: function (value, row, index) {
+                        return row.name + '<i class="mdi ' + row.icon + '"></i>';
+                    }
+                },
+                {
+                    field: 'is_used',
+                    title: '是否启用',
+                    //sortable: true,
+                    formatter: function (value, row, index) {
+                        let is_checked;
+                        if (value === -1) {
+                            is_checked = '';
+                        } else if (value === 1) {
+                            is_checked = 'checked="checked"';
+                        }
+                        return '<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitch' + row.id + '" ' + is_checked + '><label class="custom-control-label customSwitch" state="' + value + '" hashid="' + row.hashid + '" for="customSwitch' + row.id + ')"></label></div>';
+                    },
+                },
+                {
+                    field: 'link',
+                    title: '链接地址'
+                },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: {
+                        'click .role-add': function (e, value, row, index) {
+                            add(row.hashid);
+                        },
+                        'click .role-delete': function (e, value, row, index) {
+                            del(row.hashid);
+                        },
+                        'click .role-edit': function (e, value, row, index) {
+                            update(row.hashid);
+                        }
+                    },
+                    formatter: operateFormatter
+                }
+            ],
+
+            treeShowField: 'name',
+            parentIdField: 'pid',
+
+            onResetView: function (menuData) {
+                $treeTable.treegrid({
+                    initialState: 'collapsed', // 所有节点都折叠
+                    treeColumn: 1,
+                    //expanderExpandedClass: 'mdi mdi-folder-open',  // 可自定义图标样式
+                    //expanderCollapsedClass: 'mdi mdi-folder',
+                });
+
+                // 只展开树形的第一集节点
+                $treeTable.treegrid('getRootNodes').treegrid('expand');
+            },
+
+        });
+
+        // 操作按钮
+        function operateFormatter(value, row, index) {
+            return [
+                '<a type="button" class="role-add btn btn-xs btn-default m-r-5" title="编辑" data-toggle="tooltip"><i class="mdi mdi-plus"></i></a>',
+                '<a type="button" class="role-edit btn btn-xs btn-default m-r-5" title="修改" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>',
+                '<a type="button" class="role-delete btn btn-xs btn-default" title="删除" data-toggle="tooltip"><i class="mdi mdi-delete"></i></a>'
+            ].join('');
+        }
+
+        function add(id) {
+            $("#id").val('');
+            $("#name").val('');
+            $("#icon").val('');
+            $("#link").val('');
+            getMenuDetail(id, 'add');
+        }
+
+        function del(id) {
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">删除</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "DELETE",
+                                "/api/menu/" + id,
+                                "",
+                                function () {
+                                },
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 已删除。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        }
+
+        function update(id) {
+            getMenuDetail(id, 'update');
+        }
+
+        function getMenuDetail(id, op) {
+            AjaxForm(
+                "GET",
+                "/api/menu/" + id,
+                "",
+                function () {
+                },
+                function (data) {
+                    $('#level').selectpicker('val', data.id);
+                    $("#level").selectpicker('refresh');
+                    $("#level").attr("disabled", "");
+
+                    if (op === 'update') {
+                        $("#id").val(id);
+                        $("#name").val(data.name);
+                        $("#icon").val(data.icon);
+                        $("#link").val(data.link);
+                    }
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+        }
+
+        $(document).on('click', '.customSwitch', function () {
+            let state = $(this).attr("state");
+            const hashid = $(this).attr("hashid");
+
+            const is_used = (state === '1') ? -1 : 1;
+            const is_used_msg = (state === '1') ? "禁用" : "启用";
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">' + is_used_msg + '</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                "/api/menu/used",
+                                {id: hashid, used: is_used},
+                                function () {
+                                },
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 已' + is_used_msg + '。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+
+        $('#btnOk').on('click', function () {
+            const level = $("#level").val();
+            const name = $("#name").val();
+            const icon = $("#icon").val();
+            const link = $("#link").val();
+            const id = $("#id").val();
+
+            if (level === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请选择上级目录。',
+                });
+                return false;
+            }
+
+            if (name === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入菜单名称。',
+                });
+                return false;
+            }
+
+            const postData = {
+                level: level,
+                name: name,
+                icon: icon,
+                link: link,
+                id: id,
+            };
+
+            AjaxForm(
+                "POST",
+                "/api/menu",
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function () {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '菜单：' + name + ' 创建完成。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.reload();
+                                }
+                            }
+                        }
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

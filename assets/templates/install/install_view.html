@@ -18,13 +18,19 @@
                     <div class="card-title">服务初始化</div>
                 </header>
                 <div class="card-body text-center">
+                    <h4 class="card-title">检测环境</h4>
+
+                    <div class="input-group mb-3">
+                        <p class="text-left">所需版本： Go Version <code>go1.15+</code>，目前版本：<code>{{.GoVersion}}</code>。</p>
+                    </div>
+
                     <h4 class="card-title">配置 · Redis</h4>
 
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">地址</span>
                         </div>
-                        <input type="text" class="form-control" id="redis_addr" value="{{ .Redis.Addr }}"
+                        <input type="text" class="form-control" id="redis_addr" value="{{ .Config.Redis.Addr }}"
                                placeholder="请输入地址，例如：127.0.0.1:6379">
                     </div>
 
@@ -32,7 +38,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">密码</span>
                         </div>
-                        <input type="password" class="form-control" id="redis_pass" value="{{ .Redis.Pass }}"
+                        <input type="password" class="form-control" id="redis_pass" value="{{ .Config.Redis.Pass }}"
                                placeholder="请输入密码">
                     </div>
 
@@ -40,7 +46,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">DB </span>
                         </div>
-                        <input type="text" class="form-control" id="redis_db" value="{{ .Redis.Db }}"
+                        <input type="text" class="form-control" id="redis_db" value="{{ .Config.Redis.Db }}"
                                placeholder="请输入 DB ，序号从 0 开始，默认是 0">
                     </div>
 
@@ -50,7 +56,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">地址</span>
                         </div>
-                        <input type="text" class="form-control" id="mysql_addr" value="{{ .MySQL.Write.Addr }}"
+                        <input type="text" class="form-control" id="mysql_addr" value="{{ .Config.MySQL.Write.Addr }}"
                                placeholder="请输入服务器地址，例如：127.0.0.1:3306">
                     </div>
 
@@ -58,7 +64,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">用户</span>
                         </div>
-                        <input type="text" class="form-control" id="mysql_user" value="{{ .MySQL.Write.User }}"
+                        <input type="text" class="form-control" id="mysql_user" value="{{ .Config.MySQL.Write.User }}"
                                placeholder="请输入用户名">
                     </div>
 
@@ -66,7 +72,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">密码</span>
                         </div>
-                        <input type="password" class="form-control" id="mysql_pass" value="{{ .MySQL.Write.Pass }}"
+                        <input type="password" class="form-control" id="mysql_pass" value="{{ .Config.MySQL.Write.Pass }}"
                                placeholder="请输入密码">
                     </div>
 
@@ -74,13 +80,13 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">DB </span>
                         </div>
-                        <input type="text" class="form-control" id="mysql_name" value="{{ .MySQL.Write.Name }}"
+                        <input type="text" class="form-control" id="mysql_name" value="{{ .Config.MySQL.Write.Name }}"
                                placeholder="请输入数据库名">
                     </div>
 
                     <div class="input-group mb-3">
                         <small><i class="mdi mdi-checkbox-marked-circle"></i> 初始化 MySQL 数据表：<code>authorized</code>
-                            、<code>authorized_api</code> 、<code>admin</code>；
+                            、<code>authorized_api</code> 、<code>admin</code>、<code>menu<code>；
                         </small>
                     </div>
 

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">查询缓存</div>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#redis" aria-selected="true">Redis</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="redis">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">KEY</span>
+                                </div>
+                                <input type="text" class="form-control" id="redis_key" placeholder="请输入 Redis Key">
+                            </div>
+
+                            <button type="button" id="btnSearch" class="btn btn-primary">查询</button>
+                            <button type="button" id="btnSearchLoading" class="btn btn-primary" disabled
+                                    style="display: none">
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                查询中...
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">执行结果</div>
+                </header>
+                <div class="card-body">
+                    <pre id="resultDiv" style="white-space: pre-wrap;word-wrap: break-word;"></pre>
+                    <p><code id="ttl" style="display: none;"></code></p>
+                    <button class="btn btn-label btn-warning btn-clear-cache" style="display: none;"><label><i
+                                    class="mdi mdi-delete-empty"></i></label> 清空数据
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#btnSearch').on('click', function () {
+            const redis_key = $("#redis_key").val();
+            if (redis_key === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 Redis Key。',
+                });
+                return false;
+            }
+
+            AjaxForm(
+                "POST",
+                "/api/tool/cache/search",
+                {redis_key: redis_key},
+                function () {
+                    $("#resultDiv").text("");
+                    $("#ttl").hide();
+
+                    $(".btn-clear-cache").hide();
+
+                    $(this).hide();
+                    $("#btnSearchLoading").show();
+                },
+                function (data) {
+                    $("#btnSearchLoading").hide();
+                    $("#btnSearch").show();
+
+                    $("#resultDiv").text(data.val);
+
+                    $("#ttl").show();
+                    $("#ttl").text("剩余过期时间：" + data.ttl);
+
+                    $(".btn-clear-cache").show();
+                },
+                function (response) {
+                    $("#btnSearchLoading").hide();
+                    $("#btnSearch").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+
+        $(document).on('click', '.btn-clear-cache', function () {
+            const redis_key = $("#redis_key").val();
+
+            if (redis_key === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入 Redis Key。',
+                });
+                return false;
+            }
+
+            const patchData = {
+                redis_key: redis_key,
+            };
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要清空 REDIS KEY: <strong style="color: red">' + redis_key + '</strong> 的数据吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                "/api/tool/cache/clear",
+                                patchData,
+                                function () {
+                                },
+                                function () {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: 'REDIS KEY：' + redis_key + ' 数据已清空。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+
+    })
+</script>
+</body>
+</html>

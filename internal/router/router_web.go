@@ -58,10 +58,13 @@ func setWebRouter(r *resource) {
 		web.GET("/admin/modify_password", adminHandler.ModifyPasswordView())
 		web.GET("/admin/modify_info", adminHandler.ModifyInfoView())
 		web.GET("/login", adminHandler.LoginView())
+		web.GET("/admin/menu", adminHandler.MenuView())
 
 		// 工具箱
 		web.GET("/tool/hashids", toolHandler.HashIdsView())
 		web.GET("/tool/logs", toolHandler.LogsView())
+		web.GET("/tool/cache", toolHandler.CacheView())
+		web.GET("/tool/data", toolHandler.DataView())
 
 	}
 }

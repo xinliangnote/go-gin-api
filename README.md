@@ -36,15 +36,11 @@ go-gin-api 文档由以下几个主要部分组成：
 - 组件指南
 - 工具包
 
-**地址：[https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)**
+**详细文档：[https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)**
 
 ## 其他
 
 查看 Jaeger 链路追踪代码，请查看 [v1.0版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，文档点这里 [jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 。
-
-## Special Thanks
-
-[@koketama](https://github.com/koketama)
 
 ## Learning together
 

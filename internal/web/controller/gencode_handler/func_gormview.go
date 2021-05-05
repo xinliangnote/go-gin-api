@@ -21,7 +21,7 @@ func (h *handler) GormView() core.HandlerFunc {
 		sqlTables := fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", mysqlConf.Name)
 		rows, err := h.db.GetDbR().Raw(sqlTables).Rows()
 		if err != nil {
-			c.HTML("gormgen", tableCollect)
+			c.HTML("gencode_gorm", tableCollect)
 			return
 		}
 		defer rows.Close()

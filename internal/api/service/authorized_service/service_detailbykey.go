@@ -2,6 +2,7 @@ package authorized_service
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
@@ -71,7 +72,7 @@ func (s *service) DetailByKey(ctx core.Context, key string) (cacheData *CacheAut
 
 	cacheDataByte, _ := json.Marshal(cacheData)
 
-	err = s.cache.Set(cacheKey, string(cacheDataByte), 0, cache.WithTrace(ctx.Trace()))
+	err = s.cache.Set(cacheKey, string(cacheDataByte), time.Hour*24, cache.WithTrace(ctx.Trace()))
 	if err != nil {
 		return nil, err
 	}

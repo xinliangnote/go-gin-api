@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">查询数据</div>
+                    <ul class="card-actions">
+                        <li><a href="#!" class="card-btn-slide"><i class="mdi mdi-chevron-up"></i></a></li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#mysql" aria-selected="true">MySQL</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="mysql">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">数据库</span>
+                                </div>
+                                <select class="form-control select-picker col-lg-2" data-width="auto"
+                                        data-live-search="true" id="db">
+                                </select>
+
+                                <div style="width: 50px;"></div>
+
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">数据表</span>
+                                </div>
+                                <select class="form-control select-picker col-lg-2" data-width="auto"
+                                        data-live-search="true" id="table">
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <textarea rows="3" class="form-control" aria-label="With textarea" id="sql"></textarea>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <button class="btn btn-sm btn-round btn-secondary btn-select">SELECT *</button>
+                                <div style="width: 20px;"></div>
+                                <button class="btn btn-sm btn-round btn-secondary btn-show-create">SHOW CREATE TABLE </button>
+                                <div style="width: 20px;"></div>
+                                <button class="btn btn-sm btn-round btn-secondary btn-clear">清除</button>
+                                <div style="width: 20px;"></div>
+                                <button class="btn btn-sm btn-round btn-secondary btn-format">格式</button>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <code>仅支持查询语句，最多支持查询 100 条数据。</code>
+                            </div>
+
+                            <div style="float: right">
+                                <button type="button" id="btnSearch" class="btn btn-primary">查询</button>
+                                <button type="button" id="btnExplain" class="btn btn-info">分析</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr id="thead-tr">
+                            </tr>
+                            </thead>
+                            <tbody id="tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/vkbeautify.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/main.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select/i18n/defaults-zh_CN.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.select-picker').selectpicker();
+
+        AjaxForm(
+            "GET",
+            "/api/tool/data/dbs",
+            "",
+            function () {
+            },
+            function (data) {
+                $.each(data.list, function (index, value) {
+                    $("#db").append("<option value='" + value.db_name + "'>" + value.db_name + "</option>");
+                });
+
+                $("#db option:eq(0)").attr('selected', 'selected');//选中第一个
+                $("#db").selectpicker('refresh');
+
+                getTables($('#db option:selected').val());
+            },
+            function (response) {
+                AjaxError(response);
+            }
+        );
+
+        $('.btn-select').on('click', function () {
+            const table = $('#table option:selected').val();
+            $("#sql").val("SELECT * FROM `" + table + "` ORDER BY 1 DESC");
+        });
+
+        $('.btn-show-create').on('click', function () {
+            const table = $('#table option:selected').val();
+            $("#sql").val("SHOW CREATE TABLE `" + table + "` ");
+        });
+
+        $('.btn-format').on('click', function () {
+            const val = $("#sql").val();
+            if (val !== "") {
+                $("#sql").val(vkbeautify.sql(val));
+            }
+        });
+
+        $('.btn-clear').on('click', function () {
+            $("#sql").val('');
+        });
+
+        $("#db").on('change', function () {
+            getTables($(this).val());
+        });
+
+        $('#btnSearch').on('click', function () {
+            const db = $('#db option:selected').val();
+            if (db === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请选择数据库。',
+                });
+                return false;
+            }
+
+            const sql = $('#sql').val();
+            if (sql === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请先填写 SQL 语句。',
+                });
+                return false;
+            }
+
+            const table = $('#table option:selected').val();
+            if (table === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请选择数据表。',
+                });
+                return false;
+            }
+
+            searchMySQL(db, table, sql);
+        });
+
+        $('#btnExplain').on('click', function () {
+            const db = $('#db option:selected').val();
+            if (db === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请选择数据库。',
+                });
+                return false;
+            }
+
+            const table = $('#table option:selected').val();
+            if (table === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请选择数据表。',
+                });
+                return false;
+            }
+
+            const sql = $('#sql').val();
+            if (sql === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请先填写 SQL 语句。',
+                });
+                return false;
+            }
+
+            searchMySQL(db, table, "explain " + sql);
+        });
+
+        function searchMySQL(db_name, table_name, sql) {
+            AjaxForm(
+                "POST",
+                "/api/tool/data/mysql",
+                {db_name: db_name, table_name: table_name, sql: sql},
+                function () {
+                },
+                function (data) {
+                    $("#thead-tr").html("");
+                    $.each(data.cols, function (index, value) {
+                        let thHtml = "<th>" + value;
+                        $.each(data.cols_info, function (info_index, info_value) {
+                            if (info_value.column_name === value) {
+                                thHtml += "<br> <small> " + info_value.column_comment + " </small>";
+                            }
+                        });
+                        thHtml += "</th>";
+                        $("#thead-tr").append(thHtml);
+                    });
+
+                    $("#tbody").html("");
+                    $.each(data.list, function (listIndex, listValue) {
+                        $("#tbody").append("<tr>");
+                        $.each(data.cols, function (index, value) {
+                            $("#tbody").append("<td><pre>" + listValue[value] + "</pre></td>");
+                        });
+                        $("#tbody").append("</tr>");
+                    });
+
+                    $(".mdi-chevron-up").click();
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+        }
+
+        function getTables(db_name) {
+            AjaxForm(
+                "POST",
+                "/api/tool/data/tables",
+                {db_name: db_name},
+                function () {
+                },
+                function (data) {
+                    $.each(data.list, function (index, value) {
+                        $("#table").append("<option value='" + value.table_name + "' data-subtext='" + value.table_comment + "'>" + value.table_name + "</option>");
+                    });
+
+                    $("#table option:eq(0)").attr('selected', 'selected');//选中第一个
+                    $("#table").selectpicker('refresh');
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+        }
+    })
+</script>
+</body>
+</html>

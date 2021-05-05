@@ -9,8 +9,8 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/signature"
+	"github.com/xinliangnote/go-gin-api/pkg/urltable"
 
-	"github.com/koketama/urltable"
 	"github.com/pkg/errors"
 )
 

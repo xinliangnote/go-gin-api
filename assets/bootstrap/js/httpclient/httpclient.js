@@ -84,6 +84,26 @@ function AjaxForm(method, url, params, beforeSendFunction, successFunction, erro
     });
 }
 
+function AjaxFormNoAsync(method, url, params, beforeSendFunction, successFunction, errorFunction) {
+    let authorizationData = GenerateAuthorization(url, method, params);
+
+    $.ajax({
+        url: url,
+        type: method,
+        data: params,
+        async: false,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+            'Authorization': authorizationData.authorization,
+            'Authorization-Date': authorizationData.date,
+            'Token': $.cookie("_login_token_"),
+        },
+        beforeSend: beforeSendFunction,
+        success: successFunction,
+        error: errorFunction,
+    });
+}
+
 function AjaxPostJson(url, params, beforeSendFunction, successFunction, errorFunction) {
     let authorizationData = GenerateAuthorization(url, "POST", params);
 

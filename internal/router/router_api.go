@@ -4,6 +4,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/admin_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/config_handler"
+	"github.com/xinliangnote/go-gin-api/internal/api/controller/menu_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/tool_handler"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 )
@@ -43,10 +44,23 @@ func setApiRouter(r *resource) {
 		api.GET("/admin/info", adminHandler.Detail())
 		api.PATCH("/admin/modify_personal_info", adminHandler.ModifyPersonalInfo())
 
+		// menu
+		menuHandler := menu_handler.New(r.logger, r.db, r.cache)
+		api.POST("/menu", menuHandler.Create())
+		api.GET("/menu", menuHandler.List())
+		api.GET("/menu/:id", menuHandler.Detail())
+		api.PATCH("/menu/used", menuHandler.UpdateUsed())
+		api.DELETE("/menu/:id", menuHandler.Delete())
+
 		// tool
 		toolHandler := tool_handler.New(r.logger, r.db, r.cache)
 		api.GET("/tool/hashids/encode/:id", toolHandler.HashIdsEncode())
 		api.GET("/tool/hashids/decode/:id", toolHandler.HashIdsDecode())
+		api.POST("/tool/cache/search", toolHandler.SearchCache())
+		api.PATCH("/tool/cache/clear", toolHandler.ClearCache())
+		api.GET("/tool/data/dbs", toolHandler.Dbs())
+		api.POST("/tool/data/tables", toolHandler.Tables())
+		api.POST("/tool/data/mysql", toolHandler.SearchMySQL())
 
 		// config
 		configHandler := config_handler.New(r.logger, r.db, r.cache)

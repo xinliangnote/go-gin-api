@@ -16,12 +16,26 @@
                     <div class="card-title"> 错误码</div>
                 </header>
                 <div class="card-body">
-                    {{range .}}
-                        <p>
-                            <code>{{.Code}}</code> {{.Message}}
-                        <hr>
-                        </p>
-                    {{end}}
+                        <div class="row">
+                            <div class="col-sm-4 col-xs-12">
+                                <p><code>服务级错误码</code></p>
+                                <ul class="list-unstyled">
+                                    {{range $key, $value := .SystemCodes}}
+                                    <li><code>{{$value.Code}}</code> <small>{{$value.Message}}</small></li>
+                                    {{end}}
+                                </ul>
+                            </div>
+
+                            <div class="col-sm-4 col-xs-12">
+                                <p><code>模块级错误码</code></p>
+                                <ul class="list-unstyled">
+                                    {{range $key, $value := .BusinessCodes}}
+                                        <li><code>{{$value.Code}}</code> <small>{{$value.Message}}</small></li>
+                                    {{end}}
+                                </ul>
+                            </div>
+
+                        </div>
                 </div>
             </div>
         </div>

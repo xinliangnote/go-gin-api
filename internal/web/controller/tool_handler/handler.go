@@ -15,6 +15,8 @@ type Handler interface {
 
 	HashIdsView() core.HandlerFunc
 	LogsView() core.HandlerFunc
+	CacheView() core.HandlerFunc
+	DataView() core.HandlerFunc
 }
 
 type handler struct {

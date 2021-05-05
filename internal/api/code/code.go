@@ -52,6 +52,20 @@ const (
 	ConfigRedisConnectError = 20403
 	ConfigMySQLConnectError = 20404
 	ConfigMySQLInstallError = 20405
+	ConfigGoVersionError    = 20406
+
+	// 实用工具箱
+	SearchRedisError = 20501
+	ClearRedisError  = 20502
+	SearchRedisEmpty = 20503
+	SearchMySQLError = 20504
+
+	// 菜单栏
+	MenuCreateError = 20601
+	MenuUpdateError = 20602
+	MenuListError   = 20603
+	MenuDeleteError = 20604
+	MenuDetailError = 20605
 )
 
 var codeText = map[int]string{
@@ -94,6 +108,18 @@ var codeText = map[int]string{
 	ConfigRedisConnectError: "Redis 连接失败",
 	ConfigMySQLConnectError: "MySQL 连接失败",
 	ConfigMySQLInstallError: "MySQL 初始化数据失败",
+	ConfigGoVersionError:    "Go Version 不满足要求",
+
+	SearchRedisError: "查询 Redis Key 失败",
+	ClearRedisError:  "清空 Redis Key 失败",
+	SearchRedisEmpty: "查询的 Redis Key 不存在",
+	SearchMySQLError: "查询 MySQL 失败",
+
+	MenuCreateError: "创建菜单失败",
+	MenuUpdateError: "更新菜单失败",
+	MenuDeleteError: "删除菜单失败",
+	MenuListError:   "获取菜单列表页失败",
+	MenuDetailError: "获取菜单详情失败",
 }
 
 func Text(code int) string {
