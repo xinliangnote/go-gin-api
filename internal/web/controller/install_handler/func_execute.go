@@ -46,7 +46,7 @@ func (h *handler) Execute() core.HandlerFunc {
 
 		versionStr := runtime.Version()
 		version := cast.ToFloat32(versionStr[2:])
-		if version < 1.15 {
+		if version < 1.16 {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ConfigGoVersionError,
