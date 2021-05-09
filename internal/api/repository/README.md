@@ -20,6 +20,3 @@
 - 包名应以 `_repo` 结尾；
 - `./db_repo` 目录下的包名以 `数据表名`+ `_repo` 命名；
 
-#### 脚本生成 MySQL CURD
-
-- 使用脚本自动生成基于表结构的 CURD 代码，见文档：`./cmd/gormgen/README.md`

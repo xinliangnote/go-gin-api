@@ -15,6 +15,7 @@ type detailRequest struct {
 
 type detailResponse struct {
 	Id   int32  `json:"id"`   // 主键ID
+	Pid  int32  `json:"pid"`  // 父类ID
 	Name string `json:"name"` // 菜单名称
 	Link string `json:"link"` // 链接地址
 	Icon string `json:"icon"` // 图标
@@ -69,6 +70,7 @@ func (h *handler) Detail() core.HandlerFunc {
 		}
 
 		res.Id = info.Id
+		res.Pid = info.Pid
 		res.Name = info.Name
 		res.Link = info.Link
 		res.Icon = info.Icon

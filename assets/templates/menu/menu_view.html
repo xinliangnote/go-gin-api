@@ -124,14 +124,10 @@
             //toolbar: '#toolbar2',
             columns: [
                 {
-                    field: 'id',
-                    title: '编号'
-                },
-                {
                     field: 'name',
                     title: '名称',
                     formatter: function (value, row, index) {
-                        return row.name + '<i class="mdi ' + row.icon + '"></i>';
+                        return '<i class="mdi ' + row.icon + '"></i>' + row.name ;
                     }
                 },
                 {
@@ -165,6 +161,19 @@
                         },
                         'click .role-edit': function (e, value, row, index) {
                             update(row.hashid);
+                        },
+                        'click .role-action': function (e, value, row, index) {
+                            if (row.link !== '') {
+                                location.href = "/admin/menu_action/" + row.hashid;
+                            } else {
+                                $.alert({
+                                    title: '温馨提示',
+                                    icon: 'mdi mdi-alert',
+                                    type: 'orange',
+                                    content: '当前菜单无需设置功能权限。',
+                                });
+                                return false;
+                            }
                         }
                     },
                     formatter: operateFormatter
@@ -177,7 +186,7 @@
             onResetView: function (menuData) {
                 $treeTable.treegrid({
                     initialState: 'collapsed', // 所有节点都折叠
-                    treeColumn: 1,
+                    treeColumn: 0,
                     //expanderExpandedClass: 'mdi mdi-folder-open',  // 可自定义图标样式
                     //expanderCollapsedClass: 'mdi mdi-folder',
                 });
@@ -193,6 +202,7 @@
             return [
                 '<a type="button" class="role-add btn btn-xs btn-default m-r-5" title="编辑" data-toggle="tooltip"><i class="mdi mdi-plus"></i></a>',
                 '<a type="button" class="role-edit btn btn-xs btn-default m-r-5" title="修改" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>',
+                '<a type="button" class="role-action btn btn-xs btn-default m-r-5" title="功能权限" data-toggle="tooltip"><i class="mdi mdi-playlist-plus"></i></a>',
                 '<a type="button" class="role-delete btn btn-xs btn-default" title="删除" data-toggle="tooltip"><i class="mdi mdi-delete"></i></a>'
             ].join('');
         }
@@ -224,12 +234,12 @@
                                 "",
                                 function () {
                                 },
-                                function (data) {
+                                function () {
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
                                         type: 'green',
-                                        content: '编号：' + data.id + ' 已删除。',
+                                        content: '已删除成功。',
                                         buttons: {
                                             okay: {
                                                 text: '关闭',
@@ -266,11 +276,20 @@
                 function () {
                 },
                 function (data) {
-                    $('#level').selectpicker('val', data.id);
-                    $("#level").selectpicker('refresh');
-                    $("#level").attr("disabled", "");
+                    if (op === 'add') {
+                        $('#level').selectpicker('val', data.id);
+                        $("#level").selectpicker('refresh');
+                        $("#level").attr("disabled", "");
+                    }
 
                     if (op === 'update') {
+                        if (data.pid === 0) {
+                            data.pid = -1
+                        }
+                        $('#level').selectpicker('val', data.pid);
+                        $("#level").selectpicker('refresh');
+                        $("#level").attr("disabled", "");
+
                         $("#id").val(id);
                         $("#name").val(data.name);
                         $("#icon").val(data.icon);
@@ -308,12 +327,12 @@
                                 {id: hashid, used: is_used},
                                 function () {
                                 },
-                                function (data) {
+                                function () {
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
                                         type: 'green',
-                                        content: '编号：' + data.id + ' 已' + is_used_msg + '。',
+                                        content: '已' + is_used_msg + '成功。',
                                         buttons: {
                                             okay: {
                                                 text: '关闭',

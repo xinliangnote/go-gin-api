@@ -3,7 +3,7 @@ document.write('<script type="text/javascript" src="../../bootstrap/js/authoriza
 document.write('<script type="text/javascript" src="../../bootstrap/js/authorization/hmac-sha256.js"></script>');
 document.write('<script type="text/javascript" src="../../bootstrap/js/authorization/enc-base64.min.js"></script>');
 document.write('<script type="text/javascript" src="../../bootstrap/js/jquery.cookie.min.js"></script>');
-
+document.write('<div style="display:none"><script type="text/javascript">document.write(unescape("%3Cspan id=\'cnzz_stat_icon_1279911342\'%3E%3C/span%3E%3Cscript src=\'https://v1.cnzz.com/z_stat.php%3Fid%3D1279911342%26\' type=\'text/javascript\'%3E%3C/script%3E"));</script></div>');
 
 function GenerateAuthorization(path, method, params) {
     let key = "admin";

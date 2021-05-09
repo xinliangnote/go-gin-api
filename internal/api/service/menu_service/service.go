@@ -2,6 +2,7 @@ package menu_service
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_action_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -23,6 +24,10 @@ type Service interface {
 	UpdateUsed(ctx core.Context, id int32, used int32) (err error)
 	Delete(ctx core.Context, id int32) (err error)
 	Detail(ctx core.Context, searchOneData *SearchOneData) (info *menu_repo.Menu, err error)
+
+	CreateAction(ctx core.Context, menuActionData *CreateMenuActionData) (id int32, err error)
+	ListAction(ctx core.Context, searchListActionData *SearchListActionData) (listData []*menu_action_repo.MenuAction, err error)
+	DeleteAction(ctx core.Context, id int32) (err error)
 }
 
 type service struct {

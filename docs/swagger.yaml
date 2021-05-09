@@ -23,6 +23,15 @@ definitions:
         description: 用户名
         type: string
     type: object
+  admin_handler.listAdminMenuResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/admin_service.ListMenuData'
+        type: array
+      username:
+        type: string
+    type: object
   admin_handler.listData:
     properties:
       created_at:
@@ -108,6 +117,21 @@ definitions:
         description: 主键ID
         type: integer
     type: object
+  admin_service.ListMenuData:
+    properties:
+      id:
+        description: ID
+        type: integer
+      is_have:
+        description: 是否已拥有权限
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      pid:
+        description: 父类ID
+        type: integer
+    type: object
   authorized_handler.createAPIResponse:
     properties:
       id:
@@ -149,6 +173,9 @@ definitions:
     type: object
   authorized_handler.listAPIResponse:
     properties:
+      business_key:
+        description: 调用方key
+        type: string
       list:
         items:
           $ref: '#/definitions/authorized_handler.listAPIData'
@@ -227,6 +254,12 @@ definitions:
         description: 邮箱地址
         type: string
     type: object
+  menu_handler.createActionResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
   menu_handler.createRequest:
     properties:
       icon:
@@ -254,6 +287,12 @@ definitions:
         description: 主键ID
         type: integer
     type: object
+  menu_handler.deleteActionResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
   menu_handler.deleteResponse:
     properties:
       id:
@@ -273,6 +312,33 @@ definitions:
         type: string
       name:
         description: 菜单名称
+        type: string
+      pid:
+        description: 父类ID
+        type: integer
+    type: object
+  menu_handler.listActionData:
+    properties:
+      api:
+        description: 调用方对接人
+        type: string
+      hash_id:
+        description: hashID
+        type: string
+      menu_id:
+        description: 菜单栏ID
+        type: integer
+      method:
+        description: 调用方secret
+        type: string
+    type: object
+  menu_handler.listActionResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/menu_handler.listActionData'
+        type: array
+      menu_name:
         type: string
     type: object
   menu_handler.listData:
@@ -404,7 +470,7 @@ paths:
   /api/admin:
     get:
       consumes:
-      - application/json
+      - multipart/form-data
       description: 管理员列表
       parameters:
       - description: 第几页
@@ -554,20 +620,20 @@ paths:
       summary: 管理员登录
       tags:
       - API.admin
-  /api/admin/modify_password:
-    patch:
+  /api/admin/menu:
+    post:
       consumes:
       - multipart/form-data
-      description: 修改密码
+      description: 提交菜单授权
       parameters:
-      - description: 旧密码
+      - description: Hashid
         in: formData
-        name: old_password
+        name: id
         required: true
         type: string
-      - description: 新密码
+      - description: 功能权限ID,多个用,分割
         in: formData
-        name: new_password
+        name: actions
         required: true
         type: string
       produces:
@@ -576,12 +642,67 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.modifyPasswordResponse'
+            $ref: '#/definitions/admin_handler.createResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
-      summary: 修改密码
+      summary: 提交菜单授权
+      tags:
+      - API.admin
+  /api/admin/menu/:id:
+    get:
+      consumes:
+      - application/json
+      description: 菜单授权列表
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.listAdminMenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 菜单授权列表
+      tags:
+      - API.admin
+  /api/admin/modify_password:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 修改个人信息
+      parameters:
+      - description: 昵称
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 手机号
+        in: formData
+        name: mobile
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.modifyPersonalInfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 修改个人信息
       tags:
       - API.admin
   /api/admin/reset_password/{id}:
@@ -775,12 +896,13 @@ paths:
   /api/authorized_api:
     get:
       consumes:
-      - application/json
+      - multipart/form-data
       description: 调用方接口地址列表
       parameters:
-      - description: 调用方key
+      - description: hashID
         in: query
-        name: business_key
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -1021,6 +1143,90 @@ paths:
           schema:
             $ref: '#/definitions/code.Failure'
       summary: 更新菜单为启用/禁用
+      tags:
+      - API.menu
+  /api/menu_action:
+    get:
+      consumes:
+      - multipart/form-data
+      description: 功能权限列表
+      parameters:
+      - description: hashID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.listActionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 功能权限列表
+      tags:
+      - API.menu
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建功能权限
+      parameters:
+      - description: HashID
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: 请求方法
+        in: formData
+        name: method
+        required: true
+        type: string
+      - description: 请求地址
+        in: formData
+        name: api
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.createActionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 创建功能权限
+      tags:
+      - API.menu
+  /api/menu_action/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除功能权限
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/menu_handler.deleteActionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 删除功能权限
       tags:
       - API.menu
   /api/tool/cache/clear:

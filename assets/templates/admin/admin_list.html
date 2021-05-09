@@ -131,6 +131,9 @@
                                 '    <a class="btn btn-xs btn-default btn-resetPassword" href="#!" title=""\n' +
                                 '                                           data-id="' + value.hashid + '"' +
                                 '                                           data-toggle="tooltip" data-original-title="重置密码">重置密码</a>\n' +
+                                '    <a class="btn btn-xs btn-default btn-menu" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="菜单授权">菜单授权</a>\n' +
                                 '    <a class="btn btn-xs btn-default btn-confirm" href="#!" title=""\n' +
                                 '                                           data-id="' + value.hashid + '"' +
                                 '                                           data-toggle="tooltip" data-original-title="删除">删除</a>\n' +
@@ -270,6 +273,11 @@
                     }
                 }
             });
+        });
+
+        // 菜单授权
+        $(document).on('click', '.btn-menu', function () {
+            location.href = "/admin/action/" + $(this).attr('data-id');
         });
 
         // 删除

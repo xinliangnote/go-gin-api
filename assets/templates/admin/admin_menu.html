@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-multitabs/multitabs.min.css" rel="stylesheet" type="text/css">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">配置菜单
+                        <small id="adminName"></small>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <form action="#!" method="post" id="form">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="check-all">
+                                            <label class="custom-control-label" for="check-all">全选/取消全选</label>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <tbody class="tbody">
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button type="button" id="btnOk" class="btn btn-primary">确认</button>
+                        <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            执行中...
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        const hash_id = {{ .HashID }}
+
+            AjaxForm(
+                "GET",
+                "/api/admin/menu/" + hash_id,
+                '',
+                function () {
+                },
+                function (data) {
+                    $("#adminName").html("（管理员：" + data.username + "）");
+
+                    if (data.list.length > 0) {
+                        let newArr = [];
+                        data.list.forEach(function (v) {
+                            if (v.pid === 0) {
+                                v.children = [];
+                                newArr.push(v)
+                            }
+                        });
+
+                        data.list.forEach(function (v) {
+                            newArr.forEach(function (item) {
+                                if (v.pid === item.id) {
+                                    item.children.push(v)
+                                }
+                            })
+                        });
+
+
+                        $.each(newArr, function (index, value) {
+                            let checked = "";
+                            if (value.is_have == 1) {
+                                checked = "checked";
+                            }
+
+                            let tr = '<tr><td><div class="custom-control custom-checkbox custom-parent">';
+                            tr += '<input type="checkbox" ' + checked + ' class="custom-control-input checkbox-parent" id="' + value.id + '" value="' + value.id + '">';
+                            tr += '<label class="custom-control-label" for="' + value.id + '">' + value.name + '</label>';
+                            tr += '</div></td></tr>';
+
+                            tr += '<tr><td class="p-l-40">';
+
+                            value.children.forEach(function (item) {
+                                let itemChecked = "";
+                                if (item.is_have == 1) {
+                                    itemChecked = "checked";
+                                }
+
+                                tr += '<div class="custom-control custom-checkbox custom-control-inline">';
+                                tr += '<input type="checkbox" ' + itemChecked + ' class="custom-control-input checkbox-child c-' + item.pid + '" id="' + item.id + '" value="' + item.id + '">';
+                                tr += '<label class="custom-control-label" for="' + item.id + '">' + item.name + '</label>';
+                                tr += '</div>';
+                            });
+
+                            tr += '</td></tr>';
+
+                            $(".tbody").append(tr);
+
+                        });
+                    }
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+
+        $(document).on('click', '.checkbox-parent', function () {
+            const id = $(this).attr('id');
+            if ($(this).prop('checked') === true) {
+                $(this).prop('checked', true);
+                $('.c-' + id).prop('checked', true);
+            } else {
+                $(this).prop('checked', false);
+                $('.c-' + id).prop('checked', false);
+            }
+        });
+
+        $(document).on('click', '.checkbox-child', function () {
+            if ($(this).prop('checked') === true) {
+                $(this).prop('checked', true);
+            } else {
+                $(this).prop('checked', false);
+            }
+        });
+
+        $(document).on('click', '#check-all', function () {
+            if ($(this).prop('checked') === true) {
+                $('.checkbox-parent').prop('checked', true);
+                $('.checkbox-child').prop('checked', true);
+            } else {
+                $('.checkbox-parent').prop('checked', false);
+                $('.checkbox-child').prop('checked', false);
+            }
+        });
+
+        $('#btnOk').on('click', function () {
+            let vals = [];
+            $.each($('.tbody').find('input:checkbox:checked'), function () {
+                vals.push($(this).val());
+            });
+
+            if (vals.length === 0) {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请至少选择 1 个功能权限。',
+                });
+                return false;
+            }
+
+            AjaxForm(
+                "POST",
+                "/api/admin/menu",
+                {id: hash_id, actions: vals.join(',')},
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function () {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: $("#adminName").html() + ' 菜单授权完成。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.href = "/admin/list";
+                                }
+                            }
+                        }
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

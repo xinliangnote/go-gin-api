@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-multitabs/multitabs.min.css" rel="stylesheet" type="text/css">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">功能权限</div>
+                </div>
+                <div class="card-body">
+
+                    <div class="alert alert-warning" role="alert">
+                        接口地址支持通配符(*)，其中 * 表示 1 级，** 表示 n 级。
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="request_method">选择请求方式</label>
+                        </div>
+                        <select class="custom-select" id="request_method">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">输入接口地址</span>
+                        </div>
+                        <input type="text" class="form-control" maxlength="60" id="request_api"
+                               placeholder="接口地址">
+                    </div>
+
+                    <button type="button" id="btnOk" class="btn btn-primary">确认</button>
+                    <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        执行中...
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">已配置功能权限
+                        <small id="menuName"></small>
+                    </div>
+                </header>
+                <div class="card-body apis">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        const hash_id = {{ .HashID }}
+
+        $("input#request_api").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        // 加载列表页数据
+        getListData();
+
+        function getListData() {
+            AjaxForm(
+                "GET",
+                "/api/menu_action",
+                {id: hash_id},
+                function () {
+
+                },
+                function (data) {
+                    $("#menuName").html("（菜单栏：" + data.menu_name + "）");
+                    if (data.list.length > 0) {
+                        var badgeMethodClass = "";
+
+                        $.each(data.list, function (index, value) {
+                            if (value.method === "GET") {
+                                badgeMethodClass = "badge-primary";
+                            } else if (value.method === "POST") {
+                                badgeMethodClass = "badge-success";
+                            } else if (value.method === "DELETE") {
+                                badgeMethodClass = "badge-danger";
+                            } else if (value.method === "PUT") {
+                                badgeMethodClass = "badge-yellow";
+                            } else if (value.method === "PATCH") {
+                                badgeMethodClass = "badge-cyan";
+                            } else {
+                                badgeMethodClass = "badge-dark";
+                            }
+
+                            const p = '<p>\n' +
+                                '<a href="#!" data-id="' + value.hash_id + '" data-api="' + value.api + '" class="del">' +
+                                '<span class="badge badge-dark"><i class="mdi mdi-window-close"></i></span>\n' +
+                                '</a>\n' +
+                                '<span class="badge ' + badgeMethodClass + '">' + value.method + '</span>\n' + value.api
+                            ;
+
+                            $(".apis").append(p);
+                        })
+                    } else {
+                        // 数据为空
+                        const p = '<p>暂无功能权限</p>';
+                        $(".apis").append(p);
+                    }
+                },
+                function (response) {
+                    AjaxError(response);
+                }
+            );
+        }
+
+        $('#btnOk').on('click', function () {
+            const requestMethod = $("#request_method").val();
+            const requestApi = $("#request_api").val();
+            if (requestMethod === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请选择请求方式。',
+                });
+                return false;
+            }
+
+            if (requestApi === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入请求地址。',
+                });
+                return false;
+            }
+
+            const postData = {
+                method: requestMethod,
+                api: requestApi,
+                id: hash_id,
+            };
+
+            AjaxForm(
+                "POST",
+                "/api/menu_action",
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function () {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '接口：' + requestApi + ' 配置完成。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.reload();
+                                }
+                            }
+                        }
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+
+        $(document).on('click', '.del', function () {
+            const id = $(this).attr('data-id');
+            const api = $(this).attr('data-api');
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">取消配置</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "DELETE",
+                                '/api/menu_action/' + id,
+                                "",
+                                function () {
+
+                                },
+                                function () {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '接口：' + api + ' 已取消配置。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>

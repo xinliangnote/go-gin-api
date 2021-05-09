@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>服务初始化</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../bootstrap/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
     <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
@@ -18,7 +24,7 @@
                     <div class="card-title">服务初始化</div>
                 </header>
                 <div class="card-body text-center">
-                    <h4 class="card-title">检测环境</h4>
+                    <h4 class="card-title">检测 · 环境</h4>
 
                     <div class="input-group mb-3">
                         <p class="text-left">所需版本： Go Version <code>go1.15+</code>，目前版本：<code>{{.GoVersion}}</code>。</p>
@@ -85,8 +91,14 @@
                     </div>
 
                     <div class="input-group mb-3">
-                        <small><i class="mdi mdi-checkbox-marked-circle"></i> 初始化 MySQL 数据表：<code>authorized</code>
-                            、<code>authorized_api</code> 、<code>admin</code>、<code>menu</code>；
+                        <small>
+                            <i class="mdi mdi-checkbox-marked-circle"></i>
+                            初始化 MySQL 数据表：<code>authorized</code>、
+                            <code>authorized_api</code> 、
+                            <code>admin</code>、
+                            <code>menu</code>、
+                            <code>menu_action</code>、
+                            <code>admin_menu</code>；
                         </small>
                     </div>
 

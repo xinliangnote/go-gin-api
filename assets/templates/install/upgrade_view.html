@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>服务升级</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../bootstrap/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">服务升级</div>
+                </header>
+                <div class="card-body">
+                    <p class="h6">发现 GitHub 仓库更新了新代码，如何进行服务升级？</p>
+                    <p>1、源代码升级：
+                        <mark>拉取最新代码，覆盖旧版本代码即可。</mark>
+                    </p>
+                    <p>2、数据表升级：</p>
+
+                    {{range $key, $value := .List}}
+                        <p style="margin-left: 24px;">
+                            <i class="mdi mdi-checkbox-marked-circle"></i> MySQL 数据表：{{$value.TableName}}
+                            {{if eq $value.IsHave 1}} <font class="text-success">已存在</font>
+                            {{else}} <font class="text-danger">不存在</font>
+                            {{end}}
+
+                            <button class="btn btn-xs btn-info upgrade" data-op="table"
+                                    data-table="{{$value.TableName}}">创建表结构
+                            </button>
+                            <button class="btn btn-xs btn-cyan upgrade" data-op="table_data"
+                                    data-table="{{$value.TableName}}">初始化数据
+                            </button>
+                        </p>
+                    {{end}}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', '.upgrade', function () {
+            const op = $(this).attr('data-op');
+            const table = $(this).attr('data-table');
+
+            let tipMsg;
+            if (op === "table") {
+                tipMsg = '请先确保数据表不存在，确定要创建表结构吗？';
+            }
+
+            if (op === "table_data") {
+                tipMsg = '请先确保表中数据不存在，确定要初始化表数据吗？';
+            }
+
+            $.confirm({
+                title: '谨慎操作',
+                content: tipMsg,
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "POST",
+                                '/upgrade/execute',
+                                {table_name: table, op: op},
+                                function () {
+                                },
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: data,
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

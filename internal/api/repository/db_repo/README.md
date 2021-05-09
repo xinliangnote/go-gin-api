@@ -34,18 +34,4 @@ model.Mobile = user.Mobile
 
 id, err = model.Create(u.db.GetDbW().WithContext(ctx.RequestContext()))
 
-// 编辑
-model := user_demo_repo.NewModel()
-model.Id = id
-
-data := map[string]interface{}{
-    "nick_name": nickname,
-}
-
-err = model.Updates(u.db.GetDbW().WithContext(ctx.RequestContext()), data)
-
-// 删除
-model := user_demo_repo.NewModel()
-model.Id = id
-err = model.Delete(u.db.GetDbW().WithContext(ctx.RequestContext()))
 ```

@@ -65,6 +65,16 @@ type Handler interface {
 	// @Tags API.admin
 	// @Router /api/admin/reset_password/{id} [patch]
 	ResetPassword() core.HandlerFunc
+
+	// CreateAdminMenu 提交菜单授权
+	// @Tags API.admin
+	// @Router /api/admin/menu [post]
+	CreateAdminMenu() core.HandlerFunc
+
+	// ListAdminMenu 菜单授权列表
+	// @Tags API.admin
+	// @Router /api/admin/menu/:id [get]
+	ListAdminMenu() core.HandlerFunc
 }
 
 type handler struct {

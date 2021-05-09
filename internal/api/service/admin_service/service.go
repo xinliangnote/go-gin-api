@@ -17,7 +17,7 @@ type Service interface {
 	i()
 	CacheKeyPrefix() (pre string)
 
-	Create(ctx core.Context, authorizedData *CreateAdminData) (id int32, err error)
+	Create(ctx core.Context, adminData *CreateAdminData) (id int32, err error)
 	PageList(ctx core.Context, searchData *SearchData) (listData []*admin_repo.Admin, err error)
 	PageListCount(ctx core.Context, searchData *SearchData) (total int64, err error)
 	UpdateUsed(ctx core.Context, id int32, used int32) (err error)
@@ -26,6 +26,9 @@ type Service interface {
 	ResetPassword(ctx core.Context, id int32) (err error)
 	ModifyPassword(ctx core.Context, id int32, newPassword string) (err error)
 	ModifyPersonalInfo(ctx core.Context, id int32, modifyData *ModifyData) (err error)
+
+	CreateMenu(ctx core.Context, menuData *CreateMenuData) (err error)
+	ListMenu(ctx core.Context, searchData *SearchListMenuData) (menuData []ListMenuData, err error)
 }
 
 type service struct {

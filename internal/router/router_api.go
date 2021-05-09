@@ -14,13 +14,22 @@ func setApiRouter(r *resource) {
 	// admin
 	adminHandler := admin_handler.New(r.logger, r.db, r.cache)
 
-	// login
-	login := r.mux.Group("/login", r.middles.Signature())
+	// 需要签名验证，无需登录验证，无需 RBAC 权限验证
+	login := r.mux.Group("/api", r.middles.Signature())
 	{
-		login.POST("/web", adminHandler.Login())
+		login.POST("/login", adminHandler.Login())
 	}
 
-	// api
+	// 需要签名验证、登录验证，无需 RBAC 权限验证
+	notRBAC := r.mux.Group("/api", core.WrapAuthHandler(r.middles.Token), r.middles.Signature())
+	{
+		notRBAC.POST("/admin/logout", adminHandler.Logout())
+		notRBAC.PATCH("/admin/modify_password", adminHandler.ModifyPassword())
+		notRBAC.GET("/admin/info", adminHandler.Detail())
+		notRBAC.PATCH("/admin/modify_personal_info", adminHandler.ModifyPersonalInfo())
+	}
+
+	// 需要签名验证、登录验证、RBAC 权限验证
 	api := r.mux.Group("/api", core.WrapAuthHandler(r.middles.Token), r.middles.Signature())
 	{
 		// authorized
@@ -37,25 +46,27 @@ func setApiRouter(r *resource) {
 		api.POST("/admin", adminHandler.Create())
 		api.GET("/admin", adminHandler.List())
 		api.PATCH("/admin/used", adminHandler.UpdateUsed())
-		api.PATCH("/admin/reset_password/:id", adminHandler.ResetPassword())
-		api.DELETE("/admin/:id", adminHandler.Delete())
-		api.POST("/admin/logout", adminHandler.Logout())
-		api.PATCH("/admin/modify_password", adminHandler.ModifyPassword())
-		api.GET("/admin/info", adminHandler.Detail())
-		api.PATCH("/admin/modify_personal_info", adminHandler.ModifyPersonalInfo())
+		api.PATCH("/admin/reset_password/:id", core.AliasForRecordMetrics("/api/admin/reset_password"), adminHandler.ResetPassword())
+		api.DELETE("/admin/:id", core.AliasForRecordMetrics("/api/admin"), adminHandler.Delete())
+
+		api.POST("/admin/menu", adminHandler.CreateAdminMenu())
+		api.GET("/admin/menu/:id", core.AliasForRecordMetrics("/api/admin/menu"), adminHandler.ListAdminMenu())
 
 		// menu
 		menuHandler := menu_handler.New(r.logger, r.db, r.cache)
 		api.POST("/menu", menuHandler.Create())
 		api.GET("/menu", menuHandler.List())
-		api.GET("/menu/:id", menuHandler.Detail())
+		api.GET("/menu/:id", core.AliasForRecordMetrics("/api/menu"), menuHandler.Detail())
 		api.PATCH("/menu/used", menuHandler.UpdateUsed())
-		api.DELETE("/menu/:id", menuHandler.Delete())
+		api.DELETE("/menu/:id", core.AliasForRecordMetrics("/api/menu"), menuHandler.Delete())
+		api.POST("/menu_action", menuHandler.CreateAction())
+		api.GET("/menu_action", menuHandler.ListAction())
+		api.DELETE("/menu_action/:id", core.AliasForRecordMetrics("/api/menu_action"), menuHandler.DeleteAction())
 
 		// tool
 		toolHandler := tool_handler.New(r.logger, r.db, r.cache)
-		api.GET("/tool/hashids/encode/:id", toolHandler.HashIdsEncode())
-		api.GET("/tool/hashids/decode/:id", toolHandler.HashIdsDecode())
+		api.GET("/tool/hashids/encode/:id", core.AliasForRecordMetrics("/api/tool/hashids/encode"), toolHandler.HashIdsEncode())
+		api.GET("/tool/hashids/decode/:id", core.AliasForRecordMetrics("/api/tool/hashids/decode"), toolHandler.HashIdsDecode())
 		api.POST("/tool/cache/search", toolHandler.SearchCache())
 		api.PATCH("/tool/cache/clear", toolHandler.ClearCache())
 		api.GET("/tool/data/dbs", toolHandler.Dbs())

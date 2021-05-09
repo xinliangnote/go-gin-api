@@ -58,7 +58,7 @@
         <div class="col-lg-6">
             <div class="card">
                 <header class="card-header">
-                    <div class="card-title">已授权接口</div>
+                    <div class="card-title">已授权接口<small id="businessKey"></small></div>
                 </header>
                 <div class="card-body apis">
 
@@ -96,6 +96,7 @@
                     
                 },
                 function (data) {
+                    $("#businessKey").html("（授权方：" + data.business_key + "）");
                     if (data.list.length > 0) {
                         var badgeMethodClass = "";
 

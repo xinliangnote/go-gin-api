@@ -30,20 +30,6 @@ func (t *Admin) Create(db *gorm.DB) (id int32, err error) {
 	return t.Id, nil
 }
 
-func (t *Admin) Delete(db *gorm.DB) (err error) {
-	if err = db.Delete(t).Error; err != nil {
-		return errors.Wrap(err, "delete err")
-	}
-	return nil
-}
-
-func (t *Admin) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
-	if err = db.Model(&Admin{}).Where("id = ?", t.Id).Updates(m).Error; err != nil {
-		return errors.Wrap(err, "updates err")
-	}
-	return nil
-}
-
 type adminRepoQueryBuilder struct {
 	order []string
 	where []struct {
@@ -64,6 +50,30 @@ func (qb *adminRepoQueryBuilder) buildQuery(db *gorm.DB) *gorm.DB {
 	}
 	ret = ret.Limit(qb.limit).Offset(qb.offset)
 	return ret
+}
+
+func (qb *adminRepoQueryBuilder) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
+	db = db.Model(&Admin{})
+
+	for _, where := range qb.where {
+		db.Where(where.prefix, where.value)
+	}
+
+	if err = db.Updates(m).Error; err != nil {
+		return errors.Wrap(err, "updates err")
+	}
+	return nil
+}
+
+func (qb *adminRepoQueryBuilder) Delete(db *gorm.DB) (err error) {
+	for _, where := range qb.where {
+		db = db.Where(where.prefix, where.value)
+	}
+
+	if err = db.Delete(&Admin{}).Error; err != nil {
+		return errors.Wrap(err, "delete err")
+	}
+	return nil
 }
 
 func (qb *adminRepoQueryBuilder) Count(db *gorm.DB) (int64, error) {

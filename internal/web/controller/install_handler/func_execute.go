@@ -209,6 +209,56 @@ func (h *handler) Execute() core.HandlerFunc {
 		}
 		outPutString += "初始化 MySQL 数据表：menu 成功。\n"
 
+		if err = db.Exec(mysql_table.CreateMenuTableDataSql()).Error; err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigMySQLInstallError,
+				"MySQL "+err.Error()).WithErr(err),
+			)
+			return
+		}
+		outPutString += "初始化 MySQL 数据表：menu 默认数据成功。\n"
+
+		if err = db.Exec(mysql_table.CreateMenuActionTableSql()).Error; err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigMySQLInstallError,
+				"MySQL "+err.Error()).WithErr(err),
+			)
+			return
+		}
+		outPutString += "初始化 MySQL 数据表：menu_action 成功。\n"
+
+		if err = db.Exec(mysql_table.CreateMenuActionTableDataSql()).Error; err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigMySQLInstallError,
+				"MySQL "+err.Error()).WithErr(err),
+			)
+			return
+		}
+		outPutString += "初始化 MySQL 数据表：menu_action 默认数据成功。\n"
+
+		if err = db.Exec(mysql_table.CreateAdminMenuTableSql()).Error; err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigMySQLInstallError,
+				"MySQL "+err.Error()).WithErr(err),
+			)
+			return
+		}
+		outPutString += "初始化 MySQL 数据表：admin_menu 成功。\n"
+
+		if err = db.Exec(mysql_table.CreateAdminMenuTableDataSql()).Error; err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.ConfigMySQLInstallError,
+				"MySQL "+err.Error()).WithErr(err),
+			)
+			return
+		}
+		outPutString += "初始化 MySQL 数据表：admin_menu 默认数据成功。\n"
+
 		// 生成 install 完成标识
 		f, err := os.Create(configs.ProjectInstallFile())
 		if err != nil {

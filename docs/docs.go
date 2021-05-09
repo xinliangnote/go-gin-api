@@ -32,7 +32,7 @@ var doc = `{
             "get": {
                 "description": "管理员列表",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -220,9 +220,9 @@ var doc = `{
                 }
             }
         },
-        "/api/admin/modify_password": {
-            "patch": {
-                "description": "修改密码",
+        "/api/admin/menu": {
+            "post": {
+                "description": "提交菜单授权",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -232,19 +232,19 @@ var doc = `{
                 "tags": [
                     "API.admin"
                 ],
-                "summary": "修改密码",
+                "summary": "提交菜单授权",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "旧密码",
-                        "name": "old_password",
+                        "description": "Hashid",
+                        "name": "id",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "新密码",
-                        "name": "new_password",
+                        "description": "功能权限ID,多个用,分割",
+                        "name": "actions",
                         "in": "formData",
                         "required": true
                     }
@@ -253,7 +253,90 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.modifyPasswordResponse"
+                            "$ref": "#/definitions/admin_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/menu/:id": {
+            "get": {
+                "description": "菜单授权列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.admin"
+                ],
+                "summary": "菜单授权列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_handler.listAdminMenuResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/modify_password": {
+            "patch": {
+                "description": "修改个人信息",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.admin"
+                ],
+                "summary": "修改个人信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "mobile",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_handler.modifyPersonalInfoResponse"
                         }
                     },
                     "400": {
@@ -590,7 +673,7 @@ var doc = `{
             "get": {
                 "description": "调用方接口地址列表",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -602,9 +685,10 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "调用方key",
-                        "name": "business_key",
-                        "in": "query"
+                        "description": "hashID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -963,6 +1047,132 @@ var doc = `{
                 }
             }
         },
+        "/api/menu_action": {
+            "get": {
+                "description": "功能权限列表",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "功能权限列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.listActionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建功能权限",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "创建功能权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HashID",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "请求方法",
+                        "name": "method",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "请求地址",
+                        "name": "api",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.createActionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/menu_action/{id}": {
+            "delete": {
+                "description": "删除功能权限",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "删除功能权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.deleteActionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/tool/cache/clear": {
             "patch": {
                 "description": "清空缓存",
@@ -1271,6 +1481,20 @@ var doc = `{
                 }
             }
         },
+        "admin_handler.listAdminMenuResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin_service.ListMenuData"
+                    }
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "admin_handler.listData": {
             "type": "object",
             "properties": {
@@ -1395,6 +1619,27 @@ var doc = `{
                 }
             }
         },
+        "admin_service.ListMenuData": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "is_have": {
+                    "description": "是否已拥有权限",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
         "authorized_handler.createAPIResponse": {
             "type": "object",
             "properties": {
@@ -1455,6 +1700,10 @@ var doc = `{
         "authorized_handler.listAPIResponse": {
             "type": "object",
             "properties": {
+                "business_key": {
+                    "description": "调用方key",
+                    "type": "string"
+                },
                 "list": {
                     "type": "array",
                     "items": {
@@ -1568,6 +1817,15 @@ var doc = `{
                 }
             }
         },
+        "menu_handler.createActionResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
         "menu_handler.createRequest": {
             "type": "object",
             "properties": {
@@ -1606,6 +1864,15 @@ var doc = `{
                 }
             }
         },
+        "menu_handler.deleteActionResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
         "menu_handler.deleteResponse": {
             "type": "object",
             "properties": {
@@ -1632,6 +1899,45 @@ var doc = `{
                 },
                 "name": {
                     "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "menu_handler.listActionData": {
+            "type": "object",
+            "properties": {
+                "api": {
+                    "description": "调用方对接人",
+                    "type": "string"
+                },
+                "hash_id": {
+                    "description": "hashID",
+                    "type": "string"
+                },
+                "menu_id": {
+                    "description": "菜单栏ID",
+                    "type": "integer"
+                },
+                "method": {
+                    "description": "调用方secret",
+                    "type": "string"
+                }
+            }
+        },
+        "menu_handler.listActionResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/menu_handler.listActionData"
+                    }
+                },
+                "menu_name": {
                     "type": "string"
                 }
             }

@@ -30,20 +30,6 @@ func (t *AuthorizedApi) Create(db *gorm.DB) (id int32, err error) {
 	return t.Id, nil
 }
 
-func (t *AuthorizedApi) Delete(db *gorm.DB) (err error) {
-	if err = db.Delete(t).Error; err != nil {
-		return errors.Wrap(err, "delete err")
-	}
-	return nil
-}
-
-func (t *AuthorizedApi) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
-	if err = db.Model(&AuthorizedApi{}).Where("id = ?", t.Id).Updates(m).Error; err != nil {
-		return errors.Wrap(err, "updates err")
-	}
-	return nil
-}
-
 type authorizedApiRepoQueryBuilder struct {
 	order []string
 	where []struct {
@@ -64,6 +50,30 @@ func (qb *authorizedApiRepoQueryBuilder) buildQuery(db *gorm.DB) *gorm.DB {
 	}
 	ret = ret.Limit(qb.limit).Offset(qb.offset)
 	return ret
+}
+
+func (qb *authorizedApiRepoQueryBuilder) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
+	db = db.Model(&AuthorizedApi{})
+
+	for _, where := range qb.where {
+		db.Where(where.prefix, where.value)
+	}
+
+	if err = db.Updates(m).Error; err != nil {
+		return errors.Wrap(err, "updates err")
+	}
+	return nil
+}
+
+func (qb *authorizedApiRepoQueryBuilder) Delete(db *gorm.DB) (err error) {
+	for _, where := range qb.where {
+		db = db.Where(where.prefix, where.value)
+	}
+
+	if err = db.Delete(&AuthorizedApi{}).Error; err != nil {
+		return errors.Wrap(err, "delete err")
+	}
+	return nil
 }
 
 func (qb *authorizedApiRepoQueryBuilder) Count(db *gorm.DB) (int64, error) {

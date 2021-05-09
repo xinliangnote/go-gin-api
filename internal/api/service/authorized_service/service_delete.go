@@ -20,15 +20,14 @@ func (s *service) Delete(ctx core.Context, id int32) (err error) {
 		return nil
 	}
 
-	model := authorized_repo.NewModel()
-	model.Id = id
-
 	data := map[string]interface{}{
 		"is_deleted":   1,
 		"updated_user": ctx.UserName(),
 	}
 
-	err = model.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
+	qb := authorized_repo.NewQueryBuilder()
+	qb.WhereId(db_repo.EqualPredicate, id)
+	err = qb.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
 	if err != nil {
 		return err
 	}

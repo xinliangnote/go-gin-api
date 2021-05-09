@@ -44,20 +44,6 @@ func (t *{{.StructName}}) Create(db *gorm.DB) (id int32, err error) {
 	return t.Id, nil
 }
 
-func (t *{{.StructName}}) Delete(db *gorm.DB) (err error) {
-	if err = db.Delete(t).Error; err != nil {
-		return errors.Wrap(err, "delete err")
-	}
-	return nil
-}
-
-func (t *{{.StructName}}) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
-	if err = db.Model(&{{.StructName}}{}).Where("id = ?", t.Id).Updates(m).Error; err != nil {
-		return errors.Wrap(err, "updates err")
-	}
-	return nil
-}
-
 type {{.QueryBuilderName}} struct {
 	order []string
 	where []struct {
@@ -78,6 +64,30 @@ func (qb *{{.QueryBuilderName}}) buildQuery(db *gorm.DB) *gorm.DB {
 	}
 	ret = ret.Limit(qb.limit).Offset(qb.offset)
 	return ret
+}
+
+func (qb *{{.QueryBuilderName}}) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
+	db = db.Model(&{{.StructName}}{})
+
+	for _, where := range qb.where {
+		db.Where(where.prefix, where.value)
+	}
+
+	if err = db.Updates(m).Error; err != nil {
+		return errors.Wrap(err, "updates err")
+	}
+	return nil
+}
+
+func (qb *{{.QueryBuilderName}}) Delete(db *gorm.DB) (err error) {
+	for _, where := range qb.where {
+		db = db.Where(where.prefix, where.value)
+	}
+
+	if err = db.Delete(&{{.StructName}}{}).Error; err != nil {
+		return errors.Wrap(err, "delete err")
+	}
+	return nil
 }
 
 func (qb *{{.QueryBuilderName}}) Count(db *gorm.DB) (int64, error) {

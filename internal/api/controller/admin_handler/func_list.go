@@ -47,7 +47,7 @@ type listResponse struct {
 // @Summary 管理员列表
 // @Description 管理员列表
 // @Tags API.admin
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
 // @Param page query int false "第几页"
 // @Param page_size query string false "每页显示条数"

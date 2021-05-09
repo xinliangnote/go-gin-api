@@ -24,16 +24,17 @@ type listAPIData struct {
 }
 
 type listAPIResponse struct {
-	List []listAPIData `json:"list"`
+	BusinessKey string        `json:"business_key"` // 调用方key
+	List        []listAPIData `json:"list"`
 }
 
 // ListAPI 调用方接口地址列表
 // @Summary 调用方接口地址列表
 // @Description 调用方接口地址列表
 // @Tags API.authorized
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param business_key query string false "调用方key"
+// @Param id query string true "hashID"
 // @Success 200 {object} listAPIResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized_api [get]
@@ -72,6 +73,8 @@ func (h *handler) ListAPI() core.HandlerFunc {
 			)
 			return
 		}
+
+		res.BusinessKey = authorizedInfo.BusinessKey
 
 		searchAPIData := new(authorized_service.SearchAPIData)
 		searchAPIData.BusinessKey = authorizedInfo.BusinessKey

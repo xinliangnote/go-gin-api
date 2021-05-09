@@ -35,3 +35,31 @@ func CreateMenuTableSql() (sql string) {
 
 	return
 }
+
+func CreateMenuTableDataSql() (sql string) {
+	sql = "INSERT INTO `menu` (`id`, `pid`, `name`, `link`, `icon`, `level`, `created_user`) VALUES"
+	sql += "(1, 0, '配置信息', '', 'mdi-settings-box', 1, 'init'),"
+	sql += "(2, 1, '告警邮箱', '/config/email', '', 2, 'init'),"
+	sql += "(3, 1, '错误码', '/config/code', '', 2, 'init'),"
+	sql += "(4, 0, '代码生成器', '', 'mdi-code-not-equal-variant', 1, 'init'),"
+	sql += "(5, 4, '生成数据表 CURD', '/generator/gorm', '', 2, 'init'),"
+	sql += "(6, 4, '生成控制器方法', '/generator/handler', '', 2, 'init'),"
+	sql += "(7, 0, '授权调用方', '', 'mdi-playlist-check', 1, 'init'),"
+	sql += "(8, 7, '调用方', '/authorized/list', '', 2, 'init'),"
+	sql += "(9, 7, '使用说明', '/authorized/demo', '', 2, 'init'),"
+	sql += "(10, 0, '系统管理员', '', 'mdi-account', 1, 'init'),"
+	sql += "(11, 10, '管理员', '/admin/list', '', 2, 'init'),"
+	sql += "(12, 10, '菜单管理', '/admin/menu', '', 2, 'init'),"
+	sql += "(13, 0, '查询小助手', '', 'mdi-database-search', 1, 'init'),"
+	sql += "(14, 13, '查询缓存', '/tool/cache', '', 2, 'init'),"
+	sql += "(15, 13, '查询数据', '/tool/data', '', 2, 'init'),"
+	sql += "(16, 0, '实用工具箱', '', 'mdi-tools', 1, 'init'),"
+	sql += "(17, 16, 'Hashids', '/tool/hashids', '', 2, 'init'),"
+	sql += "(18, 16, '调用日志', '/tool/logs', '', 2, 'init'),"
+	sql += "(19, 16, '接口文档', '/swagger/index.html', '', 2, 'init'),"
+	sql += "(20, 16, 'GraphQL', '/graphql', '', 2, 'init'),"
+	sql += "(21, 16, '接口指标', '/metrics', '', 2, 'init'),"
+	sql += "(22, 16, '服务升级', '/upgrade', '', 2, 'init');"
+
+	return
+}
