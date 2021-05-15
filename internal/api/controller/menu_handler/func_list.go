@@ -20,6 +20,7 @@ type listData struct {
 	Link   string `json:"link"`    // 链接地址
 	Icon   string `json:"icon"`    // 图标
 	IsUsed int32  `json:"is_used"` // 是否启用 1=启用 -1=禁用
+	Sort   int32  `json:"sort"`    // 排序
 }
 
 type listResponse struct {
@@ -64,6 +65,7 @@ func (h *handler) List() core.HandlerFunc {
 				Link:   v.Link,
 				Icon:   v.Icon,
 				IsUsed: v.IsUsed,
+				Sort:   v.Sort,
 			}
 
 			res.List[k] = data

@@ -31,6 +31,9 @@ type Middleware interface {
 
 	// Token 签名验证，对登录用户的验证
 	Token(ctx core.Context) (userId int64, userName string, err errno.Error)
+
+	// RBAC 权限验证
+	RBAC() core.HandlerFunc
 }
 
 type middleware struct {

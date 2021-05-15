@@ -3,14 +3,12 @@ package admin_handler
 import (
 	"net/http"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
-
-	"github.com/pkg/errors"
-	"github.com/spf13/cast"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 )
 
 type logoutResponse struct {
@@ -31,7 +29,7 @@ func (h *handler) Logout() core.HandlerFunc {
 		res := new(logoutResponse)
 		res.Username = c.UserName()
 
-		if !h.cache.Del(h.adminService.CacheKeyPrefix()+password.GenerateLoginToken(cast.ToInt32(c.UserID())), cache.WithTrace(c.Trace())) {
+		if !h.cache.Del(configs.RedisKeyPrefixLoginUser+c.GetHeader(configs.LoginToken), cache.WithTrace(c.Trace())) {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.AdminLogOutError,

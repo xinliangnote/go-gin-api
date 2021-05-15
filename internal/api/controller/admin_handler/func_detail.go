@@ -1,20 +1,25 @@
 package admin_handler
 
 import (
+	"encoding/json"
 	"net/http"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
 
 type detailResponse struct {
-	Username string `json:"username"` // 用户名
-	Nickname string `json:"nickname"` // 昵称
-	Mobile   string `json:"mobile"`   // 手机号
+	Username string                         `json:"username"` // 用户名
+	Nickname string                         `json:"nickname"` // 昵称
+	Mobile   string                         `json:"mobile"`   // 手机号
+	Menu     []admin_service.ListMyMenuData `json:"menu"`     // 菜单栏
 }
 
 // Detail 管理员详情
@@ -38,15 +43,29 @@ func (h *handler) Detail() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.AdminDetailError,
+				code.Text(code.AdminDetailError)).WithErr(err),
 			)
 			return
 		}
 
+		menuCacheData, err := h.cache.Get(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(searchOneData.Id)+":menu", cache.WithTrace(c.Trace()))
+		if err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.AdminDetailError,
+				code.Text(code.AdminDetailError)).WithErr(err),
+			)
+			return
+		}
+
+		var menuData []admin_service.ListMyMenuData
+		_ = json.Unmarshal([]byte(menuCacheData), &menuData)
+
 		res.Username = info.Username
 		res.Nickname = info.Nickname
 		res.Mobile = info.Mobile
+		res.Menu = menuData
 		c.Payload(res)
 	}
 }

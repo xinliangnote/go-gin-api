@@ -18,34 +18,74 @@
 <body>
 <div class="container-fluid p-t-15">
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <div class="card">
                 <header class="card-header">
-                    <div class="card-title">服务升级</div>
+                    <div class="card-title">无版本号情况，服务升级</div>
                 </header>
                 <div class="card-body">
+                    <p class="h6">发现代码运行报错或缺少表字段，如何进行服务初始化？</p>
+                    <p>1、删除根目录文件：
+                        <mark>{{ .LockFile }}</mark>
+                        。
+                    </p>
+                    <p>2、重新启动服务。</p>
+
+                    <hr/>
                     <p class="h6">发现 GitHub 仓库更新了新代码，如何进行服务升级？</p>
                     <p>1、源代码升级：
                         <mark>拉取最新代码，覆盖旧版本代码即可。</mark>
                     </p>
                     <p>2、数据表升级：</p>
 
-                    {{range $key, $value := .List}}
-                        <p style="margin-left: 24px;">
-                            <i class="mdi mdi-checkbox-marked-circle"></i> MySQL 数据表：{{$value.TableName}}
-                            {{if eq $value.IsHave 1}} <font class="text-success">已存在</font>
-                            {{else}} <font class="text-danger">不存在</font>
-                            {{end}}
+                    <table style="margin-left: 24px;" class="table">
+                        <thead>
+                        <tr>
+                            <th>数据表</th>
+                            <th>是否存在</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range $key, $value := .List}}
+                        <tr>
+                            <td>{{$value.TableName}}</td>
+                            <td>
+                                {{if eq $value.IsHave 1}} <font class="text-success">已存在</font>
+                                {{else}} <font class="text-danger">不存在</font>
+                                {{end}}
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-info upgrade" data-op="table"
+                                        data-table="{{$value.TableName}}">创建表结构
+                                </button>
+                                <button class="btn btn-xs btn-cyan upgrade" data-op="table_data"
+                                        data-table="{{$value.TableName}}">初始化数据
+                                </button>
+                            </td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
 
-                            <button class="btn btn-xs btn-info upgrade" data-op="table"
-                                    data-table="{{$value.TableName}}">创建表结构
-                            </button>
-                            <button class="btn btn-xs btn-cyan upgrade" data-op="table_data"
-                                    data-table="{{$value.TableName}}">初始化数据
-                            </button>
-                        </p>
-                    {{end}}
+                </div>
+            </div>
+        </div>
 
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">有版本号情况，服务升级</div>
+                </header>
+                <div class="card-body">
+                    <p class="h6">
+                        <span class="badge badge-pill badge-warning">v1.26</span>
+                        ->
+                        <span class="badge badge-pill badge-warning">v1.27</span>
+                    </p>
+                    <p>......</p>
+
+                    <hr/>
                 </div>
             </div>
         </div>

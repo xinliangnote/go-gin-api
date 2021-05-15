@@ -17,6 +17,7 @@ const (
 	ResubmitMsg        = 10107
 	HashIdsDecodeError = 10108
 	SignatureError     = 10109
+	RBACError          = 10110
 
 	// 业务模块级错误码
 	// 用户模块
@@ -47,6 +48,8 @@ const (
 	AdminModifyPersonalInfoError = 20309
 	AdminMenuListError           = 20310
 	AdminMenuCreateError         = 20311
+	AdminOfflineError            = 20312
+	AdminDetailError             = 20313
 
 	// 配置
 	ConfigEmailError        = 20401
@@ -83,6 +86,7 @@ var codeText = map[int]string{
 	ResubmitMsg:        "请勿重复提交",
 	HashIdsDecodeError: "ID 参数有误",
 	SignatureError:     "Signature Error",
+	RBACError:          "暂无权限，请联系管理开通权限",
 
 	IllegalUserName: "非法用户名",
 	UserCreateError: "创建用户失败",
@@ -109,6 +113,8 @@ var codeText = map[int]string{
 	AdminModifyPersonalInfoError: "修改个人信息失败",
 	AdminMenuListError:           "获取管理员菜单授权列表失败",
 	AdminMenuCreateError:         "管理员菜单授权失败",
+	AdminOfflineError:            "下线管理员失败",
+	AdminDetailError:             "获取个人信息失败",
 
 	ConfigEmailError:        "修改邮箱配置失败",
 	ConfigSaveError:         "写入配置文件失败",

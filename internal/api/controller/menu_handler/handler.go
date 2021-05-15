@@ -36,6 +36,11 @@ type Handler interface {
 	// @Router /api/menu/used [patch]
 	UpdateUsed() core.HandlerFunc
 
+	// UpdateSort 更新菜单排序
+	// @Tags API.menu
+	// @Router /api/menu/sort [patch]
+	UpdateSort() core.HandlerFunc
+
 	// List 菜单列表
 	// @Tags API.menu
 	// @Router /api/menu [get]

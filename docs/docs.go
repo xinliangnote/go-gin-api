@@ -177,9 +177,9 @@ var doc = `{
         },
         "/api/admin/login": {
             "post": {
-                "description": "管理员登录",
+                "description": "管理员登出",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -187,28 +187,12 @@ var doc = `{
                 "tags": [
                     "API.admin"
                 ],
-                "summary": "管理员登录",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户名",
-                        "name": "username",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "密码",
-                        "name": "password",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
+                "summary": "管理员登出",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.loginResponse"
+                            "$ref": "#/definitions/admin_handler.logoutResponse"
                         }
                     },
                     "400": {
@@ -337,6 +321,44 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/admin_handler.modifyPersonalInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/offline": {
+            "patch": {
+                "description": "下线管理员",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.admin"
+                ],
+                "summary": "下线管理员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hashid",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_handler.offlineResponse"
                         }
                     },
                     "400": {
@@ -928,11 +950,56 @@ var doc = `{
                 }
             }
         },
+        "/api/menu/sort": {
+            "patch": {
+                "description": "更新菜单排序",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.menu"
+                ],
+                "summary": "更新菜单排序",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hashid",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "排序",
+                        "name": "sort",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/menu_handler.updateSortResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/menu/used": {
             "patch": {
                 "description": "更新菜单为启用/禁用",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1467,6 +1534,13 @@ var doc = `{
         "admin_handler.detailResponse": {
             "type": "object",
             "properties": {
+                "menu": {
+                    "description": "菜单栏",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin_service.ListMyMenuData"
+                    }
+                },
                 "mobile": {
                     "description": "手机号",
                     "type": "string"
@@ -1512,6 +1586,10 @@ var doc = `{
                 },
                 "id": {
                     "description": "ID",
+                    "type": "integer"
+                },
+                "is_online": {
+                    "description": "是否在线 1:是 -1:否",
                     "type": "integer"
                 },
                 "is_used": {
@@ -1601,6 +1679,15 @@ var doc = `{
                 }
             }
         },
+        "admin_handler.offlineResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
         "admin_handler.resetPasswordResponse": {
             "type": "object",
             "properties": {
@@ -1629,6 +1716,31 @@ var doc = `{
                 "is_have": {
                     "description": "是否已拥有权限",
                     "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin_service.ListMyMenuData": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "description": "图标",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
                 },
                 "name": {
                     "description": "菜单名称",
@@ -1972,6 +2084,10 @@ var doc = `{
                 "pid": {
                     "description": "父类ID",
                     "type": "integer"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
                 }
             }
         },
@@ -1983,6 +2099,15 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/menu_handler.listData"
                     }
+                }
+            }
+        },
+        "menu_handler.updateSortResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
                 }
             }
         },

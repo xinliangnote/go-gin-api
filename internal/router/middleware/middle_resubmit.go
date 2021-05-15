@@ -15,9 +15,6 @@ import (
 )
 
 func (m *middleware) Resubmit() core.HandlerFunc {
-
-	redisKeyPrefix := configs.ProjectName() + ":request-id:"
-
 	return func(c core.Context) {
 		cfg := configs.Get().URLToken
 
@@ -31,7 +28,7 @@ func (m *middleware) Resubmit() core.HandlerFunc {
 			return
 		}
 
-		redisKey := redisKeyPrefix + tokenString
+		redisKey := configs.RedisKeyPrefixRequestID + tokenString
 		if !m.cache.Exists(redisKey) {
 			err = m.cache.Set(redisKey, "1", time.Minute*cfg.ExpireDuration)
 			if err != nil {

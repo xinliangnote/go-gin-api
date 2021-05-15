@@ -5,13 +5,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/signature"
 	"github.com/xinliangnote/go-gin-api/pkg/urltable"
-
-	"github.com/pkg/errors"
 )
 
 const ttl = time.Minute * 2 // 签名超时时间 2 分钟
@@ -23,7 +23,7 @@ var whiteListPath = map[string]bool{
 func (m *middleware) Signature() core.HandlerFunc {
 	return func(c core.Context) {
 		// 签名信息
-		authorization := c.GetHeader("Authorization")
+		authorization := c.GetHeader(configs.SignToken)
 		if authorization == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -34,7 +34,7 @@ func (m *middleware) Signature() core.HandlerFunc {
 		}
 
 		// 时间信息
-		date := c.GetHeader("Authorization-Date")
+		date := c.GetHeader(configs.SignTokenDate)
 		if date == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

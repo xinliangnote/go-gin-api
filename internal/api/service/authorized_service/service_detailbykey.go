@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_repo"
@@ -26,7 +27,7 @@ type cacheApiData struct {
 
 func (s *service) DetailByKey(ctx core.Context, key string) (cacheData *CacheAuthorizedData, err error) {
 	// 查询缓存
-	cacheKey := cacheKeyPrefix + key
+	cacheKey := configs.RedisKeyPrefixSignature + key
 	value, err := s.cache.Get(cacheKey, cache.WithTrace(ctx.RequestContext().Trace))
 
 	cacheData = new(CacheAuthorizedData)

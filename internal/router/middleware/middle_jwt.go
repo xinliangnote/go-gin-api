@@ -7,9 +7,8 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/token"
-
-	"github.com/pkg/errors"
 )
 
 func (m *middleware) Jwt(ctx core.Context) (userId int64, userName string, err errno.Error) {

@@ -8,30 +8,30 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
-type updateUsedRequest struct {
-	Id   string `form:"id"`   // 主键ID
-	Used int32  `form:"used"` // 是否启用 1:是 -1:否
+type updateSortRequest struct {
+	Id   string `form:"id"`   // HashId
+	Sort int32  `form:"sort"` // 排序
 }
 
-type updateUsedResponse struct {
+type updateSortResponse struct {
 	Id int32 `json:"id"` // 主键ID
 }
 
-// UpdateUsed 更新菜单为启用/禁用
-// @Summary 更新菜单为启用/禁用
-// @Description 更新菜单为启用/禁用
+// UpdateSort 更新菜单排序
+// @Summary 更新菜单排序
+// @Description 更新菜单排序
 // @Tags API.menu
 // @Accept multipart/form-data
 // @Produce json
 // @Param id formData string true "Hashid"
-// @Param used formData int true "是否启用 1:是 -1:否"
-// @Success 200 {object} updateUsedResponse
+// @Param sort formData int true "排序"
+// @Success 200 {object} updateSortResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/menu/used [patch]
-func (h *handler) UpdateUsed() core.HandlerFunc {
+// @Router /api/menu/sort [patch]
+func (h *handler) UpdateSort() core.HandlerFunc {
 	return func(c core.Context) {
-		req := new(updateUsedRequest)
-		res := new(updateUsedResponse)
+		req := new(updateSortRequest)
+		res := new(updateSortResponse)
 		if err := c.ShouldBindForm(req); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -53,7 +53,7 @@ func (h *handler) UpdateUsed() core.HandlerFunc {
 
 		id := int32(ids[0])
 
-		err = h.menuService.UpdateUsed(c, id, req.Used)
+		err = h.menuService.UpdateSort(c, id, req.Sort)
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

@@ -260,7 +260,7 @@ func (h *handler) Execute() core.HandlerFunc {
 		outPutString += "初始化 MySQL 数据表：admin_menu 默认数据成功。\n"
 
 		// 生成 install 完成标识
-		f, err := os.Create(configs.ProjectInstallFile())
+		f, err := os.Create(configs.ProjectInstallMark)
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

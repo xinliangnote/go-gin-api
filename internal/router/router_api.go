@@ -30,7 +30,7 @@ func setApiRouter(r *resource) {
 	}
 
 	// 需要签名验证、登录验证、RBAC 权限验证
-	api := r.mux.Group("/api", core.WrapAuthHandler(r.middles.Token), r.middles.Signature())
+	api := r.mux.Group("/api", core.WrapAuthHandler(r.middles.Token), r.middles.Signature(), r.middles.RBAC())
 	{
 		// authorized
 		authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
@@ -46,6 +46,7 @@ func setApiRouter(r *resource) {
 		api.POST("/admin", adminHandler.Create())
 		api.GET("/admin", adminHandler.List())
 		api.PATCH("/admin/used", adminHandler.UpdateUsed())
+		api.PATCH("/admin/offline", adminHandler.Offline())
 		api.PATCH("/admin/reset_password/:id", core.AliasForRecordMetrics("/api/admin/reset_password"), adminHandler.ResetPassword())
 		api.DELETE("/admin/:id", core.AliasForRecordMetrics("/api/admin"), adminHandler.Delete())
 
@@ -58,6 +59,7 @@ func setApiRouter(r *resource) {
 		api.GET("/menu", menuHandler.List())
 		api.GET("/menu/:id", core.AliasForRecordMetrics("/api/menu"), menuHandler.Detail())
 		api.PATCH("/menu/used", menuHandler.UpdateUsed())
+		api.PATCH("/menu/sort", menuHandler.UpdateSort())
 		api.DELETE("/menu/:id", core.AliasForRecordMetrics("/api/menu"), menuHandler.Delete())
 		api.POST("/menu_action", menuHandler.CreateAction())
 		api.GET("/menu_action", menuHandler.ListAction())

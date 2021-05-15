@@ -1,8 +1,8 @@
 package admin_service
 
 import (
-	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_action_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
@@ -10,12 +10,8 @@ import (
 
 var _ Service = (*service)(nil)
 
-// 定义缓存前缀
-var cacheKeyPrefix = configs.ProjectName() + ":admin:"
-
 type Service interface {
 	i()
-	CacheKeyPrefix() (pre string)
 
 	Create(ctx core.Context, adminData *CreateAdminData) (id int32, err error)
 	PageList(ctx core.Context, searchData *SearchData) (listData []*admin_repo.Admin, err error)
@@ -29,6 +25,8 @@ type Service interface {
 
 	CreateMenu(ctx core.Context, menuData *CreateMenuData) (err error)
 	ListMenu(ctx core.Context, searchData *SearchListMenuData) (menuData []ListMenuData, err error)
+	MyMenu(ctx core.Context, searchData *SearchMyMenuData) (menuData []ListMyMenuData, err error)
+	MyAction(ctx core.Context, searchData *SearchMyActionData) (actionData []*menu_action_repo.MenuAction, err error)
 }
 
 type service struct {
@@ -44,8 +42,3 @@ func New(db db.Repo, cache cache.Repo) Service {
 }
 
 func (s *service) i() {}
-
-func (s *service) CacheKeyPrefix() (pre string) {
-	pre = cacheKeyPrefix
-	return
-}

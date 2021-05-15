@@ -11,6 +11,7 @@ type Menu struct {
 	Link        string    // 链接地址
 	Icon        string    // 图标
 	Level       int32     // 菜单类型 1:一级菜单 2:二级菜单
+	Sort        int32     // 排序
 	IsUsed      int32     // 是否启用 1:是 -1:否
 	IsDeleted   int32     // 是否删除 1:是 -1:否
 	CreatedAt   time.Time `gorm:"time"` // 创建时间

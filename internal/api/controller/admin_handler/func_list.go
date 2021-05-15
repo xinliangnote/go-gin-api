@@ -3,9 +3,11 @@ package admin_handler
 import (
 	"net/http"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
 
@@ -28,6 +30,7 @@ type listData struct {
 	Nickname    string `json:"nickname"`     // 昵称
 	Mobile      string `json:"mobile"`       // 手机号
 	IsUsed      int    `json:"is_used"`      // 是否启用 1:是 -1:否
+	IsOnline    int    `json:"is_online"`    // 是否在线 1:是 -1:否
 	CreatedAt   string `json:"created_at"`   // 创建时间
 	CreatedUser string `json:"created_user"` // 创建人
 	UpdatedAt   string `json:"updated_at"`   // 更新时间
@@ -117,6 +120,11 @@ func (h *handler) List() core.HandlerFunc {
 				h.logger.Info("hashids err", zap.Error(err))
 			}
 
+			isOnline := -1
+			if h.cache.Exists(configs.RedisKeyPrefixLoginUser + password.GenerateLoginToken(v.Id)) {
+				isOnline = 1
+			}
+
 			data := listData{
 				Id:          cast.ToInt(v.Id),
 				HashID:      hashId,
@@ -124,6 +132,7 @@ func (h *handler) List() core.HandlerFunc {
 				Nickname:    v.Nickname,
 				Mobile:      v.Mobile,
 				IsUsed:      cast.ToInt(v.IsUsed),
+				IsOnline:    isOnline,
 				CreatedAt:   v.CreatedAt.Format(time_parse.CSTLayout),
 				CreatedUser: v.CreatedUser,
 				UpdatedAt:   v.UpdatedAt.Format(time_parse.CSTLayout),

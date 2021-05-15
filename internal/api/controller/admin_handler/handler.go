@@ -56,6 +56,11 @@ type Handler interface {
 	// @Router /api/admin/{id} [delete]
 	Delete() core.HandlerFunc
 
+	// Offline 下线管理员
+	// @Tags API.admin
+	// @Router /api/admin/offline [patch]
+	Offline() core.HandlerFunc
+
 	// UpdateUsed 更新管理员为启用/禁用
 	// @Tags API.admin
 	// @Router /api/admin/used [patch]

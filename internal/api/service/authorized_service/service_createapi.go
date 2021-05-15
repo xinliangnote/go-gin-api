@@ -1,6 +1,7 @@
 package authorized_service
 
 import (
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -25,6 +26,6 @@ func (s *service) CreateAPI(ctx core.Context, authorizedAPIData *CreateAuthorize
 		return 0, err
 	}
 
-	s.cache.Del(cacheKeyPrefix+authorizedAPIData.BusinessKey, cache.WithTrace(ctx.Trace()))
+	s.cache.Del(configs.RedisKeyPrefixSignature+authorizedAPIData.BusinessKey, cache.WithTrace(ctx.Trace()))
 	return
 }

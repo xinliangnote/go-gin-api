@@ -111,11 +111,11 @@ type Context interface {
 	// SetHeader 设置 Header
 	SetHeader(key, value string)
 
-	// UserID 获取 JWT 中 UserID
+	// UserID 获取 UserID
 	UserID() int64
 	setUserID(userID int64)
 
-	// UserName 获取 JWT 中 UserName
+	// UserName 获取 UserName
 	UserName() string
 	setUserName(userName string)
 

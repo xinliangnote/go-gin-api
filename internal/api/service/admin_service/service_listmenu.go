@@ -22,7 +22,7 @@ func (s *service) ListMenu(ctx core.Context, searchData *SearchListMenuData) (me
 	menuQb := menu_repo.NewQueryBuilder()
 	menuQb.WhereIsDeleted(db_repo.EqualPredicate, -1)
 	menuListData, err := menuQb.
-		OrderById(false).
+		OrderBySort(true).
 		QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
 	if err != nil {
 		return nil, err

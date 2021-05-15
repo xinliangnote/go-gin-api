@@ -44,7 +44,7 @@ func (h *handler) LogsView() core.HandlerFunc {
 	}
 
 	return func(c core.Context) {
-		readLineFromEnd, err := file.NewReadLineFromEnd(configs.ProjectLogFile())
+		readLineFromEnd, err := file.NewReadLineFromEnd(configs.ProjectLogFile)
 		if err != nil {
 			h.logger.Error("NewReadLineFromEnd err", zap.Error(err))
 		}

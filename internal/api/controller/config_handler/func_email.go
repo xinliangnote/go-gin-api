@@ -60,8 +60,8 @@ func (h *handler) Email() core.HandlerFunc {
 			MailUser: req.User,
 			MailPass: req.Pass,
 			MailTo:   req.To,
-			Subject:  fmt.Sprintf("%s[%s] 邮箱告警人调整通知。", configs.ProjectName(), env.Active().Value()),
-			Body:     fmt.Sprintf("%s[%s] 已添加您为系统告警通知人。", configs.ProjectName(), env.Active().Value()),
+			Subject:  fmt.Sprintf("%s[%s] 邮箱告警人调整通知。", configs.ProjectName, env.Active().Value()),
+			Body:     fmt.Sprintf("%s[%s] 已添加您为系统告警通知人。", configs.ProjectName, env.Active().Value()),
 		}
 		if err := mail.Send(options); err != nil {
 			c.AbortWithError(errno.NewError(

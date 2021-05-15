@@ -1,7 +1,6 @@
 package authorized_service
 
 import (
-	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
@@ -10,9 +9,6 @@ import (
 )
 
 var _ Service = (*service)(nil)
-
-// 定义缓存前缀
-var cacheKeyPrefix = configs.ProjectName() + ":authorized:"
 
 type Service interface {
 	i()

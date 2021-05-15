@@ -9,9 +9,9 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
 	"github.com/xinliangnote/go-gin-api/internal/router/middleware"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/file"
 
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -39,9 +39,9 @@ func NewHTTPServer(logger *zap.Logger) (*Server, error) {
 	r := new(resource)
 	r.logger = logger
 
-	openBrowserUri := "http://127.0.0.1" + configs.ProjectPort()
+	openBrowserUri := "http://127.0.0.1" + configs.ProjectPort
 
-	_, ok := file.IsExists(configs.ProjectInstallFile())
+	_, ok := file.IsExists(configs.ProjectInstallMark)
 	if !ok { // 未安装
 		openBrowserUri += "/install"
 	} else { // 已安装

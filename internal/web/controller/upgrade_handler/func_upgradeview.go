@@ -8,7 +8,8 @@ import (
 )
 
 type upgradeViewResponse struct {
-	List []upgradeViewData `json:"list"`
+	LockFile string            `json:"lock_file"`
+	List     []upgradeViewData `json:"list"`
 }
 
 type upgradeViewData struct {
@@ -68,6 +69,7 @@ func (h *handler) UpgradeView() core.HandlerFunc {
 
 		obj := new(upgradeViewResponse)
 		obj.List = tableData
+		obj.LockFile = configs.ProjectInstallMark
 		c.HTML("upgrade_view", obj)
 	}
 }

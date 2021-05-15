@@ -32,7 +32,8 @@
                                 <th>手机号</th>
                                 <th>创建日期</th>
                                 <th>更新日期</th>
-                                <th style="text-align: center; ">状态</th>
+                                <th style="text-align: center; ">可用状态</th>
+                                <th style="text-align: center; ">在线状态</th>
                                 <th style="text-align: center; ">操作</th>
                             </tr>
                             </thead>
@@ -102,6 +103,7 @@
 
                         $.each(data.list, function (index, value) {
                             var showUsedBadge = "";
+                            var showOnlineBadge = "";
                             var optionUsedName = "";
 
                             if (value.is_used === 1) {
@@ -114,6 +116,14 @@
                                 showUsedBadge = '<span class="badge badge-danger">禁用</span></td>'
                             }
 
+                            if (value.is_online === 1) {
+                                showOnlineBadge = '<span class="badge btn-primary">在线</span></td>'
+                            }
+
+                            if (value.is_online === -1) {
+                                showOnlineBadge = '<span class="badge btn-secondary">离线</span></td>'
+                            }
+
                             const tr = '<tr>\n' +
                                 '<td>' + value.id + '</td>\n' +
                                 '<td>' + value.username + '</td>\n' +
@@ -122,6 +132,7 @@
                                 '<td>' + value.created_at + '</td>\n' +
                                 '<td>' + value.updated_at + '</td>\n' +
                                 '<td style="text-align: center; ">' + showUsedBadge + '</td>\n' +
+                                '<td style="text-align: center; ">' + showOnlineBadge + '</td>\n' +
                                 '<td style="text-align: center; ">\n' +
                                 '<div class="btn-group">\n' +
                                 '    <a class="btn btn-xs btn-default btn-option" href="#!" title=""\n' +
@@ -134,6 +145,9 @@
                                 '    <a class="btn btn-xs btn-default btn-menu" href="#!" title=""\n' +
                                 '                                           data-id="' + value.hashid + '"' +
                                 '                                           data-toggle="tooltip" data-original-title="菜单授权">菜单授权</a>\n' +
+                                '    <a class="btn btn-xs btn-default btn-offline" href="#!" title=""\n' +
+                                '                                           data-id="' + value.hashid + '"' +
+                                '                                           data-toggle="tooltip" data-original-title="下线">下线</a>\n' +
                                 '    <a class="btn btn-xs btn-default btn-confirm" href="#!" title=""\n' +
                                 '                                           data-id="' + value.hashid + '"' +
                                 '                                           data-toggle="tooltip" data-original-title="删除">删除</a>\n' +
@@ -278,6 +292,57 @@
         // 菜单授权
         $(document).on('click', '.btn-menu', function () {
             location.href = "/admin/action/" + $(this).attr('data-id');
+        });
+
+        // 下线
+        $(document).on('click', '.btn-offline', function () {
+            const id = $(this).attr('data-id');
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">下线</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                '/api/admin/offline',
+                                {id: id},
+                                function () {},
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 已下线。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
         });
 
         // 删除

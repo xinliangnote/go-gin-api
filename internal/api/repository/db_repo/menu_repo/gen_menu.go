@@ -377,6 +377,49 @@ func (qb *menuRepoQueryBuilder) OrderByLevel(asc bool) *menuRepoQueryBuilder {
 	return qb
 }
 
+func (qb *menuRepoQueryBuilder) WhereSort(p db_repo.Predicate, value int32) *menuRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "sort", p),
+		value,
+	})
+	return qb
+}
+
+func (qb *menuRepoQueryBuilder) WhereSortIn(value []int32) *menuRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "sort", "IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *menuRepoQueryBuilder) WhereSortNotIn(value []int32) *menuRepoQueryBuilder {
+	qb.where = append(qb.where, struct {
+		prefix string
+		value  interface{}
+	}{
+		fmt.Sprintf("%v %v ?", "sort", "NOT IN"),
+		value,
+	})
+	return qb
+}
+
+func (qb *menuRepoQueryBuilder) OrderBySort(asc bool) *menuRepoQueryBuilder {
+	order := "DESC"
+	if asc {
+		order = "ASC"
+	}
+
+	qb.order = append(qb.order, "sort "+order)
+	return qb
+}
+
 func (qb *menuRepoQueryBuilder) WhereIsUsed(p db_repo.Predicate, value int32) *menuRepoQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string

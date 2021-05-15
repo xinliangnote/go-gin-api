@@ -15,7 +15,7 @@
 <body>
 <div class="container-fluid p-t-15">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">配置菜单栏</div>
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div class="col-lg-6">
+        <div class="col-lg-7">
             <div class="card">
                 <header class="card-header">
                     <div class="card-title">菜单栏列表</div>
@@ -127,7 +127,14 @@
                     field: 'name',
                     title: '名称',
                     formatter: function (value, row, index) {
-                        return '<i class="mdi ' + row.icon + '"></i>' + row.name ;
+                        return '<i class="mdi ' + row.icon + '"></i>' + row.name;
+                    }
+                },
+                {
+                    field: 'sort',
+                    title: '排序',
+                    formatter: function (value, row, index) {
+                        return '<input type="text" value="'+ row.sort +'" data-id="' + row.hashid + '" data-name="' + row.name + '" class="form-control sort" style="width:60px;">';
                     }
                 },
                 {
@@ -301,6 +308,59 @@
                 }
             );
         }
+
+        $(document).on('blur', '.sort', function () {
+            const hashid = $(this).attr("data-id");
+            const name = $(this).attr("data-name");
+            const val = $(this).val();
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要将 ' + name + ' 的排序设置为 <strong style="color: red">' + val + '</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                "/api/menu/sort",
+                                {id: hashid, sort: val},
+                                function () {
+                                },
+                                function () {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '菜单：' + name + '排序成功。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
 
         $(document).on('click', '.customSwitch', function () {
             let state = $(this).attr("state");

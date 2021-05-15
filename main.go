@@ -31,9 +31,9 @@ import (
 func main() {
 	// 初始化 logger
 	loggers, err := logger.NewJSONLogger(
-		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName(), env.Active().Value())),
+		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
 		logger.WithTimeLayout("2006-01-02 15:04:05"),
-		logger.WithFileP(configs.ProjectLogFile()),
+		logger.WithFileP(configs.ProjectLogFile),
 	)
 	if err != nil {
 		panic(err)
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:    configs.ProjectPort(),
+		Addr:    configs.ProjectPort,
 		Handler: s.Mux,
 	}
 

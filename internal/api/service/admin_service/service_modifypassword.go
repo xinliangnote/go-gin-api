@@ -1,6 +1,7 @@
 package admin_service
 
 import (
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
@@ -21,6 +22,6 @@ func (s *service) ModifyPassword(ctx core.Context, id int32, newPassword string)
 		return err
 	}
 
-	s.cache.Del(cacheKeyPrefix+password.GenerateLoginToken(id), cache.WithTrace(ctx.Trace()))
+	s.cache.Del(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(id), cache.WithTrace(ctx.Trace()))
 	return
 }

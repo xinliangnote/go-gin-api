@@ -70,7 +70,9 @@ func CreateMenuActionTableDataSql() (sql string) {
 	sql += "(34, 12, 'GET', '/api/menu_action', 'init'),"
 	sql += "(35, 12, 'POST', '/api/menu_action', 'init'),"
 	sql += "(36, 12, 'DELETE', '/api/menu_action/*', 'init'),"
-	sql += "(37, 22, 'POST', '/upgrade/execute', 'init');"
+	sql += "(37, 22, 'POST', '/upgrade/execute', 'init'),"
+	sql += "(38, 11, 'PATCH', '/api/admin/offline', 'init'),"
+	sql += "(39, 12, 'PATCH', '/api/menu/sort', 'init');"
 
 	return
 }

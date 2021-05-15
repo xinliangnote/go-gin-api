@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 
@@ -48,6 +49,8 @@ type viewResponse struct {
 	Host        string
 	GoOS        string
 	GoArch      string
+
+	ProjectVersion string
 }
 
 func (h *handler) View() core.HandlerFunc {
@@ -88,6 +91,7 @@ func (h *handler) View() core.HandlerFunc {
 		obj.Env = env.Active().Value()
 		obj.GoOS = runtime.GOOS
 		obj.GoArch = runtime.GOARCH
+		obj.ProjectVersion = configs.ProjectVersion
 
 		c.HTML("dashboard", obj)
 	}

@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
 	"github.com/xinliangnote/go-gin-api/pkg/trace"
 
 	"github.com/go-redis/redis/v7"
-	"github.com/pkg/errors"
 )
 
 type Option func(*option)

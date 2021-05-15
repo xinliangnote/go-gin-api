@@ -1,37 +1,38 @@
-package menu_handler
+package admin_handler
 
 import (
 	"net/http"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
-type updateUsedRequest struct {
-	Id   string `form:"id"`   // 主键ID
-	Used int32  `form:"used"` // 是否启用 1:是 -1:否
+type offlineRequest struct {
+	Id string `form:"id"` // 主键ID
 }
 
-type updateUsedResponse struct {
+type offlineResponse struct {
 	Id int32 `json:"id"` // 主键ID
 }
 
-// UpdateUsed 更新菜单为启用/禁用
-// @Summary 更新菜单为启用/禁用
-// @Description 更新菜单为启用/禁用
-// @Tags API.menu
+// Offline 下线管理员
+// @Summary 下线管理员
+// @Description 下线管理员
+// @Tags API.admin
 // @Accept multipart/form-data
 // @Produce json
 // @Param id formData string true "Hashid"
-// @Param used formData int true "是否启用 1:是 -1:否"
-// @Success 200 {object} updateUsedResponse
+// @Success 200 {object} offlineResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/menu/used [patch]
-func (h *handler) UpdateUsed() core.HandlerFunc {
+// @Router /api/admin/offline [patch]
+func (h *handler) Offline() core.HandlerFunc {
 	return func(c core.Context) {
-		req := new(updateUsedRequest)
-		res := new(updateUsedResponse)
+		req := new(offlineRequest)
+		res := new(offlineResponse)
 		if err := c.ShouldBindForm(req); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -53,12 +54,12 @@ func (h *handler) UpdateUsed() core.HandlerFunc {
 
 		id := int32(ids[0])
 
-		err = h.menuService.UpdateUsed(c, id, req.Used)
-		if err != nil {
+		b := h.cache.Del(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(id), cache.WithTrace(c.Trace()))
+		if !b {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.MenuUpdateError,
-				code.Text(code.MenuUpdateError)).WithErr(err),
+				code.AdminOfflineError,
+				code.Text(code.AdminOfflineError)),
 			)
 			return
 		}
