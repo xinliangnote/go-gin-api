@@ -22,51 +22,56 @@ type codeViewResponse struct {
 	BusinessCodes []codes
 }
 
+const (
+	codeFile        = "./internal/api/code/code.go"
+	minBusinessCode = 20000
+)
+
 func (h *handler) CodeView() core.HandlerFunc {
-	return func(c core.Context) {
-		fs := token.NewFileSet()
-		filePath := "./internal/api/code/code.go"
-		parsedFile, err := decorator.ParseFile(fs, filePath, nil, 0)
-		if err != nil {
-			log.Fatalf("parsing package: %s: %s\n", filePath, err)
+	fs := token.NewFileSet()
+	parsedFile, err := decorator.ParseFile(fs, codeFile, nil, 0)
+	if err != nil {
+		log.Fatalf("parsing package: %s: %s\n", codeFile, err)
+	}
+
+	var (
+		systemCodes   []codes
+		businessCodes []codes
+	)
+
+	dst.Inspect(parsedFile, func(n dst.Node) bool {
+		// GenDecl 代表除函数以外的所有声明，即 import、const、var 和 type
+		decl, ok := n.(*dst.GenDecl)
+		if !ok || decl.Tok != token.CONST {
+			return true
 		}
 
-		var (
-			systemCodes   []codes
-			businessCodes []codes
-		)
-
-		dst.Inspect(parsedFile, func(n dst.Node) bool {
-			decl, ok := n.(*dst.GenDecl)
-			if !ok || decl.Tok != token.CONST {
-				return true
+		for _, spec := range decl.Specs {
+			valueSpec, _ok := spec.(*dst.ValueSpec)
+			if !_ok {
+				continue
 			}
 
-			for _, spec := range decl.Specs {
-				valueSpec, _ok := spec.(*dst.ValueSpec)
-				if !_ok {
-					continue
-				}
+			codeInt := cast.ToInt(valueSpec.Values[0].(*dst.BasicLit).Value)
 
-				codeInt := cast.ToInt(valueSpec.Values[0].(*dst.BasicLit).Value)
-
-				if codeInt < 20000 {
-					systemCodes = append(systemCodes, codes{
-						Code:    codeInt,
-						Message: code.Text(codeInt),
-					})
-				} else {
-					businessCodes = append(businessCodes, codes{
-						Code:    codeInt,
-						Message: code.Text(codeInt),
-					})
-				}
-
+			if codeInt < minBusinessCode {
+				systemCodes = append(systemCodes, codes{
+					Code:    codeInt,
+					Message: code.Text(codeInt),
+				})
+			} else {
+				businessCodes = append(businessCodes, codes{
+					Code:    codeInt,
+					Message: code.Text(codeInt),
+				})
 			}
 
-			return true
-		})
+		}
 
+		return true
+	})
+
+	return func(c core.Context) {
 		obj := new(codeViewResponse)
 		obj.BusinessCodes = businessCodes
 		obj.SystemCodes = systemCodes

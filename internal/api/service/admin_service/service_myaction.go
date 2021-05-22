@@ -11,7 +11,14 @@ type SearchMyActionData struct {
 	AdminId int32 `json:"admin_id"` // 管理员ID
 }
 
-func (s *service) MyAction(ctx core.Context, searchData *SearchMyActionData) (actionData []*menu_action_repo.MenuAction, err error) {
+type MyActionData struct {
+	Id     int32  // 主键
+	MenuId int32  // 菜单栏ID
+	Method string // 请求方式
+	Api    string // 请求地址
+}
+
+func (s *service) MyAction(ctx core.Context, searchData *SearchMyActionData) (actionData []MyActionData, err error) {
 	adminMenuQb := admin_menu_repo.NewQueryBuilder()
 	if searchData.AdminId != 0 {
 		adminMenuQb.WhereAdminId(db_repo.EqualPredicate, searchData.AdminId)
@@ -36,9 +43,26 @@ func (s *service) MyAction(ctx core.Context, searchData *SearchMyActionData) (ac
 	actionQb := menu_action_repo.NewQueryBuilder()
 	actionQb.WhereIsDeleted(db_repo.EqualPredicate, -1)
 	actionQb.WhereMenuIdIn(menuIds)
-	actionData, err = actionQb.QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
+	actionListData, err := actionQb.QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
 	if err != nil {
 		return nil, err
+	}
+
+	if len(actionListData) <= 0 {
+		return
+	}
+
+	actionData = make([]MyActionData, len(actionListData))
+
+	for k, v := range actionListData {
+		data := MyActionData{
+			Id:     v.Id,
+			MenuId: v.MenuId,
+			Method: v.Method,
+			Api:    v.Api,
+		}
+
+		actionData[k] = data
 	}
 
 	return

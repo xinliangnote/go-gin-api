@@ -5,6 +5,8 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+
+	"go.uber.org/zap"
 )
 
 func (h *handler) GormView() core.HandlerFunc {
@@ -21,9 +23,20 @@ func (h *handler) GormView() core.HandlerFunc {
 		sqlTables := fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", mysqlConf.Name)
 		rows, err := h.db.GetDbR().Raw(sqlTables).Rows()
 		if err != nil {
+			h.logger.Error("rows err", zap.Error(err))
+
 			c.HTML("generator_gorm", tableCollect)
 			return
 		}
+
+		err = rows.Err()
+		if err != nil {
+			h.logger.Error("rows err", zap.Error(err))
+
+			c.HTML("generator_gorm", tableCollect)
+			return
+		}
+
 		defer rows.Close()
 
 		for rows.Next() {

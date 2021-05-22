@@ -16,7 +16,7 @@ var metricsRequestsTotal = prometheus.NewCounterVec(
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "requests_total",
-		Help:      "request(s) total",
+		Help:      "request(ms) total",
 	},
 	[]string{"method", "path"},
 )
@@ -27,9 +27,9 @@ var metricsRequestsCost = prometheus.NewHistogramVec(
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "requests_cost",
-		Help:      "request(s) cost seconds",
+		Help:      "request(ms) cost milliseconds",
 	},
-	[]string{"method", "path", "success", "http_code", "business_code", "cost_seconds", "trace_id"},
+	[]string{"method", "path", "success", "http_code", "business_code", "cost_milliseconds", "trace_id"},
 )
 
 func init() {
@@ -44,12 +44,12 @@ func RecordMetrics(method, uri string, success bool, httpCode, businessCode int,
 	}).Inc()
 
 	metricsRequestsCost.With(prometheus.Labels{
-		"method":        method,
-		"path":          uri,
-		"success":       cast.ToString(success),
-		"http_code":     cast.ToString(httpCode),
-		"business_code": cast.ToString(businessCode),
-		"cost_seconds":  cast.ToString(costSeconds),
-		"trace_id":      traceId,
+		"method":            method,
+		"path":              uri,
+		"success":           cast.ToString(success),
+		"http_code":         cast.ToString(httpCode),
+		"business_code":     cast.ToString(businessCode),
+		"cost_milliseconds": cast.ToString(costSeconds * 1000),
+		"trace_id":          traceId,
 	}).Observe(costSeconds)
 }

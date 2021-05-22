@@ -14,9 +14,10 @@ type gormExecuteRequest struct {
 	Tables string `form:"tables"`
 }
 
+const gormgenSh = "./scripts/gormgen.sh"
+
 func (h *handler) GormExecute() core.HandlerFunc {
 	return func(c core.Context) {
-
 		req := new(gormExecuteRequest)
 		if err := c.ShouldBindPostForm(req); err != nil {
 			c.Payload("参数传递有误")
@@ -24,7 +25,7 @@ func (h *handler) GormExecute() core.HandlerFunc {
 		}
 
 		mysqlConf := configs.Get().MySQL.Read
-		shellPath := fmt.Sprintf("./scripts/gormgen.sh %s %s %s %s %s", mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
+		shellPath := fmt.Sprintf("%s %s %s %s %s %s", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
 
 		// runtime.GOOS = linux or darwin
 		command := exec.Command("/bin/bash", "-c", shellPath)

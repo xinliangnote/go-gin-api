@@ -60,7 +60,15 @@ func (h *handler) Detail() core.HandlerFunc {
 		}
 
 		var menuData []admin_service.ListMyMenuData
-		_ = json.Unmarshal([]byte(menuCacheData), &menuData)
+		err = json.Unmarshal([]byte(menuCacheData), &menuData)
+		if err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusBadRequest,
+				code.AdminDetailError,
+				code.Text(code.AdminDetailError)).WithErr(err),
+			)
+			return
+		}
 
 		res.Username = info.Username
 		res.Nickname = info.Nickname

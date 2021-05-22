@@ -14,7 +14,12 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/urltable"
 )
 
-const ttl = time.Minute * 2 // 签名超时时间 2 分钟
+const (
+	ttl       = time.Minute * 2 // 签名超时时间 2 分钟
+	minLength = 2               // split space 最小长度
+	notUsed   = -1              // -1 表示被禁用
+
+)
 
 var whiteListPath = map[string]bool{
 	"/login/web": true,
@@ -23,7 +28,7 @@ var whiteListPath = map[string]bool{
 func (m *middleware) Signature() core.HandlerFunc {
 	return func(c core.Context) {
 		// 签名信息
-		authorization := c.GetHeader(configs.SignToken)
+		authorization := c.GetHeader(configs.HeaderSignToken)
 		if authorization == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -34,7 +39,7 @@ func (m *middleware) Signature() core.HandlerFunc {
 		}
 
 		// 时间信息
-		date := c.GetHeader(configs.SignTokenDate)
+		date := c.GetHeader(configs.HeaderSignTokenDate)
 		if date == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -46,7 +51,7 @@ func (m *middleware) Signature() core.HandlerFunc {
 
 		// 通过签名信息获取 key
 		authorizationSplit := strings.Split(authorization, " ")
-		if len(authorizationSplit) < 2 {
+		if len(authorizationSplit) < minLength {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.SignatureError,
@@ -67,8 +72,7 @@ func (m *middleware) Signature() core.HandlerFunc {
 			return
 		}
 
-		// 验证 cache 是否被调用
-		if data.IsUsed == -1 {
+		if data.IsUsed == notUsed {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.SignatureError,

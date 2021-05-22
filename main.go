@@ -31,6 +31,7 @@ import (
 func main() {
 	// 初始化 logger
 	loggers, err := logger.NewJSONLogger(
+		logger.WithDisableConsole(),
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
 		logger.WithTimeLayout("2006-01-02 15:04:05"),
 		logger.WithFileP(configs.ProjectLogFile),
@@ -66,8 +67,6 @@ func main() {
 
 			if err := server.Shutdown(ctx); err != nil {
 				loggers.Error("server shutdown err", zap.Error(err))
-			} else {
-				loggers.Info("server shutdown success")
 			}
 		},
 
@@ -76,14 +75,10 @@ func main() {
 			if s.Db != nil {
 				if err := s.Db.DbWClose(); err != nil {
 					loggers.Error("dbw close err", zap.Error(err))
-				} else {
-					loggers.Info("dbw close success")
 				}
 
 				if err := s.Db.DbRClose(); err != nil {
 					loggers.Error("dbr close err", zap.Error(err))
-				} else {
-					loggers.Info("dbr close success")
 				}
 			}
 		},
@@ -93,8 +88,6 @@ func main() {
 			if s.Cache != nil {
 				if err := s.Cache.Close(); err != nil {
 					loggers.Error("cache close err", zap.Error(err))
-				} else {
-					loggers.Info("cache close success")
 				}
 			}
 		},
@@ -104,8 +97,6 @@ func main() {
 			if s.GrpClient != nil {
 				if err := s.GrpClient.Conn().Close(); err != nil {
 					loggers.Error("gRPC client close err", zap.Error(err))
-				} else {
-					loggers.Info("gRPC client close success")
 				}
 			}
 		},

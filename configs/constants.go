@@ -17,13 +17,13 @@ const (
 	ProjectInstallMark = "INSTALL.lock"
 
 	// 登录验证 Token，Header 中传递的参数
-	LoginToken = "Token"
+	HeaderLoginToken = "Token"
 
 	// 签名验证 Token，Header 中传递的参数
-	SignToken = "Authorization"
+	HeaderSignToken = "Authorization"
 
 	// 签名验证 Date，Header 中传递的参数
-	SignTokenDate = "Authorization-Date"
+	HeaderSignTokenDate = "Authorization-Date"
 
 	// Redis Key 前缀 - 防止重复提交
 	RedisKeyPrefixRequestID = ProjectName + ":request-id:"

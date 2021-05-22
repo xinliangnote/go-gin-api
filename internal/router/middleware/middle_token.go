@@ -13,7 +13,7 @@ import (
 )
 
 func (m *middleware) Token(ctx core.Context) (userId int64, userName string, err errno.Error) {
-	token := ctx.GetHeader(configs.LoginToken)
+	token := ctx.GetHeader(configs.HeaderLoginToken)
 	if token == "" {
 		err = errno.NewError(
 			http.StatusUnauthorized,
@@ -48,7 +48,16 @@ func (m *middleware) Token(ctx core.Context) (userId int64, userName string, err
 	}
 
 	var userData userInfo
-	_ = json.Unmarshal([]byte(cacheData), &userData)
+
+	jsonErr := json.Unmarshal([]byte(cacheData), &userData)
+	if jsonErr != nil {
+		errno.NewError(
+			http.StatusUnauthorized,
+			code.AuthorizationError,
+			code.Text(code.AuthorizationError)).WithErr(jsonErr)
+
+		return
+	}
 
 	userId = userData.Id
 	userName = userData.Username

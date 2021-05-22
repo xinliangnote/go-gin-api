@@ -6,7 +6,7 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/code"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_action_repo"
+	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
@@ -54,8 +54,16 @@ func (m *middleware) RBAC() core.HandlerFunc {
 			return
 		}
 
-		var actions []menu_action_repo.MenuAction
-		_ = json.Unmarshal([]byte(actionData), &actions)
+		var actions []admin_service.MyActionData
+		err = json.Unmarshal([]byte(actionData), &actions)
+		if err != nil {
+			c.AbortWithError(errno.NewError(
+				http.StatusUnauthorized,
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(err),
+			)
+			return
+		}
 
 		if len(actions) > 0 {
 			table := urltable.NewTable()

@@ -74,8 +74,20 @@ func (h *handler) Login() core.HandlerFunc {
 
 		token := password.GenerateLoginToken(info.Id)
 
+		adminCacheData := &struct {
+			Id       int32  `json:"id"`       // 主键ID
+			Username string `json:"username"` // 用户名
+			Nickname string `json:"nickname"` // 昵称
+			Mobile   string `json:"mobile"`   // 手机号
+		}{
+			Id:       info.Id,
+			Username: info.Username,
+			Nickname: info.Nickname,
+			Mobile:   info.Mobile,
+		}
+
 		// 用户信息
-		adminJsonInfo, _ := json.Marshal(info)
+		adminJsonInfo, _ := json.Marshal(adminCacheData)
 
 		// 将用户信息记录到 Redis 中
 		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token, string(adminJsonInfo), time.Hour*24, cache.WithTrace(c.Trace()))

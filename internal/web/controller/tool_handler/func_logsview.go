@@ -56,22 +56,25 @@ func (h *handler) LogsView() core.HandlerFunc {
 
 		for i := 0; i < logSize; i++ {
 			content, _ := readLineFromEnd.ReadLine()
-
-			var logParse logParseData
-			_ = json.Unmarshal(content, &logParse)
-			data := logData{
-				Content:     string(content),
-				Level:       logParse.Level,
-				Time:        logParse.Time,
-				Path:        logParse.Path,
-				Method:      logParse.Method,
-				Msg:         logParse.Msg,
-				HTTPCode:    logParse.HTTPCode,
-				TraceID:     logParse.TraceID,
-				CostSeconds: logParse.CostSeconds,
-			}
-
 			if string(content) != "" {
+				var logParse logParseData
+				err = json.Unmarshal(content, &logParse)
+				if err != nil {
+					h.logger.Error("NewReadLineFromEnd json Unmarshal err", zap.Error(err))
+				}
+
+				data := logData{
+					Content:     string(content),
+					Level:       logParse.Level,
+					Time:        logParse.Time,
+					Path:        logParse.Path,
+					Method:      logParse.Method,
+					Msg:         logParse.Msg,
+					HTTPCode:    logParse.HTTPCode,
+					TraceID:     logParse.TraceID,
+					CostSeconds: logParse.CostSeconds,
+				}
+
 				obj.Logs[i] = data
 			}
 		}

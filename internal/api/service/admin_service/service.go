@@ -2,7 +2,6 @@ package admin_service
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_action_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
@@ -26,7 +25,7 @@ type Service interface {
 	CreateMenu(ctx core.Context, menuData *CreateMenuData) (err error)
 	ListMenu(ctx core.Context, searchData *SearchListMenuData) (menuData []ListMenuData, err error)
 	MyMenu(ctx core.Context, searchData *SearchMyMenuData) (menuData []ListMyMenuData, err error)
-	MyAction(ctx core.Context, searchData *SearchMyActionData) (actionData []*menu_action_repo.MenuAction, err error)
+	MyAction(ctx core.Context, searchData *SearchMyActionData) (actionData []MyActionData, err error)
 }
 
 type service struct {

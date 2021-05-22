@@ -8,9 +8,10 @@ import (
 	"fmt"
 )
 
-const salt = "qkhPAGA13HocW3GAEWwb"
-
-const defaultPassword = "123456"
+const (
+	saltPassword    = "qkhPAGA13HocW3GAEWwb"
+	defaultPassword = "123456"
+)
 
 func GeneratePassword(str string) (password string) {
 	// md5
@@ -19,7 +20,7 @@ func GeneratePassword(str string) (password string) {
 	mByte := m.Sum(nil)
 
 	// hmac
-	h := hmac.New(sha256.New, []byte(salt))
+	h := hmac.New(sha256.New, []byte(saltPassword))
 	h.Write(mByte)
 	password = hex.EncodeToString(h.Sum(nil))
 
@@ -38,7 +39,7 @@ func ResetPassword() (password string) {
 
 func GenerateLoginToken(id int32) (token string) {
 	m := md5.New()
-	m.Write([]byte(fmt.Sprintf("%d%s", id, salt)))
+	m.Write([]byte(fmt.Sprintf("%d%s", id, saltPassword)))
 	token = hex.EncodeToString(m.Sum(nil))
 
 	return

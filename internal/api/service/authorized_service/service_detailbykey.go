@@ -28,55 +28,65 @@ type cacheApiData struct {
 func (s *service) DetailByKey(ctx core.Context, key string) (cacheData *CacheAuthorizedData, err error) {
 	// 查询缓存
 	cacheKey := configs.RedisKeyPrefixSignature + key
-	value, err := s.cache.Get(cacheKey, cache.WithTrace(ctx.RequestContext().Trace))
 
-	cacheData = new(CacheAuthorizedData)
-	if err == nil && json.Unmarshal([]byte(value), cacheData) == nil {
-		return
-	}
+	if !s.cache.Exists(cacheKey) {
+		// 查询调用方信息
+		authorizedInfo, err := authorized_repo.NewQueryBuilder().
+			WhereIsDeleted(db_repo.EqualPredicate, -1).
+			WhereBusinessKey(db_repo.EqualPredicate, key).
+			First(s.db.GetDbR().WithContext(ctx.RequestContext()))
 
-	// 查询调用方信息
-	authorizedInfo, err := authorized_repo.NewQueryBuilder().
-		WhereIsDeleted(db_repo.EqualPredicate, -1).
-		WhereBusinessKey(db_repo.EqualPredicate, key).
-		First(s.db.GetDbR().WithContext(ctx.RequestContext()))
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 查询调用方授权 API 信息
-	authorizedApiInfo, err := authorized_api_repo.NewQueryBuilder().
-		WhereIsDeleted(db_repo.EqualPredicate, -1).
-		WhereBusinessKey(db_repo.EqualPredicate, key).
-		OrderById(false).
-		QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
-
-	if err != nil {
-		return nil, err
-	}
-
-	// 设置缓存 data
-	cacheData = new(CacheAuthorizedData)
-	cacheData.Key = key
-	cacheData.Secret = authorizedInfo.BusinessSecret
-	cacheData.IsUsed = authorizedInfo.IsUsed
-	cacheData.Apis = make([]cacheApiData, len(authorizedApiInfo))
-
-	for k, v := range authorizedApiInfo {
-		data := cacheApiData{
-			Method: v.Method,
-			Api:    v.Api,
+		if err != nil {
+			return nil, err
 		}
-		cacheData.Apis[k] = data
+
+		// 查询调用方授权 API 信息
+		authorizedApiInfo, err := authorized_api_repo.NewQueryBuilder().
+			WhereIsDeleted(db_repo.EqualPredicate, -1).
+			WhereBusinessKey(db_repo.EqualPredicate, key).
+			OrderById(false).
+			QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
+
+		if err != nil {
+			return nil, err
+		}
+
+		// 设置缓存 data
+		cacheData = new(CacheAuthorizedData)
+		cacheData.Key = key
+		cacheData.Secret = authorizedInfo.BusinessSecret
+		cacheData.IsUsed = authorizedInfo.IsUsed
+		cacheData.Apis = make([]cacheApiData, len(authorizedApiInfo))
+
+		for k, v := range authorizedApiInfo {
+			data := cacheApiData{
+				Method: v.Method,
+				Api:    v.Api,
+			}
+			cacheData.Apis[k] = data
+		}
+
+		cacheDataByte, _ := json.Marshal(cacheData)
+
+		err = s.cache.Set(cacheKey, string(cacheDataByte), time.Hour*24, cache.WithTrace(ctx.Trace()))
+		if err != nil {
+			return nil, err
+		}
+
+		return cacheData, nil
 	}
 
-	cacheDataByte, _ := json.Marshal(cacheData)
+	value, err := s.cache.Get(cacheKey, cache.WithTrace(ctx.RequestContext().Trace))
+	if err != nil {
+		return nil, err
+	}
 
-	err = s.cache.Set(cacheKey, string(cacheDataByte), time.Hour*24, cache.WithTrace(ctx.Trace()))
+	cacheData = new(CacheAuthorizedData)
+	err = json.Unmarshal([]byte(value), cacheData)
 	if err != nil {
 		return nil, err
 	}
 
 	return
+
 }
