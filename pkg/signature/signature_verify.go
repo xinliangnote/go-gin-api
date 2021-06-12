@@ -10,9 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
-
-	"github.com/pkg/errors"
 )
 
 func (s *signature) Verify(authorization, date string, path string, method string, params url.Values) (ok bool, err error) {

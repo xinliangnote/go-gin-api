@@ -25,11 +25,13 @@ func (h *handler) HandlerExecute() core.HandlerFunc {
 
 		shellPath := fmt.Sprintf("%s %s", handlergenSh, req.Name)
 
-		// runtime.GOOS = linux or darwin
-		command := exec.Command("/bin/bash", "-c", shellPath)
+		command := new (exec.Cmd)
 
 		if runtime.GOOS == "windows" {
 			command = exec.Command("cmd", "/C", shellPath)
+		} else {
+			// runtime.GOOS = linux or darwin
+			command = exec.Command("/bin/bash", "-c", shellPath)
 		}
 
 		var stderr bytes.Buffer

@@ -20,8 +20,8 @@ type Error interface {
 	t()
 }
 
-var _ (Error) = (*item)(nil)
-var _ (fmt.Formatter) = (*item)(nil)
+var _ Error = (*item)(nil)
+var _ fmt.Formatter = (*item)(nil)
 
 type item struct {
 	msg   string

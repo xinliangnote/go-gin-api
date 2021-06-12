@@ -108,7 +108,7 @@ func WithTimeLayout(timeLayout string) Option {
 	}
 }
 
-// WithEnableConsole write log to os.Stdout or os.Stderr
+// WithDisableConsole WithEnableConsole write log to os.Stdout or os.Stderr
 func WithDisableConsole() Option {
 	return func(opt *option) {
 		opt.disableConsole = true

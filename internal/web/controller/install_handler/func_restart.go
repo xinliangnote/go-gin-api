@@ -12,11 +12,13 @@ func (h *handler) Restart() core.HandlerFunc {
 	return func(c core.Context) {
 		shellPath := "./scripts/restart.sh"
 
-		// runtime.GOOS = linux or darwin
-		command := exec.Command("/bin/bash", "-c", shellPath)
+		command := new (exec.Cmd)
 
 		if runtime.GOOS == "windows" {
 			command = exec.Command("cmd", "/C", shellPath)
+		} else {
+			// runtime.GOOS = linux or darwin
+			command = exec.Command("/bin/bash", "-c", shellPath)
 		}
 
 		var stderr bytes.Buffer

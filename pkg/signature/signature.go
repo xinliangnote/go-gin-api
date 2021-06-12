@@ -28,10 +28,10 @@ var methods = map[string]bool{
 type Signature interface {
 	i()
 
-	// 生成签名
+	// Generate 生成签名
 	Generate(path string, method string, params url.Values) (authorization, date string, err error)
 
-	// 验证签名
+	// Verify 验证签名
 	Verify(authorization, date string, path string, method string, params url.Values) (ok bool, err error)
 }
 

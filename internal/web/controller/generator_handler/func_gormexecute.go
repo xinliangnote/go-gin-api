@@ -27,11 +27,13 @@ func (h *handler) GormExecute() core.HandlerFunc {
 		mysqlConf := configs.Get().MySQL.Read
 		shellPath := fmt.Sprintf("%s %s %s %s %s %s", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
 
-		// runtime.GOOS = linux or darwin
-		command := exec.Command("/bin/bash", "-c", shellPath)
+		command := new (exec.Cmd)
 
 		if runtime.GOOS == "windows" {
 			command = exec.Command("cmd", "/C", shellPath)
+		} else {
+			// runtime.GOOS = linux or darwin
+			command = exec.Command("/bin/bash", "-c", shellPath)
 		}
 
 		var stderr bytes.Buffer

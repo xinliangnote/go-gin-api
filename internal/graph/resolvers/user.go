@@ -4,8 +4,7 @@ import (
 	"context"
 
 	"github.com/xinliangnote/go-gin-api/internal/graph/model"
-
-	"github.com/pkg/errors"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 )
 
 func (r *queryResolver) BySex(ctx context.Context, sex string) ([]*model.User, error) {

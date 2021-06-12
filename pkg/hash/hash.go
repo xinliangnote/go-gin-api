@@ -5,8 +5,10 @@ var _ Hash = (*hash)(nil)
 type Hash interface {
 	i()
 
-	// hashids
+	// HashidsEncode 加密
 	HashidsEncode(params []int) (string, error)
+
+	// HashidsDecode 解密
 	HashidsDecode(hash string) ([]int, error)
 }
 
