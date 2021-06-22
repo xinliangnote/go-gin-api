@@ -3,8 +3,10 @@ package generator_handler
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -14,9 +16,12 @@ type gormExecuteRequest struct {
 	Tables string `form:"tables"`
 }
 
-const gormgenSh = "./scripts/gormgen.sh"
-
 func (h *handler) GormExecute() core.HandlerFunc {
+	dir, _ := os.Getwd()
+	projectPath := strings.Replace(dir, "\\", "/", -1)
+	gormgenSh := projectPath + "/scripts/gormgen.sh"
+	gormgenBat := projectPath + "/scripts/gormgen.bat"
+
 	return func(c core.Context) {
 		req := new(gormExecuteRequest)
 		if err := c.ShouldBindPostForm(req); err != nil {
@@ -26,11 +31,12 @@ func (h *handler) GormExecute() core.HandlerFunc {
 
 		mysqlConf := configs.Get().MySQL.Read
 		shellPath := fmt.Sprintf("%s %s %s %s %s %s", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
+		batPath := fmt.Sprintf("%s %s %s %s %s %s", gormgenBat, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
 
-		command := new (exec.Cmd)
+		command := new(exec.Cmd)
 
 		if runtime.GOOS == "windows" {
-			command = exec.Command("cmd", "/C", shellPath)
+			command = exec.Command("cmd", "/C", batPath)
 		} else {
 			// runtime.GOOS = linux or darwin
 			command = exec.Command("/bin/bash", "-c", shellPath)
