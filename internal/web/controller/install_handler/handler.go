@@ -13,7 +13,6 @@ type Handler interface {
 
 	View() core.HandlerFunc
 	Execute() core.HandlerFunc
-	Restart() core.HandlerFunc
 }
 
 type handler struct {

@@ -39,7 +39,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer loggers.Sync()
+
+	defer func() {
+		_ = loggers.Sync()
+	}()
 
 	// 初始化 HTTP 服务
 	s, err := router.NewHTTPServer(loggers)

@@ -27,16 +27,8 @@
 
 ## 文档索引
 
-go-gin-api 文档由以下几个主要部分组成：
-
-- 准备工作
-- 快速开始
-- 目录接口
-- 核心封装
-- 组件指南
-- 工具包
-
-**详细文档：[https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)**
+- 中文文档：[go-gin-api - 语雀](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)
+- English Document：[en.md](https://github.com/xinliangnote/go-gin-api/blob/master/en.md)
 
 ## 其他
 

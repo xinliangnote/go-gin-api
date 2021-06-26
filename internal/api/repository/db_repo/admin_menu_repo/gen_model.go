@@ -2,7 +2,7 @@ package admin_menu_repo
 
 import "time"
 
-// 管理员菜单栏表
+// AdminMenu 管理员菜单栏表
 //go:generate gormgen -structs AdminMenu -input .
 type AdminMenu struct {
 	Id          int32     // 主键

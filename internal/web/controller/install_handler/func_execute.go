@@ -22,6 +22,7 @@ import (
 )
 
 type initExecuteRequest struct {
+	Language  string `form:"language" `  // 语言包
 	RedisAddr string `form:"redis_addr"` // 连接地址，例如：127.0.0.1:6379
 	RedisPass string `form:"redis_pass"` // 连接密码
 	RedisDb   string `form:"redis_db"`   // 连接 db
@@ -49,8 +50,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if version < 1.15 {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigGoVersionError,
-				code.Text(code.ConfigGoVersionError)),
+				code.GoVersionError,
+				code.Text(code.GoVersionError)),
 			)
 			return
 		}
@@ -70,8 +71,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err := redisClient.Ping().Err(); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigRedisConnectError,
-				code.Text(code.ConfigRedisConnectError)).WithErr(err),
+				code.RedisConnectError,
+				code.Text(code.RedisConnectError)).WithErr(err),
 			)
 			return
 		}
@@ -98,8 +99,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLConnectError,
-				code.Text(code.ConfigMySQLConnectError)).WithErr(err),
+				code.MySQLConnectError,
+				code.Text(code.MySQLConnectError)).WithErr(err),
 			)
 			return
 		}
@@ -114,6 +115,9 @@ func (h *handler) Execute() core.HandlerFunc {
 		viper.SetConfigName(env.Active().Value() + "_configs")
 		viper.SetConfigType("toml")
 		viper.AddConfigPath("./configs")
+
+		viper.Set("language.local", req.Language)
+
 		viper.Set("redis.addr", req.RedisAddr)
 		viper.Set("redis.pass", req.RedisPass)
 		viper.Set("redis.db", req.RedisDb)
@@ -131,19 +135,20 @@ func (h *handler) Execute() core.HandlerFunc {
 		if viper.WriteConfig() != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigSaveError,
-				code.Text(code.ConfigSaveError)).WithErr(err),
+				code.WriteConfigError,
+				code.Text(code.WriteConfigError)).WithErr(err),
 			)
 			return
 		}
 
+		outPutString += "语言包 " + req.Language + " 配置成功。\n"
 		outPutString += "配置项 Redis、MySQL 配置成功。\n"
 
 		if err = db.Exec(mysql_table.CreateAuthorizedTableSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -152,8 +157,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAuthorizedTableDataSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -162,8 +167,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAuthorizedAPITableSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -172,8 +177,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAuthorizedAPITableDataSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -182,8 +187,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAdminTableSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -192,8 +197,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAdminTableDataSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -202,8 +207,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateMenuTableSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -212,8 +217,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateMenuTableDataSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -222,8 +227,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateMenuActionTableSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -232,8 +237,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateMenuActionTableDataSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -242,8 +247,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAdminMenuTableSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -252,8 +257,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err = db.Exec(mysql_table.CreateAdminMenuTableDataSql()).Error; err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"MySQL "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -264,8 +269,8 @@ func (h *handler) Execute() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigMySQLInstallError,
-				"create lock file err:  "+err.Error()).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 			)
 			return
 		}

@@ -2,7 +2,7 @@ package menu_repo
 
 import "time"
 
-// 左侧菜单栏表
+// Menu 左侧菜单栏表
 //go:generate gormgen -structs Menu -input .
 type Menu struct {
 	Id          int32     // 主键

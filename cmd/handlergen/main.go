@@ -64,7 +64,14 @@ func main() {
 					funcFile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0766)
 					if err != nil {
 						fmt.Printf("create and open func file error %v\n", err.Error())
+						continue
 					}
+
+					if funcFile == nil {
+						fmt.Printf("func file is nil \n")
+						continue
+					}
+
 					fmt.Println("  └── file : ", filename)
 
 					funcContent := fmt.Sprintf("package %s\n\n", handlerName)

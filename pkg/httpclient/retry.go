@@ -13,7 +13,7 @@ const (
 	DefaultRetryDelay = time.Millisecond * 100
 )
 
-// Verify parse the body and verify that it is correct
+// RetryVerify Verify parse the body and verify that it is correct
 type RetryVerify func(body []byte) (shouldRetry bool)
 
 func shouldRetry(ctx context.Context, httpCode int) bool {

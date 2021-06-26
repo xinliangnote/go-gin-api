@@ -149,7 +149,6 @@ func (c *cacheRepo) ExpireAt(key string, ttl time.Time) bool {
 	return ok
 }
 
-//
 func (c *cacheRepo) Exists(keys ...string) bool {
 	if len(keys) == 0 {
 		return true

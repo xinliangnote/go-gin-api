@@ -33,8 +33,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAuthorizedTableSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -45,8 +45,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAuthorizedTableDataSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -57,8 +57,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAuthorizedAPITableSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -69,8 +69,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAuthorizedAPITableDataSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -81,8 +81,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAdminTableSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -93,8 +93,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAdminTableDataSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -105,8 +105,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateMenuTableSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -117,8 +117,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateMenuTableDataSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -129,8 +129,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateMenuActionTableSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -141,8 +141,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateMenuActionTableDataSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -153,8 +153,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAdminMenuTableSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}
@@ -165,8 +165,8 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			if err := db.Exec(mysql_table.CreateAdminMenuTableDataSql()).Error; err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ConfigMySQLInstallError,
-					"MySQL "+err.Error()).WithErr(err),
+					code.MySQLExecError,
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
 				)
 				return
 			}

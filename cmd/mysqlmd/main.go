@@ -98,7 +98,7 @@ func main() {
 
 		modelContent := fmt.Sprintf("package %s%s\n", table.Name, "_repo")
 		modelContent += fmt.Sprintf(`import "time"`)
-		modelContent += fmt.Sprintf("\n\n// %s \n", table.Comment.String)
+		modelContent += fmt.Sprintf("\n\n// %s %s \n", capitalize(table.Name), table.Comment.String)
 		modelContent += fmt.Sprintf("//go:generate gormgen -structs %s -input . \n", capitalize(table.Name))
 		modelContent += fmt.Sprintf("type %s struct {\n", capitalize(table.Name))
 

@@ -19,7 +19,7 @@ func (h *handler) HandlerExecute() core.HandlerFunc {
 	dir, _ := os.Getwd()
 	projectPath := strings.Replace(dir, "\\", "/", -1)
 	handlergenSh := projectPath + "/scripts/handlergen.sh"
-	handlergenBat := projectPath + "./scripts/handlergen.bat"
+	handlergenBat := projectPath + "/scripts/handlergen.bat"
 
 	return func(c core.Context) {
 		req := new(handlerExecuteRequest)

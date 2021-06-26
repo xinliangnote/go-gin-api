@@ -43,8 +43,8 @@ func (h *handler) ClearCache() core.HandlerFunc {
 		if b := h.cache.Exists(req.RedisKey); b != true {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchRedisEmpty,
-				code.Text(code.SearchRedisEmpty)),
+				code.CacheNotExist,
+				code.Text(code.CacheNotExist)),
 			)
 			return
 		}
@@ -53,8 +53,8 @@ func (h *handler) ClearCache() core.HandlerFunc {
 		if b != true {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ClearRedisError,
-				code.Text(code.ClearRedisError)),
+				code.CacheDelError,
+				code.Text(code.CacheDelError)),
 			)
 			return
 		}

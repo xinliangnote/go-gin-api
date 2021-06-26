@@ -63,6 +63,10 @@ type Config struct {
 		Secret string `toml:"secret"`
 		Length int    `toml:"length"`
 	} `toml:"hashids"`
+
+	Language struct {
+		Local string `toml:"local"`
+	} `toml:"language"`
 }
 
 func init() {

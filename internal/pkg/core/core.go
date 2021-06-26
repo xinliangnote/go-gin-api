@@ -73,8 +73,8 @@ func WithDisableSwagger() Option {
 	}
 }
 
-// WithDisableproPrometheus 禁用prometheus
-func WithDisableproPrometheus() Option {
+// WithDisablePrometheus 禁用prometheus
+func WithDisablePrometheus() Option {
 	return func(opt *option) {
 		opt.disablePrometheus = true
 	}

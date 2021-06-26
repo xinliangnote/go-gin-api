@@ -13,11 +13,13 @@ type Token interface {
 	// i 为了避免被其他包实现
 	i()
 
-	// JWT 签名方式
+	// JwtSign 签名
 	JwtSign(userId int64, userName string, expireDuration time.Duration) (tokenString string, err error)
+
+	// JwtParse 解密
 	JwtParse(tokenString string) (*claims, error)
 
-	// URL 签名方式，不支持解密
+	// UrlSign URL 签名方式，不支持解密
 	UrlSign(path string, method string, params url.Values) (tokenString string, err error)
 }
 

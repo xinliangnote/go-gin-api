@@ -61,7 +61,7 @@ func New(id string) *Trace {
 	if id == "" {
 		buf := make([]byte, 10)
 		io.ReadFull(rand.Reader, buf)
-		id = string(hex.EncodeToString(buf))
+		id = hex.EncodeToString(buf)
 	}
 
 	return &Trace{

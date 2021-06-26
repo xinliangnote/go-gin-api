@@ -12,7 +12,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 )
 
-// 定义缓存结构
+// CacheAuthorizedData 缓存结构
 type CacheAuthorizedData struct {
 	Key    string         `json:"key"`     // 调用方 key
 	Secret string         `json:"secret"`  // 调用方 secret

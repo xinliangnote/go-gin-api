@@ -7,6 +7,9 @@ const (
 	// ProjectName 项目名称
 	ProjectName = "go-gin-api"
 
+	// ProjectDomain 项目域名
+	ProjectDomain = "http://127.0.0.1"
+
 	// ProjectPort 项目端口
 	ProjectPort = ":9999"
 
@@ -33,4 +36,10 @@ const (
 
 	// RedisKeyPrefixSignature Redis Key 前缀 - 签名验证信息
 	RedisKeyPrefixSignature = ProjectName + ":signature:"
+
+	// ZhCN 简体中文 - 中国
+	ZhCN = "zh-cn"
+
+	// EnUS 英文 - 美国
+	EnUS = "en-us"
 )

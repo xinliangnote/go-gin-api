@@ -18,7 +18,7 @@ type CreateAuthorizedData struct {
 func (s *service) Create(ctx core.Context, authorizedData *CreateAuthorizedData) (id int32, err error) {
 	buf := make([]byte, 10)
 	io.ReadFull(rand.Reader, buf)
-	secret := string(hex.EncodeToString(buf))
+	secret := hex.EncodeToString(buf)
 
 	model := authorized_repo.NewModel()
 	model.BusinessKey = authorizedData.BusinessKey

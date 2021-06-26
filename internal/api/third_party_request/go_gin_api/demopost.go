@@ -18,7 +18,7 @@ type demoPostResponse struct {
 	Job  string `json:"job"`
 }
 
-// 发起请求
+// DemoPost 发起请求
 func DemoPost(name string, opts ...httpclient.Option) (res *demoPostResponse, err error) {
 	api := demoPostApi
 	params := url.Values{}
@@ -37,7 +37,7 @@ func DemoPost(name string, opts ...httpclient.Option) (res *demoPostResponse, er
 	return res, nil
 }
 
-// 设置重试规则
+// DemoPostRetryVerify 设置重试规则
 func DemoPostRetryVerify(body []byte) (shouldRetry bool) {
 	if len(body) == 0 {
 		return true
@@ -46,7 +46,7 @@ func DemoPostRetryVerify(body []byte) (shouldRetry bool) {
 	return false
 }
 
-// 设置告警规则
+// DemoPostAlarmVerify 设置告警规则
 func DemoPostAlarmVerify(body []byte) (shouldAlarm bool) {
 	if len(body) == 0 {
 		return true
@@ -55,7 +55,7 @@ func DemoPostAlarmVerify(body []byte) (shouldAlarm bool) {
 	return false
 }
 
-// 设置 Mock 数据
+// DemoPostMock 设置 Mock 数据
 func DemoPostMock() (body []byte) {
 	res := new(demoPostResponse)
 	res.Name = "BB"

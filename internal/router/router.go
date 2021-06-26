@@ -39,12 +39,13 @@ func NewHTTPServer(logger *zap.Logger) (*Server, error) {
 	r := new(resource)
 	r.logger = logger
 
-	openBrowserUri := "http://127.0.0.1" + configs.ProjectPort
+	openBrowserUri := configs.ProjectDomain + configs.ProjectPort
 
 	_, ok := file.IsExists(configs.ProjectInstallMark)
 	if !ok { // 未安装
 		openBrowserUri += "/install"
 	} else { // 已安装
+
 		// 初始化 DB
 		dbRepo, err := db.New()
 		if err != nil {

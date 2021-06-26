@@ -97,7 +97,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		if sql == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchMySQLError,
+				code.MySQLExecError,
 				"SQL 语句不能为空！"),
 			)
 			return
@@ -106,7 +106,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		if preFilterList[string([]byte(sql)[:6])] {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchMySQLError,
+				code.MySQLExecError,
 				"SQL 语句不能以 "+string([]byte(sql)[:6])+" 开头！"),
 			)
 			return
@@ -126,7 +126,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 				if !isWhiteList {
 					c.AbortWithError(errno.NewError(
 						http.StatusBadRequest,
-						code.SearchMySQLError,
+						code.MySQLExecError,
 						"SQL 语句存在敏感词： "+f+"！"),
 					)
 					return
@@ -144,7 +144,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchMySQLError,
+				code.MySQLExecError,
 				"MySQL "+err.Error()).WithErr(err),
 			)
 			return
@@ -193,7 +193,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchMySQLError,
+				code.MySQLExecError,
 				"MySQL "+err.Error()).WithErr(err),
 			)
 			return

@@ -17,7 +17,7 @@ type demoGetResponse struct {
 	Job  string `json:"job"`
 }
 
-// 发起请求
+// DemoGet 发起请求
 func DemoGet(name string, opts ...httpclient.Option) (res *demoGetResponse, err error) {
 	api := demoGetApi + name
 	body, err := httpclient.Get(api, nil, opts...)
@@ -34,7 +34,7 @@ func DemoGet(name string, opts ...httpclient.Option) (res *demoGetResponse, err 
 	return res, nil
 }
 
-// 设置重试规则
+// DemoGetRetryVerify 设置重试规则
 func DemoGetRetryVerify(body []byte) (shouldRetry bool) {
 	if len(body) == 0 {
 		return true
@@ -43,7 +43,7 @@ func DemoGetRetryVerify(body []byte) (shouldRetry bool) {
 	return false
 }
 
-// 设置告警规则
+// DemoGetAlarmVerify 设置告警规则
 func DemoGetAlarmVerify(body []byte) (shouldAlarm bool) {
 	if len(body) == 0 {
 		return true
@@ -52,7 +52,7 @@ func DemoGetAlarmVerify(body []byte) (shouldAlarm bool) {
 	return false
 }
 
-// 设置 Mock 数据
+// DemoGetMock 设置 Mock 数据
 func DemoGetMock() (body []byte) {
 	res := new(demoGetResponse)
 	res.Name = "AA"

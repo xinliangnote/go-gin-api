@@ -29,8 +29,8 @@ func (m *middleware) RBAC() core.HandlerFunc {
 		if !m.cache.Exists(configs.RedisKeyPrefixLoginUser + token) {
 			c.AbortWithError(errno.NewError(
 				http.StatusUnauthorized,
-				code.AuthorizationError,
-				code.Text(code.AuthorizationError)).WithErr(errors.New("请先登录 1")),
+				code.CacheGetError,
+				code.Text(code.CacheGetError)).WithErr(errors.New("请先登录 1")),
 			)
 			return
 		}
@@ -38,8 +38,8 @@ func (m *middleware) RBAC() core.HandlerFunc {
 		if !m.cache.Exists(configs.RedisKeyPrefixLoginUser + token + ":action") {
 			c.AbortWithError(errno.NewError(
 				http.StatusUnauthorized,
-				code.AuthorizationError,
-				code.Text(code.AuthorizationError)).WithErr(errors.New("请先登录 2")),
+				code.CacheGetError,
+				code.Text(code.CacheGetError)).WithErr(errors.New("请先登录 2")),
 			)
 			return
 		}
@@ -48,8 +48,8 @@ func (m *middleware) RBAC() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusUnauthorized,
-				code.AuthorizationError,
-				code.Text(code.AuthorizationError)).WithErr(err),
+				code.CacheGetError,
+				code.Text(code.CacheGetError)).WithErr(err),
 			)
 			return
 		}

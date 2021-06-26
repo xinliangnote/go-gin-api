@@ -44,8 +44,8 @@ func (h *handler) SearchCache() core.HandlerFunc {
 		if b := h.cache.Exists(req.RedisKey); b != true {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchRedisEmpty,
-				code.Text(code.SearchRedisEmpty)),
+				code.CacheNotExist,
+				code.Text(code.CacheNotExist)),
 			)
 			return
 		}
@@ -54,8 +54,8 @@ func (h *handler) SearchCache() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchRedisError,
-				code.Text(code.SearchRedisError)).WithErr(err),
+				code.CacheGetError,
+				code.Text(code.CacheGetError)).WithErr(err),
 			)
 			return
 		}
@@ -64,8 +64,8 @@ func (h *handler) SearchCache() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchRedisError,
-				code.Text(code.SearchRedisError)).WithErr(err),
+				code.CacheGetError,
+				code.Text(code.CacheGetError)).WithErr(err),
 			)
 			return
 		}

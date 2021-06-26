@@ -23,8 +23,8 @@ func (m *middleware) Resubmit() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ResubmitError,
-				code.Text(code.ResubmitError)).WithErr(err),
+				code.UrlSignError,
+				code.Text(code.UrlSignError)).WithErr(err),
 			)
 			return
 		}
@@ -35,8 +35,8 @@ func (m *middleware) Resubmit() core.HandlerFunc {
 			if err != nil {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.ResubmitError,
-					code.Text(code.ResubmitError)).WithErr(err),
+					code.CacheSetError,
+					code.Text(code.CacheSetError)).WithErr(err),
 				)
 				return
 			}
@@ -48,8 +48,8 @@ func (m *middleware) Resubmit() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ResubmitError,
-				code.Text(code.ResubmitError)).WithErr(err),
+				code.CacheGetError,
+				code.Text(code.CacheGetError)).WithErr(err),
 			)
 			return
 		}
@@ -57,8 +57,8 @@ func (m *middleware) Resubmit() core.HandlerFunc {
 		if redisValue == reSubmitMark {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ResubmitMsg,
-				code.Text(code.ResubmitMsg)).WithErr(errors.New("resubmit")),
+				code.ResubmitError,
+				code.Text(code.ResubmitError)).WithErr(errors.New("resubmit")),
 			)
 			return
 		}

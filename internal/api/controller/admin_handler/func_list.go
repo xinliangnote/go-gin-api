@@ -12,7 +12,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
 
 	"github.com/spf13/cast"
-	"go.uber.org/zap"
 )
 
 type listRequest struct {
@@ -117,7 +116,12 @@ func (h *handler) List() core.HandlerFunc {
 		for k, v := range resListData {
 			hashId, err := h.hashids.HashidsEncode([]int{cast.ToInt(v.Id)})
 			if err != nil {
-				h.logger.Info("hashids err", zap.Error(err))
+				c.AbortWithError(errno.NewError(
+					http.StatusBadRequest,
+					code.HashIdsEncodeError,
+					code.Text(code.HashIdsEncodeError)).WithErr(err),
+				)
+				return
 			}
 
 			isOnline := -1

@@ -4,12 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <title>服务初始化</title>
+    <title>项目初始化</title>
     <link rel="shortcut icon" type="image/x-icon" href="../../bootstrap/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-select/bootstrap-select.css" rel="stylesheet">
     <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
     <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
@@ -21,17 +22,27 @@
         <div class="col-lg-6">
             <div class="card">
                 <header class="card-header">
-                    <div class="card-title">服务初始化</div>
+                    <div class="card-title">项目初始化</div>
                 </header>
-                <div class="card-body text-center">
-                    <h4 class="card-title">检测 · 环境</h4>
-
+                <div class="card-body">
+                    <h5 class="card-title"><span class="badge badge-info">检测 · 环境</span></h5>
                     <div class="input-group mb-3">
-                        <p class="text-left">所需版本： Go Version <code>go1.15+</code>，目前版本：<code>{{.GoVersion}}</code>。</p>
+                        <p class="text-left">所需版本：<code>go1.15+</code> (<small>当前版本 </small><code>{{.GoVersion}}</code>)</p>
                     </div>
 
-                    <h4 class="card-title">配置 · Redis</h4>
+                    <h5 class="card-title"><span class="badge badge-info">配置 · 语言</span></h5>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">语言</span>
+                        </div>
+                        <select class="form-control select-picker col-lg-3" data-width="auto"
+                                data-live-search="true" id="language">
+                            <option value="zh-cn">简体中文</option>
+                            <option value="en-us">English</option>
+                        </select>
+                    </div>
 
+                    <h5 class="card-title"><span class="badge badge-info">配置 · Redis</span></h5>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">地址</span>
@@ -56,8 +67,7 @@
                                placeholder="请输入 DB ，序号从 0 开始，默认是 0">
                     </div>
 
-                    <h4 class="card-title">配置 · MySQL</h4>
-
+                    <h5 class="card-title"><span class="badge badge-info">配置 · MySQL</span></h5>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">地址</span>
@@ -102,7 +112,7 @@
                         </small>
                     </div>
 
-                    <button type="button" id="btnOk" class="btn btn-primary">初始化</button>
+                    <button type="button" id="btnOk" class="btn btn-primary">初始化项目</button>
                     <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
                         <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                         执行中...
@@ -125,11 +135,16 @@
     </div>
 </div>
 <script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select/i18n/defaults-zh_CN.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        $('.select-picker').selectpicker();
+
         $("#btnOk").click(function () {
 
             const redis_addr = $("#redis_addr").val();
@@ -199,6 +214,8 @@
             }
 
             const postData = {
+                language: $("#language").val(),
+
                 redis_addr: redis_addr,
                 redis_pass: $("#redis_pass").val(),
                 redis_db: redis_db,

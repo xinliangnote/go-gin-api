@@ -23,7 +23,6 @@ import (
 )
 
 const (
-	// Trace ID
 	TraceID = "trace-id"
 )
 

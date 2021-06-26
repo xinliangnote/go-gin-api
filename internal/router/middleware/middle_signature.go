@@ -32,8 +32,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if authorization == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(errors.New("Header 中缺少 Authorization 参数")),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(errors.New("Header 中缺少 Authorization 参数")),
 			)
 			return
 		}
@@ -43,8 +43,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if date == "" {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(errors.New("Header 中缺少 Date 参数")),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(errors.New("Header 中缺少 Date 参数")),
 			)
 			return
 		}
@@ -54,8 +54,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if len(authorizationSplit) < minLength {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(errors.New("Header 中 Authorization 格式错误")),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(errors.New("Header 中 Authorization 格式错误")),
 			)
 			return
 		}
@@ -66,8 +66,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(err),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(err),
 			)
 			return
 		}
@@ -75,8 +75,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if data.IsUsed == notUsed {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(errors.New(key + " 已被禁止调用")),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(errors.New(key + " 已被禁止调用")),
 			)
 			return
 		}
@@ -84,8 +84,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if len(data.Apis) < 1 {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(errors.New(key + " 未进行接口授权")),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(errors.New(key + " 未进行接口授权")),
 			)
 			return
 		}
@@ -100,8 +100,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 			if pattern, _ := table.Mapping(c.Method() + c.Path()); pattern == "" {
 				c.AbortWithError(errno.NewError(
 					http.StatusBadRequest,
-					code.SignatureError,
-					code.Text(code.SignatureError)).WithErr(errors.New(c.Method() + c.Path() + " 未进行接口授权")),
+					code.AuthorizationError,
+					code.Text(code.AuthorizationError)).WithErr(errors.New(c.Method() + c.Path() + " 未进行接口授权")),
 				)
 				return
 			}
@@ -111,8 +111,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(err),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(err),
 			)
 			return
 		}
@@ -120,8 +120,8 @@ func (m *middleware) Signature() core.HandlerFunc {
 		if !ok {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SignatureError,
-				code.Text(code.SignatureError)).WithErr(errors.New("Header 中 Authorization 信息错误")),
+				code.AuthorizationError,
+				code.Text(code.AuthorizationError)).WithErr(errors.New("Header 中 Authorization 信息错误")),
 			)
 			return
 		}

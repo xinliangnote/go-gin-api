@@ -45,8 +45,8 @@ func (h *handler) HashIdsEncode() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.HashIdsEncodeError,
+				code.Text(code.HashIdsEncodeError)).WithErr(err),
 			)
 			return
 		}

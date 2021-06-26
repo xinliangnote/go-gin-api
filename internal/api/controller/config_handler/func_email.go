@@ -66,8 +66,8 @@ func (h *handler) Email() core.HandlerFunc {
 		if err := mail.Send(options); err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigEmailError,
-				"Mail Send error: "+err.Error()).WithErr(err),
+				code.SendEmailError,
+				code.Text(code.SendEmailError)+err.Error()).WithErr(err),
 			)
 			return
 		}
@@ -86,8 +86,8 @@ func (h *handler) Email() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.ConfigEmailError,
-				code.Text(code.ConfigEmailError)).WithErr(err),
+				code.WriteConfigError,
+				code.Text(code.WriteConfigError)).WithErr(err),
 			)
 			return
 		}

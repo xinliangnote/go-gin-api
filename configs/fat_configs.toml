@@ -7,6 +7,9 @@
   expireduration = 24
   secret = "i1ydX9RtHyuJTrw7frcu"
 
+[language]
+  local = "zh-cn"
+
 [mail]
   host = "smtp.163.com"
   pass = ""
@@ -24,13 +27,13 @@
   [mysql.read]
     addr = "127.0.0.1:3306"
     name = "go_gin_api"
-    pass = "root"
+    pass = "123456789"
     user = "root"
 
   [mysql.write]
     addr = "127.0.0.1:3306"
     name = "go_gin_api"
-    pass = "root"
+    pass = "123456789"
     user = "root"
 
 [redis]

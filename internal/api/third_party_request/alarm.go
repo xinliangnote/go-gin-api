@@ -2,10 +2,9 @@ package third_party_request
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/httpclient"
 	"github.com/xinliangnote/go-gin-api/pkg/mail"
-
-	"github.com/pkg/errors"
 )
 
 // 实现 AlarmObject 告警
@@ -13,7 +12,7 @@ var _ httpclient.AlarmObject = (*AlarmEmail)(nil)
 
 type AlarmEmail struct{}
 
-// 邮件告警方式
+// Send 邮件告警方式
 func (a *AlarmEmail) Send(subject, body string) error {
 	cfg := configs.Get().Mail
 	if cfg.Host == "" || cfg.Port == 0 || cfg.User == "" || cfg.Pass == "" || cfg.To == "" {

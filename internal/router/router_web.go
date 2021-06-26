@@ -36,7 +36,6 @@ func setWebRouter(r *resource) {
 		// 安装
 		notRBAC.GET("/install", installHandler.View())
 		notRBAC.POST("/install/execute", installHandler.Execute())
-		notRBAC.POST("/install/restart", installHandler.Restart())
 
 		// 管理员
 		notRBAC.GET("/login", adminHandler.LoginView())

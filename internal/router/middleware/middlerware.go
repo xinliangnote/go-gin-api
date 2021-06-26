@@ -17,7 +17,7 @@ type Middleware interface {
 	// i 为了避免被其他包实现
 	i()
 
-	// JWT 中间件
+	// Jwt 中间件
 	Jwt(ctx core.Context) (userId int64, userName string, err errno.Error)
 
 	// Resubmit 中间件

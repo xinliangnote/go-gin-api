@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Verify parse the body and verify that it is correct
+// AlarmVerify Verify parse the body and verify that it is correct
 type AlarmVerify func(body []byte) (shouldAlarm bool)
 
 type AlarmObject interface {

@@ -52,8 +52,8 @@ func (h *handler) Tables() core.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.SearchMySQLError,
-				code.Text(code.SearchMySQLError)).WithErr(err),
+				code.MySQLExecError,
+				code.Text(code.MySQLExecError)).WithErr(err),
 			)
 			return
 		}

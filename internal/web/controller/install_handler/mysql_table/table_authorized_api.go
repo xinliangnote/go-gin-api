@@ -2,7 +2,7 @@ package mysql_table
 
 //CREATE TABLE `authorized_api` (
 //`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-//`business_key` varchar(30) NOT NULL DEFAULT '' COMMENT '调用方key',
+//`business_key` varchar(32) NOT NULL DEFAULT '' COMMENT '调用方key',
 //`method` varchar(30) NOT NULL DEFAULT '' COMMENT '请求方式',
 //`api` varchar(100) NOT NULL DEFAULT '' COMMENT '请求地址',
 //`is_deleted` tinyint(1) NOT NULL DEFAULT '-1' COMMENT '是否删除 1:是  -1:否',
@@ -16,7 +16,7 @@ package mysql_table
 func CreateAuthorizedAPITableSql() (sql string) {
 	sql = "CREATE TABLE `authorized_api` ("
 	sql += "`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',"
-	sql += "`business_key` varchar(30) NOT NULL DEFAULT '' COMMENT '调用方key',"
+	sql += "`business_key` varchar(32) NOT NULL DEFAULT '' COMMENT '调用方key',"
 	sql += "`method` varchar(30) NOT NULL DEFAULT '' COMMENT '请求方式',"
 	sql += "`api` varchar(100) NOT NULL DEFAULT '' COMMENT '请求地址',"
 	sql += "`is_deleted` tinyint(1) NOT NULL DEFAULT '-1' COMMENT '是否删除 1:是  -1:否',"
