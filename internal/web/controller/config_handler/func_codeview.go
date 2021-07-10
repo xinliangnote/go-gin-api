@@ -4,7 +4,7 @@ import (
 	"go/token"
 	"log"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 
 	"github.com/dave/dst"
@@ -23,7 +23,7 @@ type codeViewResponse struct {
 }
 
 const (
-	codeFile        = "./internal/api/code/code.go"
+	codeFile        = "./internal/pkg/code/code.go"
 	minBusinessCode = 20000
 )
 

@@ -3,7 +3,7 @@ package upgrade_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/install_handler/mysql_table"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"

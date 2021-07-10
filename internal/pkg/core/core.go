@@ -9,7 +9,7 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	_ "github.com/xinliangnote/go-gin-api/docs"
-	"github.com/xinliangnote/go-gin-api/internal/api/code"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
 	"github.com/xinliangnote/go-gin-api/pkg/browser"
 	"github.com/xinliangnote/go-gin-api/pkg/color"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
@@ -246,7 +246,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	}
 
 	gin.SetMode(gin.ReleaseMode)
-	gin.DisableBindValidation()
+	//gin.DisableBindValidation()
 	mux := &mux{
 		engine: gin.New(),
 	}

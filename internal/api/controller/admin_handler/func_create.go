@@ -3,17 +3,18 @@ package admin_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/code"
 	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type createRequest struct {
-	Username string `form:"username"` // 用户名
-	Nickname string `form:"nickname"` // 昵称
-	Mobile   string `form:"mobile"`   // 手机号
-	Password string `form:"password"` // 密码
+	Username string `form:"username" binding:"required"` // 用户名
+	Nickname string `form:"nickname" binding:"required"` // 昵称
+	Mobile   string `form:"mobile" binding:"required"`   // 手机号
+	Password string `form:"password" binding:"required"` // 密码
 }
 
 type createResponse struct {
@@ -41,7 +42,7 @@ func (h *handler) Create() core.HandlerFunc {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				validation.Error(err)).WithErr(err),
 			)
 			return
 		}
