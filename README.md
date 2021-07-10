@@ -34,7 +34,7 @@
 
 查看 Jaeger 链路追踪代码，请查看 [v1.0版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，文档点这里 [jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 。
 
-## Learning together
+## 联系作者
 
-![](https://github.com/xinliangnote/Go/blob/master/00-基础语法/images/qr.jpg)
+![联系作者](https://i.loli.net/2021/07/02/cwiLQ13CRgJIS86.jpg)
 

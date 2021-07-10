@@ -27,25 +27,16 @@ Features:
 
 ## Index
 
-The go-gin-api document consists of the following main parts:
-
-- Requirements
-- Getting started
-- Directory Structure
-- Core package
-- Component guide
-- Toolkit
-
 **Detailed documentation：[https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)**
 
 ## Others
 
 To check Jaeger  code， [v1.0](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，documentation:[jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 。
 
-## Comtributing
+## Contributing
 
 Help us with translating `go-gin-api` to your native language.
 
 ## Learning together
 
-![](https://github.com/xinliangnote/Go/blob/master/00-基础语法/images/qr.jpg)
+![联系作者](https://i.loli.net/2021/07/02/cwiLQ13CRgJIS86.jpg)
