@@ -16,6 +16,10 @@ printf "\ncreate curd code : \n"
 time go build -o gormgen ./cmd/gormgen/main.go
 shellExit $?
 
+if [ ! -d $GOPATH/bin ];then
+   mkdir -p $GOPATH/bin
+fi
+
 mv gormgen $GOPATH/bin
 shellExit $?
 
