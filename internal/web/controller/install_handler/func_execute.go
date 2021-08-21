@@ -34,10 +34,42 @@ type initExecuteRequest struct {
 }
 
 func (h *handler) Execute() core.HandlerFunc {
-	return func(c core.Context) {
+
+	installTableList := map[string]map[string]string{
+		"authorized": {
+			"table_sql":      mysql_table.CreateAuthorizedTableSql(),
+			"table_data_sql": mysql_table.CreateAuthorizedTableDataSql(),
+		},
+		"authorized_api": {
+			"table_sql":      mysql_table.CreateAuthorizedAPITableSql(),
+			"table_data_sql": mysql_table.CreateAuthorizedAPITableDataSql(),
+		},
+		"admin": {
+			"table_sql":      mysql_table.CreateAdminTableSql(),
+			"table_data_sql": mysql_table.CreateAdminTableDataSql(),
+		},
+		"admin_menu": {
+			"table_sql":      mysql_table.CreateAdminMenuTableSql(),
+			"table_data_sql": mysql_table.CreateAdminMenuTableDataSql(),
+		},
+		"menu": {
+			"table_sql":      mysql_table.CreateMenuTableSql(),
+			"table_data_sql": mysql_table.CreateMenuTableDataSql(),
+		},
+		"menu_action": {
+			"table_sql":      mysql_table.CreateMenuActionTableSql(),
+			"table_data_sql": mysql_table.CreateMenuActionTableDataSql(),
+		},
+		"cron_task": {
+			"table_sql":      mysql_table.CreateCronTaskTableSql(),
+			"table_data_sql": "",
+		},
+	}
+
+	return func(ctx core.Context) {
 		req := new(initExecuteRequest)
-		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+		if err := ctx.ShouldBindForm(req); err != nil {
+			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ParamBindError,
 				code.Text(code.ParamBindError)).WithErr(err),
@@ -45,19 +77,20 @@ func (h *handler) Execute() core.HandlerFunc {
 			return
 		}
 
+		// region 验证 version
 		versionStr := runtime.Version()
 		version := cast.ToFloat32(versionStr[2:6])
 		if version < 1.15 {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.GoVersionError,
 				code.Text(code.GoVersionError)),
 			)
 			return
 		}
+		// endregion
 
-		outPutString := ""
-
+		// region 验证 Redis 配置
 		cfg := configs.Get()
 		redisClient := redis.NewClient(&redis.Options{
 			Addr:         req.RedisAddr,
@@ -69,7 +102,7 @@ func (h *handler) Execute() core.HandlerFunc {
 		})
 
 		if err := redisClient.Ping().Err(); err != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.RedisConnectError,
 				code.Text(code.RedisConnectError)).WithErr(err),
@@ -79,8 +112,10 @@ func (h *handler) Execute() core.HandlerFunc {
 
 		defer redisClient.Close()
 
-		outPutString += "已检测 Redis 配置可用。\n"
+		outPutString := "已检测 Redis 配置可用。\n"
+		// endregion
 
+		// region 验证 MySQL 配置
 		dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=%t&loc=%s",
 			req.MySQLUser,
 			req.MySQLPass,
@@ -97,7 +132,7 @@ func (h *handler) Execute() core.HandlerFunc {
 		})
 
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.MySQLConnectError,
 				code.Text(code.MySQLConnectError)).WithErr(err),
@@ -111,7 +146,9 @@ func (h *handler) Execute() core.HandlerFunc {
 		defer dbClient.Close()
 
 		outPutString += "已检测 MySQL 配置可用。\n"
+		// endregion
 
+		// region 写入配置文件
 		viper.SetConfigName(env.Active().Value() + "_configs")
 		viper.SetConfigType("toml")
 		viper.AddConfigPath("./configs")
@@ -133,7 +170,7 @@ func (h *handler) Execute() core.HandlerFunc {
 		viper.Set("mysql.write.name", req.MySQLName)
 
 		if viper.WriteConfig() != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.WriteConfigError,
 				code.Text(code.WriteConfigError)).WithErr(err),
@@ -143,131 +180,46 @@ func (h *handler) Execute() core.HandlerFunc {
 
 		outPutString += "语言包 " + req.Language + " 配置成功。\n"
 		outPutString += "配置项 Redis、MySQL 配置成功。\n"
+		// endregion
 
-		if err = db.Exec(mysql_table.CreateAuthorizedTableSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
+		// region 初始化表结构 + 默认数据
+		for k, v := range installTableList {
+			if v["table_sql"] != "" {
+				// region 初始化表结构
+				if err = db.Exec(v["table_sql"]).Error; err != nil {
+					ctx.AbortWithError(errno.NewError(
+						http.StatusBadRequest,
+						code.MySQLExecError,
+						code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+					)
+					return
+				}
+
+				outPutString += "初始化 MySQL 数据表：" + k + " 成功。\n"
+				// endregion
+
+				// region 初始化默认数据
+				if v["table_data_sql"] != "" {
+					if err = db.Exec(v["table_data_sql"]).Error; err != nil {
+						ctx.AbortWithError(errno.NewError(
+							http.StatusBadRequest,
+							code.MySQLExecError,
+							code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+						)
+						return
+					}
+
+					outPutString += "初始化 MySQL 数据表：" + k + " 默认数据成功。\n"
+				}
+				// endregion
+			}
 		}
-		outPutString += "初始化 MySQL 数据表：authorized 成功。\n"
+		// endregion
 
-		if err = db.Exec(mysql_table.CreateAuthorizedTableDataSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：authorized 默认数据成功。\n"
-
-		if err = db.Exec(mysql_table.CreateAuthorizedAPITableSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：authorized_api 成功。\n"
-
-		if err = db.Exec(mysql_table.CreateAuthorizedAPITableDataSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：authorized_api 默认数据成功。\n"
-
-		if err = db.Exec(mysql_table.CreateAdminTableSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：admin 成功。\n"
-
-		if err = db.Exec(mysql_table.CreateAdminTableDataSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：admin 默认数据成功。\n"
-
-		if err = db.Exec(mysql_table.CreateMenuTableSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：menu 成功。\n"
-
-		if err = db.Exec(mysql_table.CreateMenuTableDataSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：menu 默认数据成功。\n"
-
-		if err = db.Exec(mysql_table.CreateMenuActionTableSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：menu_action 成功。\n"
-
-		if err = db.Exec(mysql_table.CreateMenuActionTableDataSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：menu_action 默认数据成功。\n"
-
-		if err = db.Exec(mysql_table.CreateAdminMenuTableSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：admin_menu 成功。\n"
-
-		if err = db.Exec(mysql_table.CreateAdminMenuTableDataSql()).Error; err != nil {
-			c.AbortWithError(errno.NewError(
-				http.StatusBadRequest,
-				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
-			)
-			return
-		}
-		outPutString += "初始化 MySQL 数据表：admin_menu 默认数据成功。\n"
-
-		// 生成 install 完成标识
+		// region 生成 install 完成标识
 		f, err := os.Create(configs.ProjectInstallMark)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.MySQLExecError,
 				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
@@ -275,7 +227,8 @@ func (h *handler) Execute() core.HandlerFunc {
 			return
 		}
 		defer f.Close()
+		// endregion
 
-		c.Payload(outPutString)
+		ctx.Payload(outPutString)
 	}
 }

@@ -2,7 +2,7 @@ package configs
 
 const (
 	// ProjectVersion 项目版本
-	ProjectVersion = "v1.2.6"
+	ProjectVersion = "v1.2.7"
 
 	// ProjectName 项目名称
 	ProjectName = "go-gin-api"

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/js/bootstrap-multitabs/multitabs.min.css" rel="stylesheet" type="text/css">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">编辑后台任务</div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">任务名称</label>
+                            <input type="text" class="form-control maxlength" maxlength="60" id="name"
+                                   placeholder="请输入任务名称">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="protocol">选择任务执行方式</label>
+                            <select class="form-control" id="protocol">
+                                <option value="1">SHELL</option>
+                                <option value="2">HTTP</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group http_method">
+                            <label for="http_method">选择 HTTP 请求方式</label>
+                            <select class="form-control" id="http_method">
+                                <option value="0">请选择</option>
+                                <option value="1">GET</option>
+                                <option value="2">POST</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="spec">任务表达式</label>
+                            <input type="text" class="form-control maxlength" maxlength="60" id="spec"
+                                   placeholder="请输入任务表达式，例如：*/5 * * * *">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="command">命令</label>
+                            <textarea class="form-control maxlength" maxlength="250" rows="2" id="command"
+                                      placeholder="请输入任务表达式，例如：/usr/local/bin/php /data/web/artisan consoleCommand"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="timeout">超时时间(单位:秒)</label>
+                            <input type="text" class="form-control" id="timeout"
+                                   placeholder="请输入超时时间，例如：180">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="retry_times">重试次数</label>
+                            <input type="text" class="form-control" id="retry_times"
+                                   placeholder="请输入重试次数，例如：3">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="retry_interval">重试间隔(单位:秒)</label>
+                            <input type="text" class="form-control" id="retry_interval"
+                                   placeholder="请输入重试间隔，例如：60">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notify_status">执行结束是否通知</label>
+                            <select class="form-control" id="notify_status">
+                                <option value="1">不通知</option>
+                                <option value="2">失败通知</option>
+                                <option value="3">结束通知</option>
+                                <option value="4">结果关键字匹配通知</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group notify_type">
+                            <label for="notify_type">通知方式</label>
+                            <select class="form-control" id="notify_type">
+                                <option value="0">请选择</option>
+                                <option value="1">邮件</option>
+                                <option value="2">webhook</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group notify_receiver_email">
+                            <label for="notify_receiver_email">通知者邮箱地址(多个用,分割)</label>
+                            <input type="text" class="form-control maxlength" maxlength="255" id="notify_receiver_email"
+                                   placeholder="请输入邮箱地址">
+                        </div>
+
+                        <div class="form-group notify_keyword">
+                            <label for="notify_keyword">匹配关键字(多个用,分割)</label>
+                            <input type="text" class="form-control maxlength" maxlength="255" id="notify_keyword"
+                                   placeholder="请输入匹配关键字">
+                        </div>
+
+                        <div class="form-group">
+                            <label>状态</label>
+                            <div class="clearfix">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="statusOne" value="1" name="is_used"
+                                           class="custom-control-input">
+                                    <label class="custom-control-label" for="statusOne">启用</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="statusTwo" value="-1" name="is_used"
+                                           class="custom-control-input">
+                                    <label class="custom-control-label" for="statusTwo">禁用</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="remark">备注</label>
+                            <textarea class="form-control maxlength" maxlength="100" rows="3" id="remark"
+                                      placeholder="备注"></textarea>
+                        </div>
+                        <button type="button" id="btnOk" class="btn btn-primary">确认</button>
+                        <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            执行中...
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        const hash_id = {{ .HashID }}
+
+        $(".maxlength").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        $("#protocol").change(function () {
+            if ($(this).val() === "2") {
+                $(".http_method").show();
+            } else {
+                $("#http_method").val(0);
+                $(".http_method").hide();
+            }
+        })
+
+        $("#notify_status").change(function () {
+            if ($(this).val() === "1") {
+                $(".notify_type").hide();
+                $("#notify_type").val(0)
+                $(".notify_receiver_email").hide();
+                $("#notify_receiver_email").val("");
+                $(".notify_keyword").hide();
+                $("#notify_keyword").val("");
+            } else if($(this).val() === "2" || $(this).val() === "3") {
+                $(".notify_type").show();
+                $(".notify_keyword").hide();
+                $("#notify_keyword").val("");
+
+                if (("#notify_type").val() === "1") {
+                    $(".notify_receiver_email").show();
+                } else {
+                    $(".notify_receiver_email").hide();
+                    $("#notify_receiver_email").val("");
+                }
+            } else if($(this).val() === "4") {
+                $(".notify_type").show();
+                $(".notify_keyword").show();
+
+                if (("#notify_type").val() === "1") {
+                    $(".notify_receiver_email").show();
+                } else {
+                    $(".notify_receiver_email").hide();
+                    $("#notify_receiver_email").val("");
+                }
+            }
+        });
+
+        $("#notify_type").change(function (){
+            if ($(this).val() === "1") {
+                $(".notify_receiver_email").show();
+            } else {
+                $(".notify_receiver_email").hide();
+            }
+        });
+
+        AjaxForm(
+            "GET",
+            "/api/cron/" + hash_id,
+            "",
+            function () {},
+            function (data) {
+                $("#name").val(data.name);
+                $("#protocol").val(data.protocol);
+                if (data.protocol === 1) {
+                    $(".http_method").hide();
+                }
+
+                $("#http_method").val(data.http_method);
+                $("#spec").val(data.spec);
+                $("#command").val(data.command);
+                $("#timeout").val(data.timeout);
+                $("#retry_times").val(data.retry_times);
+                $("#retry_interval").val(data.retry_interval);
+                $("#notify_status").val(data.notify_status);
+                if (data.notify_status === 1) {
+                    $(".notify_type").hide();
+                    $(".notify_receiver_email").hide();
+                    $(".notify_keyword").hide();
+                } else if (data.notify_status === 2 || data.notify_status === 3) {
+                    $(".notify_type").show();
+                    $(".notify_keyword").hide();
+
+                    if (data.notify_type === 1) {
+                        $(".notify_receiver_email").show();
+                    } else {
+                        $(".notify_receiver_email").hide();
+                    }
+                } else if (data.notify_status === 4) {
+                    $(".notify_type").show();
+                    $(".notify_keyword").show();
+
+                    if (data.notify_type === 1) {
+                        $(".notify_receiver_email").show();
+                    } else {
+                        $(".notify_receiver_email").hide();
+                    }
+                }
+
+                $("#notify_type").val(data.notify_type);
+                $("#notify_receiver_email").val(data.notify_receiver_email);
+                $("#notify_keyword").val(data.notify_keyword);
+                $("input[name='is_used'][value='"+data.is_used+"']").attr("checked", true);
+                $("#remark").val(data.remark);
+            },
+            function (response) {
+                AjaxError(response);
+            }
+        );
+
+        $('#btnOk').on('click', function () {
+            const name = $("#name").val();
+            if (name === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入任务名称。',
+                });
+                return false;
+            }
+
+            const spec = $("#spec").val();
+            if (spec === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入任务表达式。',
+                });
+                return false;
+            }
+
+            const command = $("#command").val();
+            if (spec === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入命令。',
+                });
+                return false;
+            }
+
+            const postData = {
+                id:hash_id,
+                name: name,
+                spec: spec,
+                command: command,
+                protocol: $("#protocol").val(),
+                http_method: $("#http_method").val(),
+                timeout: $("#timeout").val(),
+                retry_times: $("#retry_times").val(),
+                retry_interval: $("#retry_interval").val(),
+                notify_status: $("#notify_status").val(),
+                notify_type: $("#notify_type").val(),
+                notify_receiver_email: $("#notify_receiver_email").val(),
+                notify_keyword: $("#notify_keyword").val(),
+                is_used: $("input[name='is_used']:checked").val(),
+                remark: $("#remark").val(),
+            };
+
+            AjaxForm(
+                "POST",
+                "/api/cron/" + hash_id,
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function (data) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '编号：' + data.id + ' 信息修改成功。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.href = "/cron/list";
+                                }
+                            }
+                        }
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

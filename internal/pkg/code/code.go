@@ -60,6 +60,11 @@ const (
 	MenuCreateActionError = 20306
 	MenuListActionError   = 20307
 	MenuDeleteActionError = 20308
+
+	CronCreateError = 20401
+	CronUpdateError = 20402
+	CronListError   = 20403
+	CronDetailError = 20404
 )
 
 func Text(code int) string {

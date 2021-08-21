@@ -72,7 +72,14 @@ func CreateMenuActionTableDataSql() (sql string) {
 	sql += "(36, 12, 'DELETE', '/api/menu_action/*', 'init'),"
 	sql += "(37, 22, 'POST', '/upgrade/execute', 'init'),"
 	sql += "(38, 11, 'PATCH', '/api/admin/offline', 'init'),"
-	sql += "(39, 12, 'PATCH', '/api/menu/sort', 'init');"
+	sql += "(39, 12, 'PATCH', '/api/menu/sort', 'init'),"
+	sql += "(40, 24, 'GET', '/cron/add', 'init'),"
+	sql += "(41, 24, 'GET', '/cron/edit/*', 'init'),"
+	sql += "(42, 24, 'POST', '/api/cron', 'init'),"
+	sql += "(43, 24, 'POST', '/api/cron/*', 'init'),"
+	sql += "(44, 24, 'GET', '/api/cron', 'init'),"
+	sql += "(45, 24, 'GET', '/api/cron/*', 'init'),"
+	sql += "(46, 24, 'PATCH', '/api/cron/used', 'init');"
 
 	return
 }

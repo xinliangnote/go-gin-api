@@ -4,6 +4,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/admin_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/config_handler"
+	"github.com/xinliangnote/go-gin-api/internal/api/controller/cron_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/menu_handler"
 	"github.com/xinliangnote/go-gin-api/internal/api/controller/tool_handler"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -78,6 +79,14 @@ func setApiRouter(r *resource) {
 		// config
 		configHandler := config_handler.New(r.logger, r.db, r.cache)
 		api.PATCH("/config/email", configHandler.Email())
+
+		// cron
+		cronHandler := cron_handler.New(r.logger, r.db, r.cache)
+		api.POST("/cron", cronHandler.Create())
+		api.GET("/cron", cronHandler.List())
+		api.GET("/cron/:id", cronHandler.Detail())
+		api.POST("/cron/:id", cronHandler.Modify())
+		api.PATCH("/cron/used", cronHandler.UpdateUsed())
 
 	}
 }

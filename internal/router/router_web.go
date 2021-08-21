@@ -4,6 +4,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/admin_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/authorized_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/config_handler"
+	"github.com/xinliangnote/go-gin-api/internal/web/controller/cron_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/dashboard_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/generator_handler"
 	"github.com/xinliangnote/go-gin-api/internal/web/controller/index_handler"
@@ -23,6 +24,7 @@ func setWebRouter(r *resource) {
 	toolHandler := tool_handler.New(r.logger, r.db, r.cache)
 	adminHandler := admin_handler.New(r.logger, r.db, r.cache)
 	upgradeHandler := upgrade_handler.New(r.logger, r.db, r.cache)
+	cronTaskHandler := cron_handler.New(r.logger, r.db, r.cache)
 
 	// 无需记录日志，无需 RBAC 权限验证
 	notRBAC := r.mux.Group("", r.middles.DisableLog())
@@ -80,5 +82,9 @@ func setWebRouter(r *resource) {
 		web.GET("/tool/cache", toolHandler.CacheView())
 		web.GET("/tool/data", toolHandler.DataView())
 
+		// 后台任务
+		web.GET("/cron/list", cronTaskHandler.ListView())
+		web.GET("/cron/add", cronTaskHandler.AddView())
+		web.GET("/cron/edit/:id", cronTaskHandler.EditView())
 	}
 }
