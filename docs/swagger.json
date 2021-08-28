@@ -272,7 +272,7 @@
         },
         "/api/admin/modify_password": {
             "patch": {
-                "description": "修改个人信息",
+                "description": "修改密码",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -282,19 +282,19 @@
                 "tags": [
                     "API.admin"
                 ],
-                "summary": "修改个人信息",
+                "summary": "修改密码",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "昵称",
-                        "name": "nickname",
+                        "description": "旧密码",
+                        "name": "old_password",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "手机号",
-                        "name": "mobile",
+                        "description": "新密码",
+                        "name": "new_password",
                         "in": "formData",
                         "required": true
                     }
@@ -303,7 +303,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.modifyPersonalInfoResponse"
+                            "$ref": "#/definitions/admin_handler.modifyPasswordResponse"
                         }
                     },
                     "400": {
@@ -855,6 +855,403 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/config_handler.emailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cron": {
+            "get": {
+                "description": "任务列表",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "任务列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "第几页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "每页显示条数",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "执行方式 1:shell 2:http",
+                        "name": "protocol",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "是否启用 1:是  -1:否",
+                        "name": "is_used",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron_handler.listResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建任务",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "创建任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "任务名称",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "crontab 表达式",
+                        "name": "spec",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "执行命令",
+                        "name": "command",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "执行方式 1:shell 2:http",
+                        "name": "protocol",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "http 请求方式 1:get 2:post",
+                        "name": "http_method",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "超时时间(单位:秒)",
+                        "name": "timeout",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "重试次数",
+                        "name": "retry_times",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "重试间隔(单位:秒)",
+                        "name": "retry_interval",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知",
+                        "name": "notify_status",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "通知类型 1:邮件 2:webhook",
+                        "name": "notify_type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通知者邮箱地址(多个用,分割)",
+                        "name": "notify_receiver_email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通知匹配关键字(多个用,分割)",
+                        "name": "notify_keyword",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "是否启用 1:是  -1:否",
+                        "name": "is_used",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cron/:id": {
+            "get": {
+                "description": "获取单条任务详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "获取单条任务详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron_handler.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cron/used": {
+            "patch": {
+                "description": "更新任务为启用/禁用",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "更新任务为启用/禁用",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hashid",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "是否启用 1:是 -1:否",
+                        "name": "used",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron_handler.updateUsedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cron/{id}": {
+            "post": {
+                "description": "编辑任务",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "编辑任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hashid",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务名称",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "crontab 表达式",
+                        "name": "spec",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "执行命令",
+                        "name": "command",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "执行方式 1:shell 2:http",
+                        "name": "protocol",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "http 请求方式 1:get 2:post",
+                        "name": "http_method",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "超时时间(单位:秒)",
+                        "name": "timeout",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "重试次数",
+                        "name": "retry_times",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "重试间隔(单位:秒)",
+                        "name": "retry_interval",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知",
+                        "name": "notify_status",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "通知类型 1:邮件 2:webhook",
+                        "name": "notify_type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通知者邮箱地址(多个用,分割)",
+                        "name": "notify_receiver_email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通知匹配关键字(多个用,分割)",
+                        "name": "notify_keyword",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "是否启用 1:是  -1:否",
+                        "name": "is_used",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron_handler.modifyResponse"
                         }
                     },
                     "400": {
@@ -1616,7 +2013,7 @@
                         "current_page": {
                             "type": "integer"
                         },
-                        "pre_page_count": {
+                        "per_page_count": {
                             "type": "integer"
                         },
                         "total": {
@@ -1871,7 +2268,7 @@
                         "current_page": {
                             "type": "integer"
                         },
-                        "pre_page_count": {
+                        "per_page_count": {
                             "type": "integer"
                         },
                         "total": {
@@ -1909,6 +2306,204 @@
                 "email": {
                     "description": "邮箱地址",
                     "type": "string"
+                }
+            }
+        },
+        "cron_handler.createResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "cron_handler.detailResponse": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "description": "执行命令",
+                    "type": "string"
+                },
+                "http_method": {
+                    "description": "http 请求方式 1:get 2:post",
+                    "type": "integer"
+                },
+                "is_used": {
+                    "description": "是否启用 1:是  -1:否",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "任务名称",
+                    "type": "string"
+                },
+                "notify_keyword": {
+                    "description": "通知匹配关键字(多个用,分割)",
+                    "type": "string"
+                },
+                "notify_receiver_email": {
+                    "description": "通知者邮箱地址(多个用,分割)",
+                    "type": "string"
+                },
+                "notify_status": {
+                    "description": "执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知",
+                    "type": "integer"
+                },
+                "notify_type": {
+                    "description": "通知类型 1:邮件 2:webhook",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "执行方式 1:shell 2:http",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "retry_interval": {
+                    "description": "重试间隔(单位:秒)",
+                    "type": "integer"
+                },
+                "retry_times": {
+                    "description": "重试次数",
+                    "type": "integer"
+                },
+                "spec": {
+                    "description": "crontab 表达式",
+                    "type": "string"
+                },
+                "timeout": {
+                    "description": "超时时间(单位:秒)",
+                    "type": "integer"
+                }
+            }
+        },
+        "cron_handler.listData": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "description": "执行命令",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "created_user": {
+                    "description": "创建人",
+                    "type": "string"
+                },
+                "hashid": {
+                    "description": "hashid",
+                    "type": "string"
+                },
+                "http_method": {
+                    "description": "http 请求方式 1:get 2:post",
+                    "type": "integer"
+                },
+                "http_method_text": {
+                    "description": "http 请求方式",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "is_used": {
+                    "description": "是否启用 1=启用 2=禁用",
+                    "type": "integer"
+                },
+                "is_used_text": {
+                    "description": "是否启用",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "任务名称",
+                    "type": "string"
+                },
+                "notify_status": {
+                    "description": "执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知",
+                    "type": "integer"
+                },
+                "notify_status_text": {
+                    "description": "执行结束是否通知",
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "执行方式 1:shell 2:http",
+                    "type": "integer"
+                },
+                "protocol_text": {
+                    "description": "执行方式",
+                    "type": "string"
+                },
+                "retry_interval": {
+                    "description": "重试间隔(单位:秒)",
+                    "type": "integer"
+                },
+                "retry_times": {
+                    "description": "重试次数",
+                    "type": "integer"
+                },
+                "spec": {
+                    "description": "crontab 表达式",
+                    "type": "string"
+                },
+                "timeout": {
+                    "description": "超时时间(单位:秒)",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "updated_user": {
+                    "description": "更新人",
+                    "type": "string"
+                }
+            }
+        },
+        "cron_handler.listResponse": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cron_handler.listData"
+                    }
+                },
+                "pagination": {
+                    "type": "object",
+                    "properties": {
+                        "current_page": {
+                            "type": "integer"
+                        },
+                        "per_page_count": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "cron_handler.modifyResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "cron_handler.updateUsedResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
                 }
             }
         },

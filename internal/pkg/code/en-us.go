@@ -53,8 +53,9 @@ var enUSText = map[int]string{
 	MenuListActionError:   "Failed to get menu action list",
 	MenuDeleteActionError: "Failed to delete menu action",
 
-	CronCreateError: "Failed to create cron",
-	CronUpdateError: "Failed to update menu",
-	CronListError:   "Failed to get cron list",
-	CronDetailError: "Failed to get cron detail",
+	CronCreateError:  "Failed to create cron",
+	CronUpdateError:  "Failed to update menu",
+	CronListError:    "Failed to get cron list",
+	CronDetailError:  "Failed to get cron detail",
+	CronExecuteError: "Failed to execute cron",
 }

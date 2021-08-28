@@ -41,7 +41,7 @@ type listResponse struct {
 	Pagination struct {
 		Total        int `json:"total"`
 		CurrentPage  int `json:"current_page"`
-		PrePageCount int `json:"pre_page_count"`
+		PerPageCount int `json:"per_page_count"`
 	} `json:"pagination"`
 }
 
@@ -109,7 +109,7 @@ func (h *handler) List() core.HandlerFunc {
 			return
 		}
 		res.Pagination.Total = cast.ToInt(resCountData)
-		res.Pagination.PrePageCount = pageSize
+		res.Pagination.PerPageCount = pageSize
 		res.Pagination.CurrentPage = page
 		res.List = make([]listData, len(resListData))
 

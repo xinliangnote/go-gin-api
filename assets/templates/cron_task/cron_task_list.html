@@ -93,7 +93,7 @@
                 function (data) {
                     if (data.list.length > 0) {
                         var totalNum = data.pagination.total; //总条数
-                        var pageNum = Math.ceil(totalNum / data.pagination.pre_page_count); //分页的总页数
+                        var pageNum = Math.ceil(totalNum / data.pagination.per_page_count); //分页的总页数
 
                         $("#paginationDiv").pagination({
                             current: data.pagination.current_page,
@@ -271,11 +271,52 @@
 
         // 手动执行
         $(document).on('click', '.btn-exec', function () {
-            $.alert({
-                title: '温馨提示',
+            const id = $(this).attr('data-id');
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">手动执行</strong> 吗？',
                 icon: 'mdi mdi-alert',
-                type: 'orange',
-                content: '功能开发中...',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                "/api/cron/exec/" + id,
+                                {},
+                                function () {
+                                },
+                                function (data) {
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 任务已开始运行。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
             });
         })
     })

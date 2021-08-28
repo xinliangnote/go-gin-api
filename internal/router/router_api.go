@@ -81,12 +81,13 @@ func setApiRouter(r *resource) {
 		api.PATCH("/config/email", configHandler.Email())
 
 		// cron
-		cronHandler := cron_handler.New(r.logger, r.db, r.cache)
+		cronHandler := cron_handler.New(r.logger, r.db, r.cache, r.cronServer)
 		api.POST("/cron", cronHandler.Create())
 		api.GET("/cron", cronHandler.List())
 		api.GET("/cron/:id", cronHandler.Detail())
 		api.POST("/cron/:id", cronHandler.Modify())
 		api.PATCH("/cron/used", cronHandler.UpdateUsed())
+		api.PATCH("/cron/exec/:id", cronHandler.Execute())
 
 	}
 }

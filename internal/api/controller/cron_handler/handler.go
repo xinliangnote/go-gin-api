@@ -3,6 +3,7 @@ package cron_handler
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
+	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
@@ -40,6 +41,11 @@ type Handler interface {
 	// @Tags API.cron
 	// @Router /api/cron/:id [get]
 	Detail() core.HandlerFunc
+
+	// Execute 手动执行任务
+	// @Tags API.cron
+	// @Router /api/cron/:id [patch]
+	Execute() core.HandlerFunc
 }
 
 type handler struct {
@@ -49,12 +55,12 @@ type handler struct {
 	cronService cron_service.Service
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache cache.Repo, cron cron_server.Server) Handler {
 	return &handler{
 		logger:      logger,
 		cache:       cache,
 		hashids:     hash.New(configs.Get().HashIds.Secret, configs.Get().HashIds.Length),
-		cronService: cron_service.New(db, cache),
+		cronService: cron_service.New(db, cache, cron),
 	}
 }
 

@@ -53,8 +53,9 @@ var zhCNText = map[int]string{
 	MenuListActionError:   "获取菜单栏功能权限列表失败",
 	MenuDeleteActionError: "删除菜单栏功能权限失败",
 
-	CronCreateError: "创建后台任务失败",
-	CronUpdateError: "更新后台任务失败",
-	CronListError:   "获取定时任务列表失败",
-	CronDetailError: "获取定时任务详情失败",
+	CronCreateError:  "创建后台任务失败",
+	CronUpdateError:  "更新后台任务失败",
+	CronListError:    "获取定时任务列表失败",
+	CronDetailError:  "获取定时任务详情失败",
+	CronExecuteError: "手动执行定时任务失败",
 }

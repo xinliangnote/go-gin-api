@@ -83,7 +83,7 @@ definitions:
         properties:
           current_page:
             type: integer
-          pre_page_count:
+          per_page_count:
             type: integer
           total:
             type: integer
@@ -259,7 +259,7 @@ definitions:
         properties:
           current_page:
             type: integer
-          pre_page_count:
+          per_page_count:
             type: integer
           total:
             type: integer
@@ -285,6 +285,148 @@ definitions:
       email:
         description: 邮箱地址
         type: string
+    type: object
+  cron_handler.createResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  cron_handler.detailResponse:
+    properties:
+      command:
+        description: 执行命令
+        type: string
+      http_method:
+        description: http 请求方式 1:get 2:post
+        type: integer
+      is_used:
+        description: 是否启用 1:是  -1:否
+        type: integer
+      name:
+        description: 任务名称
+        type: string
+      notify_keyword:
+        description: 通知匹配关键字(多个用,分割)
+        type: string
+      notify_receiver_email:
+        description: 通知者邮箱地址(多个用,分割)
+        type: string
+      notify_status:
+        description: 执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知
+        type: integer
+      notify_type:
+        description: 通知类型 1:邮件 2:webhook
+        type: integer
+      protocol:
+        description: 执行方式 1:shell 2:http
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      retry_interval:
+        description: 重试间隔(单位:秒)
+        type: integer
+      retry_times:
+        description: 重试次数
+        type: integer
+      spec:
+        description: crontab 表达式
+        type: string
+      timeout:
+        description: 超时时间(单位:秒)
+        type: integer
+    type: object
+  cron_handler.listData:
+    properties:
+      command:
+        description: 执行命令
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      created_user:
+        description: 创建人
+        type: string
+      hashid:
+        description: hashid
+        type: string
+      http_method:
+        description: http 请求方式 1:get 2:post
+        type: integer
+      http_method_text:
+        description: http 请求方式
+        type: string
+      id:
+        description: ID
+        type: integer
+      is_used:
+        description: 是否启用 1=启用 2=禁用
+        type: integer
+      is_used_text:
+        description: 是否启用
+        type: string
+      name:
+        description: 任务名称
+        type: string
+      notify_status:
+        description: 执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知
+        type: integer
+      notify_status_text:
+        description: 执行结束是否通知
+        type: string
+      protocol:
+        description: 执行方式 1:shell 2:http
+        type: integer
+      protocol_text:
+        description: 执行方式
+        type: string
+      retry_interval:
+        description: 重试间隔(单位:秒)
+        type: integer
+      retry_times:
+        description: 重试次数
+        type: integer
+      spec:
+        description: crontab 表达式
+        type: string
+      timeout:
+        description: 超时时间(单位:秒)
+        type: integer
+      updated_at:
+        description: 更新时间
+        type: string
+      updated_user:
+        description: 更新人
+        type: string
+    type: object
+  cron_handler.listResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/cron_handler.listData'
+        type: array
+      pagination:
+        properties:
+          current_page:
+            type: integer
+          per_page_count:
+            type: integer
+          total:
+            type: integer
+        type: object
+    type: object
+  cron_handler.modifyResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
+    type: object
+  cron_handler.updateUsedResponse:
+    properties:
+      id:
+        description: 主键ID
+        type: integer
     type: object
   menu_handler.createActionResponse:
     properties:
@@ -709,16 +851,16 @@ paths:
     patch:
       consumes:
       - multipart/form-data
-      description: 修改个人信息
+      description: 修改密码
       parameters:
-      - description: 昵称
+      - description: 旧密码
         in: formData
-        name: nickname
+        name: old_password
         required: true
         type: string
-      - description: 手机号
+      - description: 新密码
         in: formData
-        name: mobile
+        name: new_password
         required: true
         type: string
       produces:
@@ -727,12 +869,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.modifyPersonalInfoResponse'
+            $ref: '#/definitions/admin_handler.modifyPasswordResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
-      summary: 修改个人信息
+      summary: 修改密码
       tags:
       - API.admin
   /api/admin/offline:
@@ -1077,6 +1219,275 @@ paths:
       summary: 修改邮件配置
       tags:
       - API.config
+  /api/cron:
+    get:
+      consumes:
+      - multipart/form-data
+      description: 任务列表
+      parameters:
+      - description: 第几页
+        in: query
+        name: page
+        type: integer
+      - description: 每页显示条数
+        in: query
+        name: page_size
+        type: string
+      - description: 任务名称
+        in: query
+        name: name
+        type: string
+      - description: 执行方式 1:shell 2:http
+        in: query
+        name: protocol
+        type: integer
+      - description: 是否启用 1:是  -1:否
+        in: query
+        name: is_used
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron_handler.listResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 任务列表
+      tags:
+      - API.cron
+    post:
+      consumes:
+      - multipart/form-data
+      description: 创建任务
+      parameters:
+      - description: 任务名称
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: crontab 表达式
+        in: formData
+        name: spec
+        required: true
+        type: string
+      - description: 执行命令
+        in: formData
+        name: command
+        required: true
+        type: string
+      - description: 执行方式 1:shell 2:http
+        in: formData
+        name: protocol
+        required: true
+        type: integer
+      - description: http 请求方式 1:get 2:post
+        in: formData
+        name: http_method
+        type: integer
+      - description: 超时时间(单位:秒)
+        in: formData
+        name: timeout
+        required: true
+        type: integer
+      - description: 重试次数
+        in: formData
+        name: retry_times
+        required: true
+        type: integer
+      - description: 重试间隔(单位:秒)
+        in: formData
+        name: retry_interval
+        required: true
+        type: integer
+      - description: 执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知
+        in: formData
+        name: notify_status
+        required: true
+        type: integer
+      - description: 通知类型 1:邮件 2:webhook
+        in: formData
+        name: notify_type
+        type: integer
+      - description: 通知者邮箱地址(多个用,分割)
+        in: formData
+        name: notify_receiver_email
+        type: string
+      - description: 通知匹配关键字(多个用,分割)
+        in: formData
+        name: notify_keyword
+        type: string
+      - description: 备注
+        in: formData
+        name: remark
+        type: string
+      - description: 是否启用 1:是  -1:否
+        in: formData
+        name: is_used
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron_handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 创建任务
+      tags:
+      - API.cron
+  /api/cron/:id:
+    get:
+      consumes:
+      - application/json
+      description: 获取单条任务详情
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron_handler.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 获取单条任务详情
+      tags:
+      - API.cron
+  /api/cron/{id}:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 编辑任务
+      parameters:
+      - description: Hashid
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: 任务名称
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: crontab 表达式
+        in: formData
+        name: spec
+        required: true
+        type: string
+      - description: 执行命令
+        in: formData
+        name: command
+        required: true
+        type: string
+      - description: 执行方式 1:shell 2:http
+        in: formData
+        name: protocol
+        required: true
+        type: integer
+      - description: http 请求方式 1:get 2:post
+        in: formData
+        name: http_method
+        type: integer
+      - description: 超时时间(单位:秒)
+        in: formData
+        name: timeout
+        required: true
+        type: integer
+      - description: 重试次数
+        in: formData
+        name: retry_times
+        required: true
+        type: integer
+      - description: 重试间隔(单位:秒)
+        in: formData
+        name: retry_interval
+        required: true
+        type: integer
+      - description: 执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知
+        in: formData
+        name: notify_status
+        required: true
+        type: integer
+      - description: 通知类型 1:邮件 2:webhook
+        in: formData
+        name: notify_type
+        type: integer
+      - description: 通知者邮箱地址(多个用,分割)
+        in: formData
+        name: notify_receiver_email
+        type: string
+      - description: 通知匹配关键字(多个用,分割)
+        in: formData
+        name: notify_keyword
+        type: string
+      - description: 备注
+        in: formData
+        name: remark
+        type: string
+      - description: 是否启用 1:是  -1:否
+        in: formData
+        name: is_used
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron_handler.modifyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 编辑任务
+      tags:
+      - API.cron
+  /api/cron/used:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 更新任务为启用/禁用
+      parameters:
+      - description: Hashid
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: 是否启用 1:是 -1:否
+        in: formData
+        name: used
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron_handler.updateUsedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 更新任务为启用/禁用
+      tags:
+      - API.cron
   /api/menu:
     get:
       consumes:

@@ -7,33 +7,33 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
+
+	"github.com/spf13/cast"
 )
 
-type updateUsedRequest struct {
-	Id   string `form:"id"`   // 主键ID
-	Used int32  `form:"used"` // 是否启用 1:是 -1:否
+type executeRequest struct {
+	Id string `uri:"id"` // HashID
 }
 
-type updateUsedResponse struct {
-	Id int32 `json:"id"` // 主键ID
+type executeResponse struct {
+	Id int `json:"id"` // ID
 }
 
-// UpdateUsed 更新任务为启用/禁用
-// @Summary 更新任务为启用/禁用
-// @Description 更新任务为启用/禁用
+// Execute 手动执行单条任务
+// @Summary 手动执行单条任务
+// @Description 手动执行单条任务
 // @Tags API.cron
-// @Accept multipart/form-data
+// @Accept json
 // @Produce json
-// @Param id formData string true "Hashid"
-// @Param used formData int true "是否启用 1:是 -1:否"
-// @Success 200 {object} updateUsedResponse
+// @Param id path string true "hashId"
+// @Success 200 {object} detailResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/cron/used [patch]
-func (h *handler) UpdateUsed() core.HandlerFunc {
+// @Router /api/cron/:id [patch]
+func (h *handler) Execute() core.HandlerFunc {
 	return func(ctx core.Context) {
-		req := new(updateUsedRequest)
-		res := new(updateUsedResponse)
-		if err := ctx.ShouldBindForm(req); err != nil {
+		req := new(executeRequest)
+		res := new(executeResponse)
+		if err := ctx.ShouldBindURI(req); err != nil {
 			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.ParamBindError,
@@ -52,19 +52,17 @@ func (h *handler) UpdateUsed() core.HandlerFunc {
 			return
 		}
 
-		id := int32(ids[0])
-
-		err = h.cronService.UpdateUsed(ctx, id, req.Used)
+		err = h.cronService.Execute(ctx, cast.ToInt32(ids[0]))
 		if err != nil {
 			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
-				code.AdminUpdateError,
-				code.Text(code.AdminUpdateError)).WithErr(err),
+				code.CronExecuteError,
+				code.Text(code.CronExecuteError)).WithErr(err),
 			)
 			return
 		}
 
-		res.Id = id
+		res.Id = ids[0]
 		ctx.Payload(res)
 	}
 }

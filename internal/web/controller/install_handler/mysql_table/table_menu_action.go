@@ -79,7 +79,8 @@ func CreateMenuActionTableDataSql() (sql string) {
 	sql += "(43, 24, 'POST', '/api/cron/*', 'init'),"
 	sql += "(44, 24, 'GET', '/api/cron', 'init'),"
 	sql += "(45, 24, 'GET', '/api/cron/*', 'init'),"
-	sql += "(46, 24, 'PATCH', '/api/cron/used', 'init');"
+	sql += "(46, 24, 'PATCH', '/api/cron/used', 'init'),"
+	sql += "(47, 24, 'PATCH', '/api/cron/exec/*', 'init');"
 
 	return
 }

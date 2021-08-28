@@ -1,13 +1,13 @@
 package cron_handler
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
 
@@ -50,7 +50,7 @@ type listResponse struct {
 	Pagination struct {
 		Total        int `json:"total"`
 		CurrentPage  int `json:"current_page"`
-		PrePageCount int `json:"pre_page_count"`
+		PerPageCount int `json:"per_page_count"`
 	} `json:"pagination"`
 }
 
@@ -119,7 +119,7 @@ func (h *handler) List() core.HandlerFunc {
 		}
 
 		res.Pagination.Total = cast.ToInt(resCountData)
-		res.Pagination.PrePageCount = pageSize
+		res.Pagination.PerPageCount = pageSize
 		res.Pagination.CurrentPage = page
 		res.List = make([]listData, len(resListData))
 

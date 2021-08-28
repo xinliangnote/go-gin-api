@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
@@ -16,22 +17,24 @@ import (
 )
 
 type resource struct {
-	mux     core.Mux
-	logger  *zap.Logger
-	db      db.Repo
-	cache   cache.Repo
-	grpConn grpc.ClientConn
-	middles middleware.Middleware
+	mux        core.Mux
+	logger     *zap.Logger
+	db         db.Repo
+	cache      cache.Repo
+	grpConn    grpc.ClientConn
+	middles    middleware.Middleware
+	cronServer cron_server.Server
 }
 
 type Server struct {
-	Mux       core.Mux
-	Db        db.Repo
-	Cache     cache.Repo
-	GrpClient grpc.ClientConn
+	Mux        core.Mux
+	Db         db.Repo
+	Cache      cache.Repo
+	GrpClient  grpc.ClientConn
+	CronServer cron_server.Server
 }
 
-func NewHTTPServer(logger *zap.Logger) (*Server, error) {
+func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) {
 	if logger == nil {
 		return nil, errors.New("logger required")
 	}
@@ -66,6 +69,14 @@ func NewHTTPServer(logger *zap.Logger) (*Server, error) {
 			logger.Fatal("new grpc err", zap.Error(err))
 		}
 		r.grpConn = gRPCRepo
+
+		// 初始化 CRON Server
+		cronServer, err := cron_server.New(cronLogger, dbRepo, cacheRepo)
+		if err != nil {
+			logger.Fatal("new cron err", zap.Error(err))
+		}
+		cronServer.Start()
+		r.cronServer = cronServer
 	}
 
 	mux, err := core.New(logger,
@@ -97,6 +108,7 @@ func NewHTTPServer(logger *zap.Logger) (*Server, error) {
 	s.Db = r.db
 	s.Cache = r.cache
 	s.GrpClient = r.grpConn
+	s.CronServer = r.cronServer
 
 	return s, nil
 }

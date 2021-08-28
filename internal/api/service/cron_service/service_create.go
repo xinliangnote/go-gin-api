@@ -45,5 +45,7 @@ func (s *service) Create(ctx core.Context, createData *CreateCronTaskData) (id i
 		return 0, err
 	}
 
+	s.cronServer.AddTask(model)
+
 	return
 }

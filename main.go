@@ -29,23 +29,36 @@ import (
 // @host 127.0.0.1:9999
 // @BasePath
 func main() {
-	// 初始化 logger
-	loggers, err := logger.NewJSONLogger(
+	// 初始化 access logger
+	accessLogger, err := logger.NewJSONLogger(
 		logger.WithDisableConsole(),
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
 		logger.WithTimeLayout("2006-01-02 15:04:05"),
-		logger.WithFileP(configs.ProjectLogFile),
+		logger.WithFileP(configs.ProjectAccessLogFile),
 	)
 	if err != nil {
 		panic(err)
 	}
 
+	// 初始化 cron logger
+	cronLogger, err := logger.NewJSONLogger(
+		logger.WithDisableConsole(),
+		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
+		logger.WithTimeLayout("2006-01-02 15:04:05"),
+		logger.WithFileP(configs.ProjectCronLogFile),
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
 	defer func() {
-		_ = loggers.Sync()
+		_ = accessLogger.Sync()
+		_ = cronLogger.Sync()
 	}()
 
 	// 初始化 HTTP 服务
-	s, err := router.NewHTTPServer(loggers)
+	s, err := router.NewHTTPServer(accessLogger, cronLogger)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +70,7 @@ func main() {
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			loggers.Fatal("http server startup err", zap.Error(err))
+			accessLogger.Fatal("http server startup err", zap.Error(err))
 		}
 	}()
 
@@ -69,7 +82,7 @@ func main() {
 			defer cancel()
 
 			if err := server.Shutdown(ctx); err != nil {
-				loggers.Error("server shutdown err", zap.Error(err))
+				accessLogger.Error("server shutdown err", zap.Error(err))
 			}
 		},
 
@@ -77,11 +90,11 @@ func main() {
 		func() {
 			if s.Db != nil {
 				if err := s.Db.DbWClose(); err != nil {
-					loggers.Error("dbw close err", zap.Error(err))
+					accessLogger.Error("dbw close err", zap.Error(err))
 				}
 
 				if err := s.Db.DbRClose(); err != nil {
-					loggers.Error("dbr close err", zap.Error(err))
+					accessLogger.Error("dbr close err", zap.Error(err))
 				}
 			}
 		},
@@ -90,7 +103,7 @@ func main() {
 		func() {
 			if s.Cache != nil {
 				if err := s.Cache.Close(); err != nil {
-					loggers.Error("cache close err", zap.Error(err))
+					accessLogger.Error("cache close err", zap.Error(err))
 				}
 			}
 		},
@@ -99,8 +112,15 @@ func main() {
 		func() {
 			if s.GrpClient != nil {
 				if err := s.GrpClient.Conn().Close(); err != nil {
-					loggers.Error("gRPC client close err", zap.Error(err))
+					accessLogger.Error("gRPC client close err", zap.Error(err))
 				}
+			}
+		},
+
+		// 关闭 cron Server
+		func() {
+			if s.CronServer != nil {
+				s.CronServer.Stop()
 			}
 		},
 	)
