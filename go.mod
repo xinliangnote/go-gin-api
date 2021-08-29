@@ -10,12 +10,12 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gin-contrib/pprof v1.3.0
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-openapi/spec v0.20.0 // indirect
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
-	github.com/go-playground/validator/v10 v10.2.0
+	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v7 v7.4.0
 	github.com/golang/protobuf v1.5.2
 	github.com/jakecoffman/cron v0.0.0-20190106200828-7e2009c226a5
