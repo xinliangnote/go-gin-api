@@ -50,11 +50,21 @@ type server struct {
 
 type Server interface {
 	i()
+
+	// Start 启动 cron 服务
 	Start()
+
+	// Stop 停止 cron 服务
 	Stop()
+
+	// AddTask 增加定时任务
 	AddTask(task *cron_task_repo.CronTask)
-	AddJob(task *cron_task_repo.CronTask) cron.FuncJob
+
+	// RemoveTask 删除定时任务
 	RemoveTask(taskId int)
+
+	// AddJob 增加定时任务执行的工作内容
+	AddJob(task *cron_task_repo.CronTask) cron.FuncJob
 }
 
 func New(logger *zap.Logger, db db.Repo, cache cache.Repo) (Server, error) {
