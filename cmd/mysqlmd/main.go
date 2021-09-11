@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/xinliangnote/go-gin-api/cmd/mysqlmd/mysql"
@@ -237,7 +236,7 @@ func queryTableColumn(db *gorm.DB, dbName string, tableName string) ([]tableColu
 func getTargetIndexMap(tableNameArr []string, item string) map[int]int {
 	indexMap := make(map[int]int)
 	for i := 0; i < len(tableNameArr); i++ {
-		if match, _ := regexp.MatchString(item, tableNameArr[i]); match {
+		if tableNameArr[i] == item {
 			if _, ok := indexMap[i]; ok {
 				continue
 			}
@@ -256,8 +255,8 @@ func capitalize(s string) string {
 			if i == 0 {
 				if vv[i] >= 97 && vv[i] <= 122 {
 					vv[i] -= 32
-					upperStr += string(vv[i])
 				}
+				upperStr += string(vv[i])
 			} else {
 				upperStr += string(vv[i])
 			}
