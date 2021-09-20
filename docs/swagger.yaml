@@ -615,6 +615,12 @@ definitions:
           type: object
         type: array
     type: object
+  tool_handler.sendMessageResponse:
+    properties:
+      status:
+        description: 状态
+        type: string
+    type: object
   tool_handler.tableColumn:
     properties:
       column_comment:
@@ -776,20 +782,31 @@ paths:
   /api/admin/login:
     post:
       consumes:
-      - application/json
-      description: 管理员登出
+      - multipart/form-data
+      description: 管理员登录
+      parameters:
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.logoutResponse'
+            $ref: '#/definitions/admin_handler.loginResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
-      summary: 管理员登出
+      summary: 管理员登录
       tags:
       - API.admin
   /api/admin/menu:
@@ -1368,6 +1385,30 @@ paths:
       summary: 获取单条任务详情
       tags:
       - API.cron
+    patch:
+      consumes:
+      - application/json
+      description: 手动执行单条任务
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron_handler.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 手动执行单条任务
+      tags:
+      - API.cron
   /api/cron/{id}:
     post:
       consumes:
@@ -1902,6 +1943,31 @@ paths:
           schema:
             $ref: '#/definitions/code.Failure'
       summary: HashIds 加密
+      tags:
+      - API.tool
+  /api/tool/send_message:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 发送消息
+      parameters:
+      - description: 消息内容
+        in: formData
+        name: message
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tool_handler.sendMessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 发送消息
       tags:
       - API.tool
 swagger: "2.0"

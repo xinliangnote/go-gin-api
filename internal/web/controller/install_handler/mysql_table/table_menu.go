@@ -63,7 +63,8 @@ func CreateMenuTableDataSql() (sql string) {
 	sql += "(21, 16, '接口指标', '/metrics', '', 2, 706, 'init'),"
 	sql += "(22, 16, '服务升级', '/upgrade', '', 2, 701, 'init'),"
 	sql += "(23, 0, '后台任务', '', 'mdi-av-timer', 1, 40, 'init'),"
-	sql += "(24, 23, '任务列表', '/cron/list', '', 2, 401, 'init');"
+	sql += "(24, 23, '任务列表', '/cron/list', '', 2, 401, 'init'),"
+	sql += "(25, 16, 'WebSocket', '/tool/websocket', '', 2, 707, 'init');"
 
 	return
 }

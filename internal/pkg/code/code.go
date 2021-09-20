@@ -28,6 +28,8 @@ const (
 	SendEmailError     = 10117
 	MySQLExecError     = 10118
 	GoVersionError     = 10119
+	SocketConnectError = 10120
+	SocketSendError    = 10121
 
 	AuthorizedCreateError    = 20101
 	AuthorizedListError      = 20102

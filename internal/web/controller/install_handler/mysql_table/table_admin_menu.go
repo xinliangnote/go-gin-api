@@ -49,7 +49,8 @@ func CreateAdminMenuTableDataSql() (sql string) {
 	sql += "(21, 1, 2, 'init'),"
 	sql += "(22, 1, 22, 'init'),"
 	sql += "(23, 1, 23, 'init'),"
-	sql += "(24, 1, 24, 'init');"
+	sql += "(24, 1, 24, 'init'),"
+	sql += "(25, 1, 25, 'init');"
 
 	return
 }

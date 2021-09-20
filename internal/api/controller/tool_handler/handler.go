@@ -49,6 +49,11 @@ type Handler interface {
 	// @Tags API.tool
 	// @Router /api/tool/data/mysql [post]
 	SearchMySQL() core.HandlerFunc
+
+	// SendMessage 发送消息
+	// @Tags API.tool
+	// @Router /api/tool/send_message [post]
+	SendMessage() core.HandlerFunc
 }
 
 type handler struct {

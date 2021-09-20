@@ -75,6 +75,7 @@ func setApiRouter(r *resource) {
 		api.GET("/tool/data/dbs", toolHandler.Dbs())
 		api.POST("/tool/data/tables", toolHandler.Tables())
 		api.POST("/tool/data/mysql", toolHandler.SearchMySQL())
+		api.POST("/tool/send_message", toolHandler.SendMessage())
 
 		// config
 		configHandler := config_handler.New(r.logger, r.db, r.cache)
@@ -84,10 +85,10 @@ func setApiRouter(r *resource) {
 		cronHandler := cron_handler.New(r.logger, r.db, r.cache, r.cronServer)
 		api.POST("/cron", cronHandler.Create())
 		api.GET("/cron", cronHandler.List())
-		api.GET("/cron/:id", cronHandler.Detail())
-		api.POST("/cron/:id", cronHandler.Modify())
+		api.GET("/cron/:id", core.AliasForRecordMetrics("/api/cron/detail"), cronHandler.Detail())
+		api.POST("/cron/:id", core.AliasForRecordMetrics("/api/cron/modify"), cronHandler.Modify())
 		api.PATCH("/cron/used", cronHandler.UpdateUsed())
-		api.PATCH("/cron/exec/:id", cronHandler.Execute())
+		api.PATCH("/cron/exec/:id", core.AliasForRecordMetrics("/api/cron/exec"), cronHandler.Execute())
 
 	}
 }

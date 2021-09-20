@@ -98,6 +98,9 @@
                         </div>
                         <input type="text" class="form-control" id="mysql_name" value="{{ .Config.MySQL.Write.Name }}"
                                placeholder="请输入数据库名">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><code>请确保此数据库已存在！</code></span>
+                        </div>
                     </div>
 
                     <div class="input-group mb-3">

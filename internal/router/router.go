@@ -103,6 +103,9 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	// 设置 GraphQL 路由
 	setGraphQLRouter(r)
 
+	// 设置 Socket 路由
+	setSocketRouter(r)
+
 	s := new(Server)
 	s.Mux = mux
 	s.Db = r.db

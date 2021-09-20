@@ -20,6 +20,8 @@ var enUSText = map[int]string{
 	SendEmailError:     "Failed to send mail",
 	MySQLExecError:     "SQL execution failed",
 	GoVersionError:     "Go Version mismatch",
+	SocketConnectError: "Socket not connected",
+	SocketSendError:    "Socket message sending failed",
 
 	AuthorizedCreateError:    "Failed to create caller",
 	AuthorizedListError:      "Failed to get caller list",

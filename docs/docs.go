@@ -177,9 +177,9 @@ var doc = `{
         },
         "/api/admin/login": {
             "post": {
-                "description": "管理员登出",
+                "description": "管理员登录",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -187,12 +187,28 @@ var doc = `{
                 "tags": [
                     "API.admin"
                 ],
-                "summary": "管理员登出",
+                "summary": "管理员登录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.logoutResponse"
+                            "$ref": "#/definitions/admin_handler.loginResponse"
                         }
                     },
                     "400": {
@@ -1102,6 +1118,42 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "手动执行单条任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "手动执行单条任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron_handler.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
             }
         },
         "/api/cron/used": {
@@ -1897,6 +1949,44 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/tool_handler.hashIdsEncodeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tool/send_message": {
+            "post": {
+                "description": "发送消息",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.tool"
+                ],
+                "summary": "发送消息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "消息内容",
+                        "name": "message",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tool_handler.sendMessageResponse"
                         }
                     },
                     "400": {
@@ -2791,6 +2881,15 @@ var doc = `{
                         "type": "object",
                         "additionalProperties": true
                     }
+                }
+            }
+        },
+        "tool_handler.sendMessageResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "description": "状态",
+                    "type": "string"
                 }
             }
         },

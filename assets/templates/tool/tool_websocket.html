@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="../../bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/animate.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">WebSocket 示例</div>
+                </header>
+                <div class="card-body">
+
+                    <ul class="lyear-timeline lyear-timeline-left timeline-content">
+                        <li class="lyear-timeline-item">
+                            <div class="lyear-timeline-item-dot">
+                                <span class="badge"></span>
+                            </div>
+                            <div class="lyear-timeline-item-content">
+                                <p class="mb-1"><strong class="connect-content"></strong></p>
+                                <p class="mb-0 connect-url"></p>
+                                <p>
+                                    <time class="mb-3 connect-time"></time>
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">WebSocket 示例</div>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#send_message"
+                               aria-selected="true">发送消息</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="send_message">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">消息内容</span>
+                                </div>
+                                <input type="text" class="form-control" id="message_content" placeholder="请输入消息内容">
+                            </div>
+
+                            <button type="button" id="btnSend" class="btn btn-primary">发送</button>
+                            <button type="button" id="btnSending" class="btn btn-primary" disabled
+                                    style="display: none">
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                发送中...
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-notify/notify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        const ws = new WebSocket("ws://127.0.0.1:9999/socket/system/message");
+
+        //连接打开时触发
+        ws.onopen = function (evt) {
+            if (evt.isTrusted) {
+                $(".badge").addClass("badge-success");
+                $(".connect-content").html("Socket 连接成功");
+                $(".connect-url").html("连接地址：" + evt.currentTarget.url);
+                $(".connect-time").html(getCSTTime());
+            } else {
+                $(".badge").addClass("badge-danger");
+                $(".connect-content").html("Socket 连接失败");
+                $(".connect-url").html("请确认连接地址是否正确");
+                $(".connect-time").html(getCSTTime());
+            }
+        };
+
+        //接收到消息时触发
+        ws.onmessage = function (evt) {
+            const messageData = JSON.parse(evt.data);
+
+            let html = '<li class="lyear-timeline-item">';
+            html += '<div class="lyear-timeline-item-dot"><span class="badge badge-success"></span></div>';
+            html += '<div class="lyear-timeline-item-content">';
+            html += '<p class="mb-1"><strong>' + messageData.username + '</strong></p>';
+            html += '<p class="mb-0">' + messageData.message + '</p>';
+            html += '<p><time class="mb-3">' + messageData.time + '</time></p>';
+            html += '</div></li>';
+
+            $(".timeline-content").prepend(html);
+        };
+
+        //连接关闭时触发
+        ws.onclose = function (evt) {
+
+            let html = '<li class="lyear-timeline-item">';
+            html += '<div class="lyear-timeline-item-dot"><span class="badge badge-muted"></span></div>';
+            html += '<div class="lyear-timeline-item-content">';
+            html += '<p class="mb-1"><strong>Socket 连接关闭</strong></p>';
+            html += '<p class="mb-0">连接已关闭</p>';
+            html += '<p><time class="mb-3">' + getCSTTime() + '</time></p>';
+            html += '</div></li>';
+
+            $(".timeline-content").prepend(html);
+
+        };
+
+        function getCSTTime() {
+            let date = new Date();
+            let datetime = date.getFullYear() + "-" // "年"
+                + ((date.getMonth() + 1) > 10 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1)) + "-" // "月"
+                + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " " // "日"
+                + (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":" // "小时"
+                + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + ":" // "分钟"
+                + (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()); // "秒"
+
+            return datetime;
+        }
+
+        $('#btnSend').on('click', function () {
+            const messageContent = $("#message_content").val();
+            if (messageContent === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入消息内容。',
+                });
+                return false;
+            }
+
+            AjaxForm(
+                "POST",
+                "/api/tool/send_message",
+                {message: messageContent},
+                function () {
+                    $(this).hide();
+                    $("#btnSendLoading").show();
+                },
+                function (data) {
+                    $("#btnSendLoading").hide();
+                    $("#btnSend").show();
+
+                    if (data.status === 'OK') {
+                        $("#message_content").val("");
+                        SuccessNotify("消息发送成功");
+                    }
+                },
+                function (response) {
+                    $("#btnSendLoading").hide();
+                    $("#btnSend").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

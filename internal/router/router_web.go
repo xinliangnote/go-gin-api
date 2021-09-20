@@ -81,6 +81,7 @@ func setWebRouter(r *resource) {
 		web.GET("/tool/logs", toolHandler.LogsView())
 		web.GET("/tool/cache", toolHandler.CacheView())
 		web.GET("/tool/data", toolHandler.DataView())
+		web.GET("/tool/websocket", toolHandler.WebsocketView())
 
 		// 后台任务
 		web.GET("/cron/list", cronTaskHandler.ListView())

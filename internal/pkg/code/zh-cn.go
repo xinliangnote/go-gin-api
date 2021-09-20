@@ -20,6 +20,8 @@ var zhCNText = map[int]string{
 	SendEmailError:     "发送邮件失败",
 	MySQLExecError:     "SQL 执行失败",
 	GoVersionError:     "Go 版本不满足要求",
+	SocketConnectError: "Socket 未连接",
+	SocketSendError:    "Socket 消息发送失败",
 
 	AuthorizedCreateError:    "创建调用方失败",
 	AuthorizedListError:      "获取调用方列表失败",
