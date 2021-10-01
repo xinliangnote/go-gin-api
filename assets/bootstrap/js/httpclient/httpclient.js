@@ -11,7 +11,7 @@ function GenerateAuthorization(path, method, params) {
 
     let date = new Date();
     let datetime = date.getFullYear() + "-" // "年"
-        + ((date.getMonth() + 1) > 10 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1)) + "-" // "月"
+        + ((date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1)) + "-" // "月"
         + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " " // "日"
         + (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":" // "小时"
         + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) + ":" // "分钟"
