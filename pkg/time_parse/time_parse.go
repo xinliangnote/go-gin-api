@@ -18,6 +18,9 @@ func init() {
 	if cst, err = time.LoadLocation("Asia/Shanghai"); err != nil {
 		panic(err)
 	}
+
+	// 默认设置为中国时区
+	time.Local = cst
 }
 
 // RFC3339ToCSTLayout convert rfc3339 value to china standard time layout

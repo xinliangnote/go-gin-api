@@ -11,6 +11,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
+	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
 
 	"go.uber.org/zap"
 )
@@ -33,7 +34,7 @@ func main() {
 	accessLogger, err := logger.NewJSONLogger(
 		logger.WithDisableConsole(),
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
-		logger.WithTimeLayout("2006-01-02 15:04:05"),
+		logger.WithTimeLayout(time_parse.CSTLayout),
 		logger.WithFileP(configs.ProjectAccessLogFile),
 	)
 	if err != nil {
@@ -44,7 +45,7 @@ func main() {
 	cronLogger, err := logger.NewJSONLogger(
 		logger.WithDisableConsole(),
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
-		logger.WithTimeLayout("2006-01-02 15:04:05"),
+		logger.WithTimeLayout(time_parse.CSTLayout),
 		logger.WithFileP(configs.ProjectCronLogFile),
 	)
 
