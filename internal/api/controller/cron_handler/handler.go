@@ -2,8 +2,8 @@ package cron_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	cronServer "github.com/xinliangnote/go-gin-api/internal/api/repository/cron"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
-	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/internal/services/cron"
@@ -55,7 +55,7 @@ type handler struct {
 	cronService cron.Service
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo, cronServer cron_server.Server) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo, cronServer cronServer.Server) Handler {
 	return &handler{
 		logger:      logger,
 		cache:       cache,

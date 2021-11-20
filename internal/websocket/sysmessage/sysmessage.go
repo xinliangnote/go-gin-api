@@ -1,25 +1,19 @@
-package system_message
+package sysmessage
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/socket"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
-	"github.com/xinliangnote/go-gin-api/internal/websocket/socket_server"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 
 	"go.uber.org/zap"
 )
 
-var _ Handler = (*handler)(nil)
-
-var server socket_server.Server
-
-type Handler interface {
-	i()
-
-	// Connect 建立 Socket 连接
-	Connect() core.HandlerFunc
-}
+var (
+	err    error
+	server socket.Server
+)
 
 type handler struct {
 	logger *zap.Logger
@@ -27,7 +21,7 @@ type handler struct {
 	db     db.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) *handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,
@@ -35,7 +29,7 @@ func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
 	}
 }
 
-func GetConn() (socket_server.Server, error) {
+func GetConn() (socket.Server, error) {
 	if server != nil {
 		return server, nil
 	}
@@ -43,4 +37,13 @@ func GetConn() (socket_server.Server, error) {
 	return nil, errors.New("conn is nil")
 }
 
-func (h *handler) i() {}
+func (h *handler) Connect() core.HandlerFunc {
+	return func(ctx core.Context) {
+		server, err = socket.New(h.logger, h.db, h.cache, ctx.ResponseWriter(), ctx.Request(), nil)
+		if err != nil {
+			return
+		}
+
+		go server.OnMessage()
+	}
+}

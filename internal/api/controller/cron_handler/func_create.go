@@ -6,7 +6,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
-	cron2 "github.com/xinliangnote/go-gin-api/internal/services/cron"
+	"github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
@@ -67,7 +67,7 @@ func (h *handler) Create() core.HandlerFunc {
 			return
 		}
 
-		createData := new(cron2.CreateCronTaskData)
+		createData := new(cron.CreateCronTaskData)
 		createData.Name = req.Name
 		createData.Spec = req.Spec
 		createData.Command = req.Command

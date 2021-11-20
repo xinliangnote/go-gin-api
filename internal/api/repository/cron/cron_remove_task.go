@@ -1,4 +1,4 @@
-package cron_server
+package cron
 
 import "github.com/spf13/cast"
 

@@ -1,6 +1,9 @@
-package socket_server
+package socket
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
@@ -31,7 +34,14 @@ type Server interface {
 	OnClose()
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo, conn *websocket.Conn) (Server, error) {
+var upGrader = websocket.Upgrader{
+	HandshakeTimeout: 5 * time.Second,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo, w http.ResponseWriter, r *http.Request, responseHeader http.Header) (Server, error) {
 	if logger == nil {
 		return nil, errors.New("logger required")
 	}
@@ -44,15 +54,16 @@ func New(logger *zap.Logger, db db.Repo, cache redis.Repo, conn *websocket.Conn)
 		return nil, errors.New("cache required")
 	}
 
-	if conn == nil {
-		return nil, errors.New("conn required")
+	ws, err := upGrader.Upgrade(w, r, responseHeader)
+	if err != nil {
+		return nil, errors.Wrap(err, "ws error")
 	}
 
 	return &server{
 		logger: logger,
 		db:     db,
 		cache:  cache,
-		socket: conn,
+		socket: ws,
 	}, nil
 }
 

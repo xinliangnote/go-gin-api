@@ -1,9 +1,9 @@
 package cron
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/cron"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
-	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 )
@@ -25,10 +25,10 @@ type Service interface {
 type service struct {
 	db         db.Repo
 	cache      redis.Repo
-	cronServer cron_server.Server
+	cronServer cron.Server
 }
 
-func New(db db.Repo, cache redis.Repo, cron cron_server.Server) Service {
+func New(db db.Repo, cache redis.Repo, cron cron.Server) Service {
 	return &service{
 		db:         db,
 		cache:      cache,

@@ -1,4 +1,4 @@
-package socket_server
+package socket
 
 import "go.uber.org/zap"
 

@@ -7,7 +7,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
-	"github.com/xinliangnote/go-gin-api/internal/websocket/socket_conn/system_message"
+	"github.com/xinliangnote/go-gin-api/internal/websocket/sysmessage"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 )
@@ -49,7 +49,7 @@ func (h *handler) SendMessage() core.HandlerFunc {
 			return
 		}
 
-		conn, err := system_message.GetConn()
+		conn, err := sysmessage.GetConn()
 		if err != nil {
 			ctx.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

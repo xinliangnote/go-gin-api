@@ -7,7 +7,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
-	cron2 "github.com/xinliangnote/go-gin-api/internal/services/cron"
+	"github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
@@ -91,7 +91,7 @@ func (h *handler) List() core.HandlerFunc {
 			pageSize = 10
 		}
 
-		searchData := new(cron2.SearchData)
+		searchData := new(cron.SearchData)
 		searchData.Page = req.Page
 		searchData.PageSize = req.PageSize
 		searchData.Name = req.Name

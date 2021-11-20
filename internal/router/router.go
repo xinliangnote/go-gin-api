@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/cron"
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
-	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
@@ -21,14 +21,14 @@ type resource struct {
 	db         db.Repo
 	cache      redis.Repo
 	middles    middleware.Middleware
-	cronServer cron_server.Server
+	cronServer cron.Server
 }
 
 type Server struct {
 	Mux        core.Mux
 	Db         db.Repo
 	Cache      redis.Repo
-	CronServer cron_server.Server
+	CronServer cron.Server
 }
 
 func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) {
@@ -61,7 +61,7 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 		r.cache = cacheRepo
 
 		// 初始化 CRON Server
-		cronServer, err := cron_server.New(cronLogger, dbRepo, cacheRepo)
+		cronServer, err := cron.New(cronLogger, dbRepo, cacheRepo)
 		if err != nil {
 			logger.Fatal("new cron err", zap.Error(err))
 		}
