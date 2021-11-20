@@ -3,10 +3,10 @@ package cron_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
+	cron2 "github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
@@ -81,7 +81,7 @@ func (h *handler) Modify() core.HandlerFunc {
 
 		id := int32(ids[0])
 
-		modifyData := new(cron_service.ModifyCronTaskData)
+		modifyData := new(cron2.ModifyCronTaskData)
 		modifyData.Name = req.Name
 		modifyData.Spec = req.Spec
 		modifyData.Command = req.Command

@@ -203,6 +203,35 @@
                 }
             }
         },
+        "/api/admin/logout": {
+            "post": {
+                "description": "管理员登出",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.admin"
+                ],
+                "summary": "管理员登出",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_handler.logoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/menu": {
             "post": {
                 "description": "提交菜单授权",
@@ -320,6 +349,51 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/admin_handler.modifyPasswordResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/modify_personal_info": {
+            "patch": {
+                "description": "修改个人信息",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.admin"
+                ],
+                "summary": "修改个人信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "mobile",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin_handler.modifyPersonalInfoResponse"
                         }
                     },
                     "400": {
@@ -1672,6 +1746,126 @@
                 }
             }
         },
+        "/api/order/cancel": {
+            "post": {
+                "description": "取消订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.order"
+                ],
+                "summary": "取消订单",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order_handler.cancelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/order_handler.cancelResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/order/create": {
+            "post": {
+                "description": "创建订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.order"
+                ],
+                "summary": "创建订单",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order_handler.createRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/order_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/order/{id}": {
+            "get": {
+                "description": "取消订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.order"
+                ],
+                "summary": "取消订单",
+                "parameters": [
+                    {
+                        "description": "请求信息",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order_handler.detailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/order_handler.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/tool/cache/clear": {
             "patch": {
                 "description": "清空缓存",
@@ -1983,6 +2177,52 @@
         }
     },
     "definitions": {
+        "admin.ListMenuData": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "is_have": {
+                    "description": "是否已拥有权限",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "admin.ListMyMenuData": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "description": "图标",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "link": {
+                    "description": "链接地址",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "父类ID",
+                    "type": "integer"
+                }
+            }
+        },
         "admin_handler.createResponse": {
             "type": "object",
             "properties": {
@@ -2008,7 +2248,7 @@
                     "description": "菜单栏",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/admin_service.ListMyMenuData"
+                        "$ref": "#/definitions/admin.ListMyMenuData"
                     }
                 },
                 "mobile": {
@@ -2031,7 +2271,7 @@
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/admin_service.ListMenuData"
+                        "$ref": "#/definitions/admin.ListMenuData"
                     }
                 },
                 "username": {
@@ -2172,52 +2412,6 @@
             "properties": {
                 "id": {
                     "description": "主键ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "admin_service.ListMenuData": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "ID",
-                    "type": "integer"
-                },
-                "is_have": {
-                    "description": "是否已拥有权限",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "菜单名称",
-                    "type": "string"
-                },
-                "pid": {
-                    "description": "父类ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "admin_service.ListMyMenuData": {
-            "type": "object",
-            "properties": {
-                "icon": {
-                    "description": "图标",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID",
-                    "type": "integer"
-                },
-                "link": {
-                    "description": "链接地址",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "菜单名称",
-                    "type": "string"
-                },
-                "pid": {
-                    "description": "父类ID",
                     "type": "integer"
                 }
             }
@@ -2787,6 +2981,24 @@
                     "type": "integer"
                 }
             }
+        },
+        "order_handler.cancelRequest": {
+            "type": "object"
+        },
+        "order_handler.cancelResponse": {
+            "type": "object"
+        },
+        "order_handler.createRequest": {
+            "type": "object"
+        },
+        "order_handler.createResponse": {
+            "type": "object"
+        },
+        "order_handler.detailRequest": {
+            "type": "object"
+        },
+        "order_handler.detailResponse": {
+            "type": "object"
         },
         "tool_handler.dbData": {
             "type": "object",

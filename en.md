@@ -13,7 +13,6 @@ Features:
 1. GraphQL supported by [GraphQL](https://github.com/99designs/gqlgen)
 1. Trace project internal invoking
 1. Visualized performance analysis supported by [pprof](https://github.com/gin-contrib/pprof)
-1. Industry standard RFC 7519 method for authentication supported by [jwt](https://github.com/dgrijalva/jwt-go)
 1. Uniformly defined error codes supported by errno
 1. Blazing fast, structured, leveled logging system by [zap](https://go.uber.org/zap)
 1. Complete configuration solution supported by [viper](https://github.com/spf13/viper)
@@ -28,10 +27,6 @@ Features:
 ## Index
 
 **Detailed documentation：[https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)**
-
-## Others
-
-To check Jaeger  code， [v1.0](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，documentation:[jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 。
 
 ## Contributing
 

@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
 	"github.com/spf13/cast"
 )
@@ -82,7 +82,7 @@ func (h *handler) List() core.HandlerFunc {
 			pageSize = 10
 		}
 
-		searchData := new(admin_service.SearchData)
+		searchData := new(admin2.SearchData)
 		searchData.Page = page
 		searchData.PageSize = pageSize
 		searchData.Username = req.Username
@@ -137,9 +137,9 @@ func (h *handler) List() core.HandlerFunc {
 				Mobile:      v.Mobile,
 				IsUsed:      cast.ToInt(v.IsUsed),
 				IsOnline:    isOnline,
-				CreatedAt:   v.CreatedAt.Format(time_parse.CSTLayout),
+				CreatedAt:   v.CreatedAt.Format(timeutil.CSTLayout),
 				CreatedUser: v.CreatedUser,
-				UpdatedAt:   v.UpdatedAt.Format(time_parse.CSTLayout),
+				UpdatedAt:   v.UpdatedAt.Format(timeutil.CSTLayout),
 				UpdatedUser: v.UpdatedUser,
 			}
 

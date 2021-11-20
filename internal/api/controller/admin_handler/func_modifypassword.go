@@ -3,10 +3,10 @@ package admin_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -47,7 +47,7 @@ func (h *handler) ModifyPassword() core.HandlerFunc {
 
 		userId := cast.ToInt32(c.UserID())
 
-		searchOneData := new(admin_service.SearchOneData)
+		searchOneData := new(admin2.SearchOneData)
 		searchOneData.Id = userId
 		searchOneData.Password = password.GeneratePassword(req.OldPassword)
 		searchOneData.IsUsed = 1

@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 )
@@ -48,7 +48,7 @@ func (h *handler) Login() core.HandlerFunc {
 			return
 		}
 
-		searchOneData := new(admin_service.SearchOneData)
+		searchOneData := new(admin2.SearchOneData)
 		searchOneData.Username = req.Username
 		searchOneData.Password = password.GeneratePassword(req.Password)
 		searchOneData.IsUsed = 1
@@ -90,7 +90,7 @@ func (h *handler) Login() core.HandlerFunc {
 		adminJsonInfo, _ := json.Marshal(adminCacheData)
 
 		// 将用户信息记录到 Redis 中
-		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token, string(adminJsonInfo), time.Hour*24, cache.WithTrace(c.Trace()))
+		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token, string(adminJsonInfo), time.Hour*24, redis.WithTrace(c.Trace()))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -100,7 +100,7 @@ func (h *handler) Login() core.HandlerFunc {
 			return
 		}
 
-		searchMenuData := new(admin_service.SearchMyMenuData)
+		searchMenuData := new(admin2.SearchMyMenuData)
 		searchMenuData.AdminId = info.Id
 		menu, err := h.adminService.MyMenu(c, searchMenuData)
 		if err != nil {
@@ -116,7 +116,7 @@ func (h *handler) Login() core.HandlerFunc {
 		menuJsonInfo, _ := json.Marshal(menu)
 
 		// 将菜单栏信息记录到 Redis 中
-		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":menu", string(menuJsonInfo), time.Hour*24, cache.WithTrace(c.Trace()))
+		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":menu", string(menuJsonInfo), time.Hour*24, redis.WithTrace(c.Trace()))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -126,7 +126,7 @@ func (h *handler) Login() core.HandlerFunc {
 			return
 		}
 
-		searchActionData := new(admin_service.SearchMyActionData)
+		searchActionData := new(admin2.SearchMyActionData)
 		searchActionData.AdminId = info.Id
 		action, err := h.adminService.MyAction(c, searchActionData)
 		if err != nil {
@@ -142,7 +142,7 @@ func (h *handler) Login() core.HandlerFunc {
 		actionJsonInfo, _ := json.Marshal(action)
 
 		// 将可访问接口信息记录到 Redis 中
-		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":action", string(actionJsonInfo), time.Hour*24, cache.WithTrace(c.Trace()))
+		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":action", string(actionJsonInfo), time.Hour*24, redis.WithTrace(c.Trace()))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 )
 
 func (s *signature) Verify(authorization, date string, path string, method string, params url.Values) (ok bool, err error) {
@@ -36,13 +36,13 @@ func (s *signature) Verify(authorization, date string, path string, method strin
 		return
 	}
 
-	ts, err := time_parse.ParseCSTInLocation(date)
+	ts, err := timeutil.ParseCSTInLocation(date)
 	if err != nil {
 		err = errors.New("date must follow '2006-01-02 15:04:05'")
 		return
 	}
 
-	if time_parse.SubInLocation(ts) > float64(s.ttl/time.Second) {
+	if timeutil.SubInLocation(ts) > float64(s.ttl/time.Second) {
 		err = errors.Errorf("date exceeds limit %v", s.ttl)
 		return
 	}

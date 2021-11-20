@@ -2,10 +2,10 @@ package authorized_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/authorized_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	authorized2 "github.com/xinliangnote/go-gin-api/internal/services/authorized"
 	"github.com/xinliangnote/go-gin-api/pkg/hash"
 
 	"go.uber.org/zap"
@@ -54,16 +54,16 @@ type Handler interface {
 
 type handler struct {
 	logger            *zap.Logger
-	cache             cache.Repo
-	authorizedService authorized_service.Service
+	cache             redis.Repo
+	authorizedService authorized2.Service
 	hashids           hash.Hash
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger:            logger,
 		cache:             cache,
-		authorizedService: authorized_service.New(db, cache),
+		authorizedService: authorized2.New(db, cache),
 		hashids:           hash.New(configs.Get().HashIds.Secret, configs.Get().HashIds.Length),
 	}
 }

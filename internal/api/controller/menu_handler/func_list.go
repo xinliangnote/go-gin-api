@@ -3,9 +3,9 @@ package menu_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/menu_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	menu2 "github.com/xinliangnote/go-gin-api/internal/services/menu"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -38,7 +38,7 @@ type listResponse struct {
 func (h *handler) List() core.HandlerFunc {
 	return func(c core.Context) {
 		res := new(listResponse)
-		resListData, err := h.menuService.List(c, new(menu_service.SearchData))
+		resListData, err := h.menuService.List(c, new(menu2.SearchData))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

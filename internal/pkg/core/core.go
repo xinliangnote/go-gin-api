@@ -2,14 +2,16 @@ package core
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/url"
 	"runtime/debug"
 	"time"
 
+	"github.com/xinliangnote/go-gin-api/assets"
 	"github.com/xinliangnote/go-gin-api/configs"
 	_ "github.com/xinliangnote/go-gin-api/docs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/pkg/browser"
 	"github.com/xinliangnote/go-gin-api/pkg/color"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
@@ -28,6 +30,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// see https://patorjk.com/software/taag/#p=testall&f=Graffiti&t=go-gin-api
 const _UI = `
  ██████╗  ██████╗        ██████╗ ██╗███╗   ██╗       █████╗ ██████╗ ██╗
 ██╔════╝ ██╔═══██╗      ██╔════╝ ██║████╗  ██║      ██╔══██╗██╔══██╗██║
@@ -36,8 +39,6 @@ const _UI = `
 ╚██████╔╝╚██████╔╝      ╚██████╔╝██║██║ ╚████║      ██║  ██║██║     ██║
  ╚═════╝  ╚═════╝        ╚═════╝ ╚═╝╚═╝  ╚═══╝      ╚═╝  ╚═╝╚═╝     ╚═╝
 `
-
-const _MaxBurstSize = 100000
 
 type Option func(*option)
 
@@ -84,7 +85,6 @@ func WithDisablePrometheus() Option {
 func WithPanicNotify(notify OnPanicNotify) Option {
 	return func(opt *option) {
 		opt.panicNotify = notify
-		fmt.Println(color.Green("* [register panic notify]"))
 	}
 }
 
@@ -106,14 +106,12 @@ func WithEnableOpenBrowser(uri string) Option {
 func WithEnableCors() Option {
 	return func(opt *option) {
 		opt.enableCors = true
-		fmt.Println(color.Green("* [register cors]"))
 	}
 }
 
 func WithEnableRate() Option {
 	return func(opt *option) {
 		opt.enableRate = true
-		fmt.Println(color.Green("* [register rate]"))
 	}
 }
 
@@ -246,19 +244,16 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	}
 
 	gin.SetMode(gin.ReleaseMode)
-	//gin.DisableBindValidation()
 	mux := &mux{
 		engine: gin.New(),
 	}
 
 	fmt.Println(color.Blue(_UI))
-	fmt.Println(color.Green(fmt.Sprintf("* [register port %s]", configs.ProjectPort)))
-	fmt.Println(color.Green(fmt.Sprintf("* [register env %s]", env.Active().Value())))
 
-	mux.engine.StaticFS("bootstrap", http.Dir("./assets/bootstrap"))
-	mux.engine.LoadHTMLGlob("./assets/templates/**/*")
+	mux.engine.StaticFS("assets", http.FS(assets.Bootstrap))
+	mux.engine.SetHTMLTemplate(template.Must(template.New("").ParseFS(assets.Templates, "templates/**/*")))
 
-	// withoutLogPaths 这些请求，默认不记录日志
+	// withoutTracePaths 这些请求，默认不记录日志
 	withoutTracePaths := map[string]bool{
 		"/metrics": true,
 
@@ -287,20 +282,17 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	if !opt.disablePProf {
 		if !env.Active().IsPro() {
 			pprof.Register(mux.engine) // register pprof to gin
-			fmt.Println(color.Green("* [register pprof]"))
 		}
 	}
 
 	if !opt.disableSwagger {
 		if !env.Active().IsPro() {
 			mux.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
-			fmt.Println(color.Green("* [register swagger]"))
 		}
 	}
 
 	if !opt.disablePrometheus {
 		mux.engine.GET("/metrics", gin.WrapH(promhttp.Handler())) // register prometheus
-		fmt.Println(color.Green("* [register prometheus]"))
 	}
 
 	if opt.enableCors {
@@ -322,7 +314,6 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	if opt.enableOpenBrowser != "" {
 		_ = browser.Open(opt.enableOpenBrowser)
-		fmt.Println(color.Green("* [register open browser '" + opt.enableOpenBrowser + "']"))
 	}
 
 	// recover两次，防止处理时发生panic，尤其是在OnPanicNotify中。
@@ -497,7 +488,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 	})
 
 	if opt.enableRate {
-		limiter := rate.NewLimiter(rate.Every(time.Second*1), _MaxBurstSize)
+		limiter := rate.NewLimiter(rate.Every(time.Second*1), configs.MaxRequestsPerSecond)
 		mux.engine.Use(func(ctx *gin.Context) {
 			context := newContext(ctx)
 			defer releaseContext(context)

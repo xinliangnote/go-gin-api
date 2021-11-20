@@ -1,7 +1,7 @@
 package config_handler
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 
@@ -21,10 +21,10 @@ type Handler interface {
 
 type handler struct {
 	logger *zap.Logger
-	cache  cache.Repo
+	cache  redis.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,

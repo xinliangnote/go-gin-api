@@ -1,7 +1,7 @@
 package socket_server
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 
@@ -14,7 +14,7 @@ var _ Server = (*server)(nil)
 type server struct {
 	logger *zap.Logger
 	db     db.Repo
-	cache  cache.Repo
+	cache  redis.Repo
 	socket *websocket.Conn
 }
 
@@ -31,7 +31,7 @@ type Server interface {
 	OnClose()
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo, conn *websocket.Conn) (Server, error) {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo, conn *websocket.Conn) (Server, error) {
 	if logger == nil {
 		return nil, errors.New("logger required")
 	}

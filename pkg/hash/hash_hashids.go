@@ -9,12 +9,7 @@ func (h *hash) HashidsEncode(params []int) (string, error) {
 	hd.Salt = h.secret
 	hd.MinLength = h.length
 
-	hashID, err := hashids.NewWithData(hd)
-	if err != nil {
-		return "", err
-	}
-
-	hashStr, err := hashID.Encode(params)
+	hashStr, err := hashids.NewWithData(hd).Encode(params)
 	if err != nil {
 		return "", err
 	}
@@ -27,12 +22,7 @@ func (h *hash) HashidsDecode(hash string) ([]int, error) {
 	hd.Salt = h.secret
 	hd.MinLength = h.length
 
-	hashID, err := hashids.NewWithData(hd)
-	if err != nil {
-		return nil, err
-	}
-
-	ids, err := hashID.DecodeWithError(hash)
+	ids, err := hashids.NewWithData(hd).DecodeWithError(hash)
 	if err != nil {
 		return nil, err
 	}

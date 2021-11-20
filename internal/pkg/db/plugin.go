@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 	"github.com/xinliangnote/go-gin-api/pkg/trace"
 
 	"gorm.io/gorm"
@@ -69,7 +69,7 @@ func after(db *gorm.DB) {
 	sql := db.Dialector.Explain(db.Statement.SQL.String(), db.Statement.Vars...)
 
 	sqlInfo := new(trace.SQL)
-	sqlInfo.Timestamp = time_parse.CSTLayoutString()
+	sqlInfo.Timestamp = timeutil.CSTLayoutString()
 	sqlInfo.SQL = sql
 	sqlInfo.Stack = utils.FileWithLineNum()
 	sqlInfo.Rows = db.Statement.RowsAffected

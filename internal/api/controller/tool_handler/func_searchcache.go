@@ -3,8 +3,8 @@ package tool_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
@@ -50,7 +50,7 @@ func (h *handler) SearchCache() core.HandlerFunc {
 			return
 		}
 
-		val, err := h.cache.Get(req.RedisKey, cache.WithTrace(c.Trace()))
+		val, err := h.cache.Get(req.RedisKey, redis.WithTrace(c.Trace()))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,

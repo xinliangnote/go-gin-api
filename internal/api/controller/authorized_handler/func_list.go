@@ -3,11 +3,11 @@ package authorized_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/authorized_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	authorized2 "github.com/xinliangnote/go-gin-api/internal/services/authorized"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
 	"github.com/spf13/cast"
 )
@@ -82,7 +82,7 @@ func (h *handler) List() core.HandlerFunc {
 			pageSize = 10
 		}
 
-		searchData := new(authorized_service.SearchData)
+		searchData := new(authorized2.SearchData)
 		searchData.Page = page
 		searchData.PageSize = pageSize
 		searchData.BusinessKey = req.BusinessKey
@@ -132,9 +132,9 @@ func (h *handler) List() core.HandlerFunc {
 				BusinessDeveloper: v.BusinessDeveloper,
 				Remark:            v.Remark,
 				IsUsed:            cast.ToInt(v.IsUsed),
-				CreatedAt:         v.CreatedAt.Format(time_parse.CSTLayout),
+				CreatedAt:         v.CreatedAt.Format(timeutil.CSTLayout),
 				CreatedUser:       v.CreatedUser,
-				UpdatedAt:         v.UpdatedAt.Format(time_parse.CSTLayout),
+				UpdatedAt:         v.UpdatedAt.Format(timeutil.CSTLayout),
 				UpdatedUser:       v.UpdatedUser,
 			}
 

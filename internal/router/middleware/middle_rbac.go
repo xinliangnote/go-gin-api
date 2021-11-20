@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/urltable"
@@ -44,7 +44,7 @@ func (m *middleware) RBAC() core.HandlerFunc {
 			return
 		}
 
-		actionData, err := m.cache.Get(configs.RedisKeyPrefixLoginUser+token+":action", cache.WithTrace(c.Trace()))
+		actionData, err := m.cache.Get(configs.RedisKeyPrefixLoginUser+token+":action", redis.WithTrace(c.Trace()))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusUnauthorized,
@@ -54,7 +54,7 @@ func (m *middleware) RBAC() core.HandlerFunc {
 			return
 		}
 
-		var actions []admin_service.MyActionData
+		var actions []admin2.MyActionData
 		err = json.Unmarshal([]byte(actionData), &actions)
 		if err != nil {
 			c.AbortWithError(errno.NewError(

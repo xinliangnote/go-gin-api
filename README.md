@@ -13,8 +13,7 @@
 1. 支持 [Swagger](https://github.com/swaggo/gin-swagger) 接口文档生成 
 1. 支持 [GraphQL](https://github.com/99designs/gqlgen) 查询语言 
 1. 支持 trace 项目内部链路追踪 
-1. 支持 [pprof](https://github.com/gin-contrib/pprof) 性能剖析 
-1. 支持 [jwt](https://github.com/dgrijalva/jwt-go) 接口鉴权 
+1. 支持 [pprof](https://github.com/gin-contrib/pprof) 性能剖析
 1. 支持 errno 统一定义错误码 
 1. 支持 [zap](https://go.uber.org/zap) 日志收集 
 1. 支持 [viper](https://github.com/spf13/viper) 配置文件解析
@@ -34,7 +33,9 @@
 
 ## 其他
 
-查看 Jaeger 链路追踪代码，请查看 [v1.0版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0)，文档点这里 [jaeger.md](https://github.com/xinliangnote/go-gin-api/blob/master/docs/jaeger.md) 。
+查看 Jaeger 链路追踪 Demo 代码，请查看 [v1.0 版](https://github.com/xinliangnote/go-gin-api/releases/tag/v1.0) ，链接地址：http://127.0.0.1:9999/jaeger_test
+
+调用的其他服务端 Demo 代码为 [https://github.com/xinliangnote/go-jaeger-demo](https://github.com/xinliangnote/go-jaeger-demo)
 
 ## 联系作者
 

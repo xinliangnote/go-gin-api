@@ -3,10 +3,10 @@ package admin_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
@@ -47,7 +47,7 @@ func (h *handler) Create() core.HandlerFunc {
 			return
 		}
 
-		createData := new(admin_service.CreateAdminData)
+		createData := new(admin2.CreateAdminData)
 		createData.Nickname = req.Nickname
 		createData.Username = req.Username
 		createData.Mobile = req.Mobile

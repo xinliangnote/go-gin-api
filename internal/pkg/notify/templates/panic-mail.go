@@ -84,7 +84,7 @@ const PanicMail = `
                                                 Stack:
                                             </td>
                                             <td style="width: 90%;">
-                                                {{.Stack}}}
+                                                {{.Stack}}
                                             </td>
                                         </tr>
                                     </table>

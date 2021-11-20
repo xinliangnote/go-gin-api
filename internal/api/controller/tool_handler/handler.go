@@ -2,7 +2,7 @@ package tool_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/pkg/hash"
@@ -59,11 +59,11 @@ type Handler interface {
 type handler struct {
 	logger  *zap.Logger
 	db      db.Repo
-	cache   cache.Repo
+	cache   redis.Repo
 	hashids hash.Hash
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger:  logger,
 		db:      db,

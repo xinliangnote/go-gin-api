@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 )
 
 // Generate
@@ -33,7 +33,7 @@ func (s *signature) Generate(path string, method string, params url.Values) (aut
 	}
 
 	// Date
-	date = time_parse.CSTLayoutString()
+	date = timeutil.CSTLayoutString()
 
 	// Encode() 方法中自带 sorted by key
 	sortParamsEncode, err := url.QueryUnescape(params.Encode())

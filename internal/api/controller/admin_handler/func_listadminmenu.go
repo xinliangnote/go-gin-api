@@ -3,9 +3,9 @@ package admin_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
@@ -14,8 +14,8 @@ type listAdminMenuRequest struct {
 }
 
 type listAdminMenuResponse struct {
-	List     []admin_service.ListMenuData `json:"list"`
-	UserName string                       `json:"username"`
+	List     []admin2.ListMenuData `json:"list"`
+	UserName string                `json:"username"`
 }
 
 // ListAdminMenu 菜单授权列表
@@ -51,7 +51,7 @@ func (h *handler) ListAdminMenu() core.HandlerFunc {
 			return
 		}
 
-		searchOneData := new(admin_service.SearchOneData)
+		searchOneData := new(admin2.SearchOneData)
 		searchOneData.Id = int32(ids[0])
 		searchOneData.IsUsed = 1
 
@@ -67,7 +67,7 @@ func (h *handler) ListAdminMenu() core.HandlerFunc {
 
 		res.UserName = info.Username
 
-		searchData := new(admin_service.SearchListMenuData)
+		searchData := new(admin2.SearchListMenuData)
 		searchData.AdminId = int32(ids[0])
 
 		listData, err := h.adminService.ListMenu(c, searchData)

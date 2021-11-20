@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
@@ -23,13 +23,13 @@ type logoutResponse struct {
 // @Produce json
 // @Success 200 {object} logoutResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/admin/login [post]
+// @Router /api/admin/logout [post]
 func (h *handler) Logout() core.HandlerFunc {
 	return func(c core.Context) {
 		res := new(logoutResponse)
 		res.Username = c.UserName()
 
-		if !h.cache.Del(configs.RedisKeyPrefixLoginUser+c.GetHeader(configs.HeaderLoginToken), cache.WithTrace(c.Trace())) {
+		if !h.cache.Del(configs.RedisKeyPrefixLoginUser+c.GetHeader(configs.HeaderLoginToken), redis.WithTrace(c.Trace())) {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
 				code.AdminLogOutError,

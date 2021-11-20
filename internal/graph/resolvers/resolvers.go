@@ -3,8 +3,8 @@ package resolvers
 import (
 	"context"
 
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/graph/generated"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 
@@ -21,11 +21,11 @@ type queryResolver struct{ *Resolver }
 
 type Resolver struct {
 	logger *zap.Logger
-	cache  cache.Repo
+	cache  redis.Repo
 	//userService user_service.UserService
 }
 
-func NewRootResolvers(logger *zap.Logger, db db.Repo, cache cache.Repo) generated.Config {
+func NewRootResolvers(logger *zap.Logger, db db.Repo, cache redis.Repo) generated.Config {
 	c := generated.Config{
 		Resolvers: &Resolver{
 			logger: logger,

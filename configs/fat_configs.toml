@@ -3,10 +3,6 @@
   length = 12
   secret = "6ab6122836cfef95f8db"
 
-[jwt]
-  expireduration = 24
-  secret = "i1ydX9RtHyuJTrw7frcu"
-
 [language]
   local = "zh-cn"
 
@@ -43,7 +39,3 @@
   minidleconns = 5
   pass = ""
   poolsize = 10
-
-[urltoken]
-  expireduration = 10
-  secret = "i1ydX9RtHyuJTrw7frcu"

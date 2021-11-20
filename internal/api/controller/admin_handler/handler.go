@@ -2,10 +2,10 @@ package admin_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/hash"
 
 	"go.uber.org/zap"
@@ -84,17 +84,17 @@ type Handler interface {
 
 type handler struct {
 	logger       *zap.Logger
-	cache        cache.Repo
+	cache        redis.Repo
 	hashids      hash.Hash
-	adminService admin_service.Service
+	adminService admin2.Service
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger:       logger,
 		cache:        cache,
 		hashids:      hash.New(configs.Get().HashIds.Secret, configs.Get().HashIds.Length),
-		adminService: admin_service.New(db, cache),
+		adminService: admin2.New(db, cache),
 	}
 }
 

@@ -3,10 +3,10 @@ package cron_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
+	cron2 "github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -66,7 +66,7 @@ func (h *handler) Detail() core.HandlerFunc {
 			return
 		}
 
-		searchOneData := new(cron_service.SearchOneData)
+		searchOneData := new(cron2.SearchOneData)
 		searchOneData.Id = cast.ToInt32(ids[0])
 
 		info, err := h.cronService.Detail(ctx, searchOneData)

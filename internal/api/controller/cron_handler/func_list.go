@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
+	cron2 "github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
 	"github.com/spf13/cast"
 )
@@ -91,7 +91,7 @@ func (h *handler) List() core.HandlerFunc {
 			pageSize = 10
 		}
 
-		searchData := new(cron_service.SearchData)
+		searchData := new(cron2.SearchData)
 		searchData.Page = req.Page
 		searchData.PageSize = req.PageSize
 		searchData.Name = req.Name
@@ -151,9 +151,9 @@ func (h *handler) List() core.HandlerFunc {
 				NotifyStatusText: cron_task_repo.NotifyStatusText[v.NotifyStatus],
 				IsUsed:           cast.ToInt(v.IsUsed),
 				IsUsedText:       cron_task_repo.IsUsedText[v.IsUsed],
-				CreatedAt:        v.CreatedAt.Format(time_parse.CSTLayout),
+				CreatedAt:        v.CreatedAt.Format(timeutil.CSTLayout),
 				CreatedUser:      v.CreatedUser,
-				UpdatedAt:        v.UpdatedAt.Format(time_parse.CSTLayout),
+				UpdatedAt:        v.UpdatedAt.Format(timeutil.CSTLayout),
 				UpdatedUser:      v.UpdatedUser,
 			}
 

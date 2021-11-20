@@ -5,21 +5,21 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
 
 type detailResponse struct {
-	Username string                         `json:"username"` // 用户名
-	Nickname string                         `json:"nickname"` // 昵称
-	Mobile   string                         `json:"mobile"`   // 手机号
-	Menu     []admin_service.ListMyMenuData `json:"menu"`     // 菜单栏
+	Username string                  `json:"username"` // 用户名
+	Nickname string                  `json:"nickname"` // 昵称
+	Mobile   string                  `json:"mobile"`   // 手机号
+	Menu     []admin2.ListMyMenuData `json:"menu"`     // 菜单栏
 }
 
 // Detail 管理员详情
@@ -35,7 +35,7 @@ func (h *handler) Detail() core.HandlerFunc {
 	return func(c core.Context) {
 		res := new(detailResponse)
 
-		searchOneData := new(admin_service.SearchOneData)
+		searchOneData := new(admin2.SearchOneData)
 		searchOneData.Id = cast.ToInt32(c.UserID())
 		searchOneData.IsUsed = 1
 
@@ -49,7 +49,7 @@ func (h *handler) Detail() core.HandlerFunc {
 			return
 		}
 
-		menuCacheData, err := h.cache.Get(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(searchOneData.Id)+":menu", cache.WithTrace(c.Trace()))
+		menuCacheData, err := h.cache.Get(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(searchOneData.Id)+":menu", redis.WithTrace(c.Trace()))
 		if err != nil {
 			c.AbortWithError(errno.NewError(
 				http.StatusBadRequest,
@@ -59,7 +59,7 @@ func (h *handler) Detail() core.HandlerFunc {
 			return
 		}
 
-		var menuData []admin_service.ListMyMenuData
+		var menuData []admin2.ListMyMenuData
 		err = json.Unmarshal([]byte(menuCacheData), &menuData)
 		if err != nil {
 			c.AbortWithError(errno.NewError(

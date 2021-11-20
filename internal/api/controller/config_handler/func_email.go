@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
@@ -71,10 +71,6 @@ func (h *handler) Email() core.HandlerFunc {
 			)
 			return
 		}
-
-		viper.SetConfigName(env.Active().Value() + "_configs")
-		viper.SetConfigType("toml")
-		viper.AddConfigPath("./configs")
 
 		viper.Set("mail.host", req.Host)
 		viper.Set("mail.port", cast.ToInt(req.Port))

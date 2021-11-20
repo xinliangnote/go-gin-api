@@ -1,7 +1,7 @@
 package system_message
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/internal/websocket/socket_server"
@@ -23,11 +23,11 @@ type Handler interface {
 
 type handler struct {
 	logger *zap.Logger
-	cache  cache.Repo
+	cache  redis.Repo
 	db     db.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,

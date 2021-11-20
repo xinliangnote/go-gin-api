@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 
@@ -43,7 +43,7 @@ func (tc *taskCount) Wait() {
 type server struct {
 	logger    *zap.Logger
 	db        db.Repo
-	cache     cache.Repo
+	cache     redis.Repo
 	cron      *cron.Cron
 	taskCount *taskCount
 }
@@ -67,7 +67,7 @@ type Server interface {
 	AddJob(task *cron_task_repo.CronTask) cron.FuncJob
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo) (Server, error) {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo) (Server, error) {
 	if logger == nil {
 		return nil, errors.New("logger required")
 	}

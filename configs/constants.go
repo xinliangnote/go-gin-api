@@ -1,6 +1,9 @@
 package configs
 
 const (
+	// MinGoVersion 最小 Go 版本
+	MinGoVersion = 1.16
+
 	// ProjectVersion 项目版本
 	ProjectVersion = "v1.2.8"
 
@@ -31,9 +34,6 @@ const (
 	// HeaderSignTokenDate 签名验证 Date，Header 中传递的参数
 	HeaderSignTokenDate = "Authorization-Date"
 
-	// RedisKeyPrefixRequestID Redis Key 前缀 - 防止重复提交
-	RedisKeyPrefixRequestID = ProjectName + ":request-id:"
-
 	// RedisKeyPrefixLoginUser Redis Key 前缀 - 登录用户信息
 	RedisKeyPrefixLoginUser = ProjectName + ":login-user:"
 
@@ -45,4 +45,7 @@ const (
 
 	// EnUS 英文 - 美国
 	EnUS = "en-us"
+
+	// MaxRequestsPerSecond 每秒最大请求量
+	MaxRequestsPerSecond = 10000
 )

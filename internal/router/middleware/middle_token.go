@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
@@ -32,7 +32,7 @@ func (m *middleware) Token(ctx core.Context) (userId int64, userName string, err
 		return
 	}
 
-	cacheData, cacheErr := m.cache.Get(configs.RedisKeyPrefixLoginUser+token, cache.WithTrace(ctx.Trace()))
+	cacheData, cacheErr := m.cache.Get(configs.RedisKeyPrefixLoginUser+token, redis.WithTrace(ctx.Trace()))
 	if cacheErr != nil {
 		err = errno.NewError(
 			http.StatusUnauthorized,

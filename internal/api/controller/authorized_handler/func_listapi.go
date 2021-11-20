@@ -3,9 +3,9 @@ package authorized_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/authorized_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	authorized2 "github.com/xinliangnote/go-gin-api/internal/services/authorized"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -75,7 +75,7 @@ func (h *handler) ListAPI() core.HandlerFunc {
 
 		res.BusinessKey = authorizedInfo.BusinessKey
 
-		searchAPIData := new(authorized_service.SearchAPIData)
+		searchAPIData := new(authorized2.SearchAPIData)
 		searchAPIData.BusinessKey = authorizedInfo.BusinessKey
 
 		resListData, err := h.authorizedService.ListAPI(c, searchAPIData)

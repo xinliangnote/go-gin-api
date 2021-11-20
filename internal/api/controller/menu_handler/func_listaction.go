@@ -3,9 +3,9 @@ package menu_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/menu_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	menu2 "github.com/xinliangnote/go-gin-api/internal/services/menu"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -62,7 +62,7 @@ func (h *handler) ListAction() core.HandlerFunc {
 
 		id := int32(ids[0])
 
-		searchOneData := new(menu_service.SearchOneData)
+		searchOneData := new(menu2.SearchOneData)
 		searchOneData.Id = id
 
 		menuInfo, err := h.menuService.Detail(c, searchOneData)
@@ -77,7 +77,7 @@ func (h *handler) ListAction() core.HandlerFunc {
 
 		res.MenuName = menuInfo.Name
 
-		searchListData := new(menu_service.SearchListActionData)
+		searchListData := new(menu2.SearchListActionData)
 		searchListData.MenuId = menuInfo.Id
 
 		resListData, err := h.menuService.ListAction(c, searchListData)

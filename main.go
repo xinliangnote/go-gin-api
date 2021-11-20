@@ -11,7 +11,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
 	"github.com/xinliangnote/go-gin-api/pkg/shutdown"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
 	"go.uber.org/zap"
 )
@@ -34,7 +34,7 @@ func main() {
 	accessLogger, err := logger.NewJSONLogger(
 		logger.WithDisableConsole(),
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
-		logger.WithTimeLayout(time_parse.CSTLayout),
+		logger.WithTimeLayout(timeutil.CSTLayout),
 		logger.WithFileP(configs.ProjectAccessLogFile),
 	)
 	if err != nil {
@@ -45,7 +45,7 @@ func main() {
 	cronLogger, err := logger.NewJSONLogger(
 		logger.WithDisableConsole(),
 		logger.WithField("domain", fmt.Sprintf("%s[%s]", configs.ProjectName, env.Active().Value())),
-		logger.WithTimeLayout(time_parse.CSTLayout),
+		logger.WithTimeLayout(timeutil.CSTLayout),
 		logger.WithFileP(configs.ProjectCronLogFile),
 	)
 
@@ -105,15 +105,6 @@ func main() {
 			if s.Cache != nil {
 				if err := s.Cache.Close(); err != nil {
 					accessLogger.Error("cache close err", zap.Error(err))
-				}
-			}
-		},
-
-		// 关闭 gRPC client
-		func() {
-			if s.GrpClient != nil {
-				if err := s.GrpClient.Conn().Close(); err != nil {
-					accessLogger.Error("gRPC client close err", zap.Error(err))
 				}
 			}
 		},

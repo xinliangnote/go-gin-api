@@ -3,9 +3,9 @@ package admin_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -30,7 +30,7 @@ type modifyPersonalInfoResponse struct {
 // @Param mobile formData string true "手机号"
 // @Success 200 {object} modifyPersonalInfoResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/admin/modify_password [patch]
+// @Router /api/admin/modify_personal_info [patch]
 func (h *handler) ModifyPersonalInfo() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(modifyPersonalInfoRequest)
@@ -46,7 +46,7 @@ func (h *handler) ModifyPersonalInfo() core.HandlerFunc {
 
 		userId := cast.ToInt32(c.UserID())
 
-		modifyData := new(admin_service.ModifyData)
+		modifyData := new(admin2.ModifyData)
 		modifyData.Nickname = req.Nickname
 		modifyData.Mobile = req.Mobile
 

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/bootstrap/js/bootstrap-multitabs/multitabs.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">个人信息</div>
+                </div>
+                <div class="card-body">
+
+                    <form class="site-form">
+                        <div class="form-group">
+                            <label>用户名</label>
+                            <input type="text" class="form-control" id="username" disabled="disabled">
+                        </div>
+                        <div class="form-group">
+                            <label>昵称</label>
+                            <input type="text" class="form-control" maxlength="10" id="nickname" placeholder="输入您的昵称">
+                        </div>
+                        <div class="form-group">
+                            <label>手机号</label>
+                            <input type="text" class="form-control" maxlength="11" id="mobile" placeholder="请输入您的手机号">
+                        </div>
+                        <button type="button" id="btnOk" class="btn btn-primary">保存</button>
+                        <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            执行中...
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/assets/bootstrap/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("input#nickname, input#mobile").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        AjaxForm(
+            "GET",
+            "/api/admin/info",
+            "",
+            function () {},
+            function (data) {
+                $("#username").val(data.username);
+                $("#nickname").val(data.nickname);
+                $("#mobile").val(data.mobile);
+            },
+            function (response) {
+                AjaxError(response);
+            }
+        );
+
+        $('#btnOk').on('click', function () {
+            const nickname = $("#nickname").val();
+            if (nickname === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入您的昵称。',
+                });
+                return false;
+            }
+
+            const postData = {
+                nickname: nickname,
+                mobile: $("#mobile").val(),
+            };
+
+            AjaxForm(
+                "PATCH",
+                "/api/admin/modify_personal_info",
+                postData,
+                function () {
+                    $(this).hide();
+                    $("#btnLoading").show();
+                },
+                function () {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    $.alert({
+                        title: '操作成功',
+                        icon: 'mdi mdi-check-decagram',
+                        type: 'green',
+                        content: '信息修改成功。',
+                        buttons: {
+                            okay: {
+                                text: '关闭',
+                                action: function () {
+                                    location.reload();
+                                }
+                            }
+                        }
+                    });
+                },
+                function (response) {
+                    $("#btnLoading").hide();
+                    $("#btnOk").show();
+
+                    AjaxError(response);
+                }
+            );
+        });
+    })
+</script>
+</body>
+</html>

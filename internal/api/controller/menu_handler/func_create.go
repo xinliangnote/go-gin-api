@@ -3,9 +3,9 @@ package menu_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/menu_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	menu2 "github.com/xinliangnote/go-gin-api/internal/services/menu"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
@@ -60,7 +60,7 @@ func (h *handler) Create() core.HandlerFunc {
 
 			id := int32(ids[0])
 
-			updateData := new(menu_service.UpdateMenuData)
+			updateData := new(menu2.UpdateMenuData)
 			updateData.Name = req.Name
 			updateData.Icon = req.Icon
 			updateData.Link = req.Link
@@ -88,7 +88,7 @@ func (h *handler) Create() core.HandlerFunc {
 				level = 1
 			}
 
-			createData := new(menu_service.CreateMenuData)
+			createData := new(menu2.CreateMenuData)
 			createData.Pid = pid
 			createData.Name = req.Name
 			createData.Icon = req.Icon

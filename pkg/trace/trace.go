@@ -19,7 +19,6 @@ type T interface {
 	AppendDialog(dialog *Dialog) *Trace
 	AppendSQL(sql *SQL) *Trace
 	AppendRedis(redis *Redis) *Trace
-	AppendGRPC(grpc *Grpc) *Trace
 }
 
 // Trace 记录的参数
@@ -32,7 +31,6 @@ type Trace struct {
 	Debugs             []*Debug  `json:"debugs"`               // 调试信息
 	SQLs               []*SQL    `json:"sqls"`                 // 执行的 SQL 信息
 	Redis              []*Redis  `json:"redis"`                // 执行的 Redis 信息
-	GRPCs              []*Grpc   `json:"grpc"`                 // 执行的 gRPC 信息
 	Success            bool      `json:"success"`              // 请求结果 true or false
 	CostSeconds        float64   `json:"cost_seconds"`         // 执行时长(单位秒)
 }
@@ -137,18 +135,5 @@ func (t *Trace) AppendRedis(redis *Redis) *Trace {
 	defer t.mux.Unlock()
 
 	t.Redis = append(t.Redis, redis)
-	return t
-}
-
-// AppendGRPC 追加 gRPC 调用信息
-func (t *Trace) AppendGRPC(grpc *Grpc) *Trace {
-	if grpc == nil {
-		return t
-	}
-
-	t.mux.Lock()
-	defer t.mux.Unlock()
-
-	t.GRPCs = append(t.GRPCs, grpc)
 	return t
 }

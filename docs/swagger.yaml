@@ -1,4 +1,37 @@
 definitions:
+  admin.ListMenuData:
+    properties:
+      id:
+        description: ID
+        type: integer
+      is_have:
+        description: 是否已拥有权限
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      pid:
+        description: 父类ID
+        type: integer
+    type: object
+  admin.ListMyMenuData:
+    properties:
+      icon:
+        description: 图标
+        type: string
+      id:
+        description: ID
+        type: integer
+      link:
+        description: 链接地址
+        type: string
+      name:
+        description: 菜单名称
+        type: string
+      pid:
+        description: 父类ID
+        type: integer
+    type: object
   admin_handler.createResponse:
     properties:
       id:
@@ -16,7 +49,7 @@ definitions:
       menu:
         description: 菜单栏
         items:
-          $ref: '#/definitions/admin_service.ListMyMenuData'
+          $ref: '#/definitions/admin.ListMyMenuData'
         type: array
       mobile:
         description: 手机号
@@ -32,7 +65,7 @@ definitions:
     properties:
       list:
         items:
-          $ref: '#/definitions/admin_service.ListMenuData'
+          $ref: '#/definitions/admin.ListMenuData'
         type: array
       username:
         type: string
@@ -129,39 +162,6 @@ definitions:
     properties:
       id:
         description: 主键ID
-        type: integer
-    type: object
-  admin_service.ListMenuData:
-    properties:
-      id:
-        description: ID
-        type: integer
-      is_have:
-        description: 是否已拥有权限
-        type: integer
-      name:
-        description: 菜单名称
-        type: string
-      pid:
-        description: 父类ID
-        type: integer
-    type: object
-  admin_service.ListMyMenuData:
-    properties:
-      icon:
-        description: 图标
-        type: string
-      id:
-        description: ID
-        type: integer
-      link:
-        description: 链接地址
-        type: string
-      name:
-        description: 菜单名称
-        type: string
-      pid:
-        description: 父类ID
         type: integer
     type: object
   authorized_handler.createAPIResponse:
@@ -561,6 +561,18 @@ definitions:
         description: 主键ID
         type: integer
     type: object
+  order_handler.cancelRequest:
+    type: object
+  order_handler.cancelResponse:
+    type: object
+  order_handler.createRequest:
+    type: object
+  order_handler.createResponse:
+    type: object
+  order_handler.detailRequest:
+    type: object
+  order_handler.detailResponse:
+    type: object
   tool_handler.dbData:
     properties:
       db_name:
@@ -809,6 +821,25 @@ paths:
       summary: 管理员登录
       tags:
       - API.admin
+  /api/admin/logout:
+    post:
+      consumes:
+      - application/json
+      description: 管理员登出
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.logoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 管理员登出
+      tags:
+      - API.admin
   /api/admin/menu:
     post:
       consumes:
@@ -892,6 +923,36 @@ paths:
           schema:
             $ref: '#/definitions/code.Failure'
       summary: 修改密码
+      tags:
+      - API.admin
+  /api/admin/modify_personal_info:
+    patch:
+      consumes:
+      - multipart/form-data
+      description: 修改个人信息
+      parameters:
+      - description: 昵称
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 手机号
+        in: formData
+        name: mobile
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin_handler.modifyPersonalInfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 修改个人信息
       tags:
       - API.admin
   /api/admin/offline:
@@ -1766,6 +1827,84 @@ paths:
       summary: 删除功能权限
       tags:
       - API.menu
+  /api/order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 取消订单
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/order_handler.detailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order_handler.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 取消订单
+      tags:
+      - API.order
+  /api/order/cancel:
+    post:
+      consumes:
+      - application/json
+      description: 取消订单
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/order_handler.cancelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order_handler.cancelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 取消订单
+      tags:
+      - API.order
+  /api/order/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建订单
+      parameters:
+      - description: 请求信息
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/order_handler.createRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order_handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 创建订单
+      tags:
+      - API.order
   /api/tool/cache/clear:
     patch:
       consumes:

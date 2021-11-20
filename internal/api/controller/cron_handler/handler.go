@@ -2,11 +2,11 @@ package cron_handler
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/hash"
 
 	"go.uber.org/zap"
@@ -50,17 +50,17 @@ type Handler interface {
 
 type handler struct {
 	logger      *zap.Logger
-	cache       cache.Repo
+	cache       redis.Repo
 	hashids     hash.Hash
-	cronService cron_service.Service
+	cronService cron.Service
 }
 
-func New(logger *zap.Logger, db db.Repo, cache cache.Repo, cron cron_server.Server) Handler {
+func New(logger *zap.Logger, db db.Repo, cache redis.Repo, cronServer cron_server.Server) Handler {
 	return &handler{
 		logger:      logger,
 		cache:       cache,
 		hashids:     hash.New(configs.Get().HashIds.Secret, configs.Get().HashIds.Length),
-		cronService: cron_service.New(db, cache, cron),
+		cronService: cron.New(db, cache, cronServer),
 	}
 }
 

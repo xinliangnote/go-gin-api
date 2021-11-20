@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/service/admin_service"
-	"github.com/xinliangnote/go-gin-api/internal/api/service/authorized_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
+	authorized2 "github.com/xinliangnote/go-gin-api/internal/services/authorized"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"go.uber.org/zap"
@@ -16,12 +16,6 @@ var _ Middleware = (*middleware)(nil)
 type Middleware interface {
 	// i 为了避免被其他包实现
 	i()
-
-	// Jwt 中间件
-	Jwt(ctx core.Context) (userId int64, userName string, err errno.Error)
-
-	// Resubmit 中间件
-	Resubmit() core.HandlerFunc
 
 	// DisableLog 不记录日志
 	DisableLog() core.HandlerFunc
@@ -38,19 +32,19 @@ type Middleware interface {
 
 type middleware struct {
 	logger            *zap.Logger
-	cache             cache.Repo
+	cache             redis.Repo
 	db                db.Repo
-	authorizedService authorized_service.Service
-	adminService      admin_service.Service
+	authorizedService authorized2.Service
+	adminService      admin2.Service
 }
 
-func New(logger *zap.Logger, cache cache.Repo, db db.Repo) Middleware {
+func New(logger *zap.Logger, cache redis.Repo, db db.Repo) Middleware {
 	return &middleware{
 		logger:            logger,
 		cache:             cache,
 		db:                db,
-		authorizedService: authorized_service.New(db, cache),
-		adminService:      admin_service.New(db, cache),
+		authorizedService: authorized2.New(db, cache),
+		adminService:      admin2.New(db, cache),
 	}
 }
 

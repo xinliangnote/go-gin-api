@@ -3,10 +3,10 @@ package cron_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/cron_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
+	cron2 "github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
@@ -67,7 +67,7 @@ func (h *handler) Create() core.HandlerFunc {
 			return
 		}
 
-		createData := new(cron_service.CreateCronTaskData)
+		createData := new(cron2.CreateCronTaskData)
 		createData.Name = req.Name
 		createData.Spec = req.Spec
 		createData.Command = req.Command

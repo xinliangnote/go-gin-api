@@ -8,19 +8,24 @@ import (
 	"go.uber.org/zap"
 )
 
-// OnPanicNotify 发生 panic 时进行通知
-func OnPanicNotify(ctx core.Context, err interface{}, stackInfo string) {
+// Email 发生 panic 时进行邮件通知
+func Email(ctx core.Context, err interface{}, stackInfo string) {
 	cfg := configs.Get().Mail
 	if cfg.Host == "" || cfg.Port == 0 || cfg.User == "" || cfg.Pass == "" || cfg.To == "" {
 		ctx.Logger().Error("Mail config error")
 		return
 	}
 
+	tractID := ""
+	if ctx.Trace() != nil {
+		tractID = ctx.Trace().ID()
+	}
+
 	subject, body, htmlErr := NewPanicHTMLEmail(
 		ctx.Method(),
 		ctx.Host(),
 		ctx.URI(),
-		ctx.Trace().ID(),
+		tractID,
 		err,
 		stackInfo,
 	)

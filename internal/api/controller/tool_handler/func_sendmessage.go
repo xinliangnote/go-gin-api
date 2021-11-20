@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/internal/websocket/socket_conn/system_message"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
-	"github.com/xinliangnote/go-gin-api/pkg/time_parse"
+	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 )
 
 type sendMessageRequest struct {
@@ -62,7 +62,7 @@ func (h *handler) SendMessage() core.HandlerFunc {
 		messageData := new(messageBody)
 		messageData.Username = ctx.UserName()
 		messageData.Message = req.Message
-		messageData.Time = time_parse.CSTLayoutString()
+		messageData.Time = timeutil.CSTLayoutString()
 
 		messageJsonData, err := json.Marshal(messageData)
 		if err != nil {

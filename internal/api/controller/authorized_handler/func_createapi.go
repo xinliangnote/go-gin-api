@@ -3,9 +3,9 @@ package authorized_handler
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/service/authorized_service"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/code"
+	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	authorized2 "github.com/xinliangnote/go-gin-api/internal/services/authorized"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
@@ -67,7 +67,7 @@ func (h *handler) CreateAPI() core.HandlerFunc {
 			return
 		}
 
-		createAPIData := new(authorized_service.CreateAuthorizedAPIData)
+		createAPIData := new(authorized2.CreateAuthorizedAPIData)
 		createAPIData.BusinessKey = authorizedInfo.BusinessKey
 		createAPIData.Method = req.Method
 		createAPIData.API = req.API

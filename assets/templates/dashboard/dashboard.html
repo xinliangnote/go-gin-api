@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="../../bootstrap/css/style.min.css" rel="stylesheet">
+<link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/assets/bootstrap/css/style.min.css" rel="stylesheet">
 </head>
   
 <body>
@@ -18,7 +18,12 @@
           <div class="card-title">项目信息 <span class="badge badge-pill badge-warning">{{ .ProjectVersion }}</span> </div>
         </header>
         <div class="card-body">
-          <p>操作系统：{{ .GoOS }} <span class="badge badge-brown"> {{ .GoArch }} </span> <span class="badge badge-info"> {{ .GoVersion }} </span></p>
+          <p>操作系统：{{ .GoOS }}
+            <span class="badge badge-brown"> {{ .GoArch }} </span>
+            <span class="badge badge-info"> {{ .GoVersion }} </span>
+            <span class="badge badge-danger"> mysql{{ .MySQLVersion }} </span>
+            <span class="badge badge-danger"> redis{{ .RedisVersion }} </span>
+          </p>
           <p>项目地址：{{ .ProjectPath }}</p>
           <p>项目域名：{{ .Host }} <span class="badge badge-secondary"> {{ .Env }} </span></p>
         </div>
@@ -82,7 +87,7 @@
           <div class="card-title">开源信息</div>
         </header>
         <div class="card-body">
-          <p>GitHub 地址：<a target="_blank" href="https://github.com/xinliangnote/go-gin-api">xinliangnote/go-gin-api</a></p>
+          <p>GitHub 地址：<a target="_blank" href="https://github.com/xinliangnote/go-gin-api">[go-gin-api 源码地址]</a> <a target="_blank" href="https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5">[中文文档]</a></p>
           <p>GitHub Stars：<a href="https://github.com/xinliangnote/go-gin-api/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/xinliangnote/go-gin-api?style=flat-square"></a></p>
           <p>GitHub Forks：<a href="https://github.com/xinliangnote/go-gin-api/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/xinliangnote/go-gin-api?style=flat-square"></a></p>
         </div>
@@ -96,7 +101,7 @@
         </header>
         <div class="card-body text-center">
           <p style="height: 105px;">
-            <img style="height: 100px;" src="../../bootstrap/images/qr-code.png"/>
+            <img style="height: 100px;" src="/assets/bootstrap/images/qr-code.png"/>
           </p>
         </div>
       </div>

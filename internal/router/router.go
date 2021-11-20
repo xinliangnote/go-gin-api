@@ -2,11 +2,10 @@ package router
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/cron/cron_server"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/cache"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/grpc"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
 	"github.com/xinliangnote/go-gin-api/internal/router/middleware"
@@ -20,8 +19,7 @@ type resource struct {
 	mux        core.Mux
 	logger     *zap.Logger
 	db         db.Repo
-	cache      cache.Repo
-	grpConn    grpc.ClientConn
+	cache      redis.Repo
 	middles    middleware.Middleware
 	cronServer cron_server.Server
 }
@@ -29,8 +27,7 @@ type resource struct {
 type Server struct {
 	Mux        core.Mux
 	Db         db.Repo
-	Cache      cache.Repo
-	GrpClient  grpc.ClientConn
+	Cache      redis.Repo
 	CronServer cron_server.Server
 }
 
@@ -57,18 +54,11 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 		r.db = dbRepo
 
 		// 初始化 Cache
-		cacheRepo, err := cache.New()
+		cacheRepo, err := redis.New()
 		if err != nil {
 			logger.Fatal("new cache err", zap.Error(err))
 		}
 		r.cache = cacheRepo
-
-		// 初始化 gRPC client
-		gRPCRepo, err := grpc.New()
-		if err != nil {
-			logger.Fatal("new grpc err", zap.Error(err))
-		}
-		r.grpConn = gRPCRepo
 
 		// 初始化 CRON Server
 		cronServer, err := cron_server.New(cronLogger, dbRepo, cacheRepo)
@@ -83,7 +73,7 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 		core.WithEnableOpenBrowser(openBrowserUri),
 		core.WithEnableCors(),
 		core.WithEnableRate(),
-		core.WithPanicNotify(notify.OnPanicNotify),
+		core.WithPanicNotify(notify.Email),
 		core.WithRecordMetrics(metrics.RecordMetrics),
 	)
 
@@ -94,8 +84,8 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	r.mux = mux
 	r.middles = middleware.New(logger, r.cache, r.db)
 
-	// 设置 WEB 路由
-	setWebRouter(r)
+	// 设置 Render 路由
+	setRenderRouter(r)
 
 	// 设置 API 路由
 	setApiRouter(r)
@@ -110,7 +100,6 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	s.Mux = mux
 	s.Db = r.db
 	s.Cache = r.cache
-	s.GrpClient = r.grpConn
 	s.CronServer = r.cronServer
 
 	return s, nil

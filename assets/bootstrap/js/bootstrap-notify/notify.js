@@ -1,4 +1,4 @@
-document.write('<script type="text/javascript" src="../../bootstrap/js/bootstrap-notify/bootstrap-notify.min.js"></script>');
+document.write('<script type="text/javascript" src="/assets/bootstrap/js/bootstrap-notify/bootstrap-notify.min.js"></script>');
 
 function SuccessNotify(content) {
     $.notify({
