@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin"
 )
 
 type SearchData struct {
@@ -14,7 +14,7 @@ type SearchData struct {
 	Mobile   string // 手机号
 }
 
-func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData []*admin_repo.Admin, err error) {
+func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData []*admin.Admin, err error) {
 
 	page := searchData.Page
 	if page == 0 {
@@ -28,19 +28,19 @@ func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData [
 
 	offset := (page - 1) * pageSize
 
-	qb := admin_repo.NewQueryBuilder()
-	qb.WhereIsDeleted(db_repo.EqualPredicate, -1)
+	qb := admin.NewQueryBuilder()
+	qb.WhereIsDeleted(mysql.EqualPredicate, -1)
 
 	if searchData.Username != "" {
-		qb.WhereUsername(db_repo.EqualPredicate, searchData.Username)
+		qb.WhereUsername(mysql.EqualPredicate, searchData.Username)
 	}
 
 	if searchData.Nickname != "" {
-		qb.WhereNickname(db_repo.EqualPredicate, searchData.Nickname)
+		qb.WhereNickname(mysql.EqualPredicate, searchData.Nickname)
 	}
 
 	if searchData.Mobile != "" {
-		qb.WhereMobile(db_repo.EqualPredicate, searchData.Mobile)
+		qb.WhereMobile(mysql.EqualPredicate, searchData.Mobile)
 	}
 
 	listData, err = qb.

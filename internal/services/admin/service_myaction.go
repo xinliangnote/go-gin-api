@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_menu_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_action_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin_menu"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/menu_action"
 )
 
 type SearchMyActionData struct {
@@ -19,9 +19,9 @@ type MyActionData struct {
 }
 
 func (s *service) MyAction(ctx core.Context, searchData *SearchMyActionData) (actionData []MyActionData, err error) {
-	adminMenuQb := admin_menu_repo.NewQueryBuilder()
+	adminMenuQb := admin_menu.NewQueryBuilder()
 	if searchData.AdminId != 0 {
-		adminMenuQb.WhereAdminId(db_repo.EqualPredicate, searchData.AdminId)
+		adminMenuQb.WhereAdminId(mysql.EqualPredicate, searchData.AdminId)
 	}
 
 	adminMenuListData, err := adminMenuQb.
@@ -40,8 +40,8 @@ func (s *service) MyAction(ctx core.Context, searchData *SearchMyActionData) (ac
 		menuIds = append(menuIds, v.MenuId)
 	}
 
-	actionQb := menu_action_repo.NewQueryBuilder()
-	actionQb.WhereIsDeleted(db_repo.EqualPredicate, -1)
+	actionQb := menu_action.NewQueryBuilder()
+	actionQb.WhereIsDeleted(mysql.EqualPredicate, -1)
 	actionQb.WhereMenuIdIn(menuIds)
 	actionListData, err := actionQb.QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
 	if err != nil {

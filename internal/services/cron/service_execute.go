@@ -1,14 +1,14 @@
 package cron
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/cron_task"
 )
 
 func (s *service) Execute(ctx core.Context, id int32) (err error) {
-	qb := cron_task_repo.NewQueryBuilder()
-	qb.WhereId(db_repo.EqualPredicate, id)
+	qb := cron_task.NewQueryBuilder()
+	qb.WhereId(mysql.EqualPredicate, id)
 	info, err := qb.QueryOne(s.db.GetDbR().WithContext(ctx.RequestContext()))
 	if err != nil {
 		return err

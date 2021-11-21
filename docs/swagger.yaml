@@ -32,19 +32,19 @@ definitions:
         description: 父类ID
         type: integer
     type: object
-  admin_handler.createResponse:
+  admin.createResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  admin_handler.deleteResponse:
+  admin.deleteResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  admin_handler.detailResponse:
+  admin.detailResponse:
     properties:
       menu:
         description: 菜单栏
@@ -61,7 +61,7 @@ definitions:
         description: 用户名
         type: string
     type: object
-  admin_handler.listAdminMenuResponse:
+  admin.listAdminMenuResponse:
     properties:
       list:
         items:
@@ -70,7 +70,7 @@ definitions:
       username:
         type: string
     type: object
-  admin_handler.listData:
+  admin.listData:
     properties:
       created_at:
         description: 创建时间
@@ -106,11 +106,11 @@ definitions:
         description: 用户名
         type: string
     type: object
-  admin_handler.listResponse:
+  admin.listResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/admin_handler.listData'
+          $ref: '#/definitions/admin.listData'
         type: array
       pagination:
         properties:
@@ -122,73 +122,73 @@ definitions:
             type: integer
         type: object
     type: object
-  admin_handler.loginResponse:
+  admin.loginResponse:
     properties:
       token:
         description: 用户身份标识
         type: string
     type: object
-  admin_handler.logoutResponse:
+  admin.logoutResponse:
     properties:
       username:
         description: 用户账号
         type: string
     type: object
-  admin_handler.modifyPasswordResponse:
+  admin.modifyPasswordResponse:
     properties:
       username:
         description: 用户账号
         type: string
     type: object
-  admin_handler.modifyPersonalInfoResponse:
+  admin.modifyPersonalInfoResponse:
     properties:
       username:
         description: 用户账号
         type: string
     type: object
-  admin_handler.offlineResponse:
+  admin.offlineResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  admin_handler.resetPasswordResponse:
+  admin.resetPasswordResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  admin_handler.updateUsedResponse:
+  admin.updateUsedResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  authorized_handler.createAPIResponse:
+  authorized.createAPIResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  authorized_handler.createResponse:
+  authorized.createResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  authorized_handler.deleteAPIResponse:
+  authorized.deleteAPIResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  authorized_handler.deleteResponse:
+  authorized.deleteResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  authorized_handler.listAPIData:
+  authorized.listAPIData:
     properties:
       api:
         description: 调用方对接人
@@ -203,17 +203,17 @@ definitions:
         description: 调用方secret
         type: string
     type: object
-  authorized_handler.listAPIResponse:
+  authorized.listAPIResponse:
     properties:
       business_key:
         description: 调用方key
         type: string
       list:
         items:
-          $ref: '#/definitions/authorized_handler.listAPIData'
+          $ref: '#/definitions/authorized.listAPIData'
         type: array
     type: object
-  authorized_handler.listData:
+  authorized.listData:
     properties:
       business_developer:
         description: 调用方对接人
@@ -249,11 +249,11 @@ definitions:
         description: 更新人
         type: string
     type: object
-  authorized_handler.listResponse:
+  authorized.listResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/authorized_handler.listData'
+          $ref: '#/definitions/authorized.listData'
         type: array
       pagination:
         properties:
@@ -265,7 +265,7 @@ definitions:
             type: integer
         type: object
     type: object
-  authorized_handler.updateUsedResponse:
+  authorized.updateUsedResponse:
     properties:
       id:
         description: 主键ID
@@ -280,19 +280,19 @@ definitions:
         description: 描述信息
         type: string
     type: object
-  config_handler.emailResponse:
+  config.emailResponse:
     properties:
       email:
         description: 邮箱地址
         type: string
     type: object
-  cron_handler.createResponse:
+  cron.createResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  cron_handler.detailResponse:
+  cron.detailResponse:
     properties:
       command:
         description: 执行命令
@@ -337,7 +337,7 @@ definitions:
         description: 超时时间(单位:秒)
         type: integer
     type: object
-  cron_handler.listData:
+  cron.listData:
     properties:
       command:
         description: 执行命令
@@ -400,11 +400,11 @@ definitions:
         description: 更新人
         type: string
     type: object
-  cron_handler.listResponse:
+  cron.listResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/cron_handler.listData'
+          $ref: '#/definitions/cron.listData'
         type: array
       pagination:
         properties:
@@ -416,25 +416,25 @@ definitions:
             type: integer
         type: object
     type: object
-  cron_handler.modifyResponse:
+  cron.modifyResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  cron_handler.updateUsedResponse:
+  cron.updateUsedResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  menu_handler.createActionResponse:
+  menu.createActionResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  menu_handler.createRequest:
+  menu.createRequest:
     properties:
       icon:
         description: 图标
@@ -455,25 +455,25 @@ definitions:
         description: 父类ID
         type: integer
     type: object
-  menu_handler.createResponse:
+  menu.createResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  menu_handler.deleteActionResponse:
+  menu.deleteActionResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  menu_handler.deleteResponse:
+  menu.deleteResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  menu_handler.detailResponse:
+  menu.detailResponse:
     properties:
       icon:
         description: 图标
@@ -491,7 +491,7 @@ definitions:
         description: 父类ID
         type: integer
     type: object
-  menu_handler.listActionData:
+  menu.listActionData:
     properties:
       api:
         description: 调用方对接人
@@ -506,16 +506,16 @@ definitions:
         description: 调用方secret
         type: string
     type: object
-  menu_handler.listActionResponse:
+  menu.listActionResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/menu_handler.listActionData'
+          $ref: '#/definitions/menu.listActionData'
         type: array
       menu_name:
         type: string
     type: object
-  menu_handler.listData:
+  menu.listData:
     properties:
       hashid:
         description: hashid
@@ -542,64 +542,52 @@ definitions:
         description: 排序
         type: integer
     type: object
-  menu_handler.listResponse:
+  menu.listResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/menu_handler.listData'
+          $ref: '#/definitions/menu.listData'
         type: array
     type: object
-  menu_handler.updateSortResponse:
+  menu.updateSortResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  menu_handler.updateUsedResponse:
+  menu.updateUsedResponse:
     properties:
       id:
         description: 主键ID
         type: integer
     type: object
-  order_handler.cancelRequest:
-    type: object
-  order_handler.cancelResponse:
-    type: object
-  order_handler.createRequest:
-    type: object
-  order_handler.createResponse:
-    type: object
-  order_handler.detailRequest:
-    type: object
-  order_handler.detailResponse:
-    type: object
-  tool_handler.dbData:
+  tool.dbData:
     properties:
       db_name:
         description: 数据库名称
         type: string
     type: object
-  tool_handler.dbsResponse:
+  tool.dbsResponse:
     properties:
       list:
         description: 数据库列表
         items:
-          $ref: '#/definitions/tool_handler.dbData'
+          $ref: '#/definitions/tool.dbData'
         type: array
     type: object
-  tool_handler.hashIdsDecodeResponse:
+  tool.hashIdsDecodeResponse:
     properties:
       val:
         description: 解密后的值
         type: integer
     type: object
-  tool_handler.hashIdsEncodeResponse:
+  tool.hashIdsEncodeResponse:
     properties:
       val:
         description: 加密后的值
         type: string
     type: object
-  tool_handler.searchCacheResponse:
+  tool.searchCacheResponse:
     properties:
       ttl:
         description: 过期时间
@@ -608,7 +596,7 @@ definitions:
         description: 查询后的值
         type: string
     type: object
-  tool_handler.searchMySQLResponse:
+  tool.searchMySQLResponse:
     properties:
       cols:
         description: 查询后的行
@@ -618,7 +606,7 @@ definitions:
       cols_info:
         description: 行信息
         items:
-          $ref: '#/definitions/tool_handler.tableColumn'
+          $ref: '#/definitions/tool.tableColumn'
         type: array
       list:
         description: 查询后的数据
@@ -627,13 +615,13 @@ definitions:
           type: object
         type: array
     type: object
-  tool_handler.sendMessageResponse:
+  tool.sendMessageResponse:
     properties:
       status:
         description: 状态
         type: string
     type: object
-  tool_handler.tableColumn:
+  tool.tableColumn:
     properties:
       column_comment:
         description: 字段注释
@@ -642,7 +630,7 @@ definitions:
         description: 字段名称
         type: string
     type: object
-  tool_handler.tableData:
+  tool.tableData:
     properties:
       table_comment:
         description: 数据表备注
@@ -651,12 +639,12 @@ definitions:
         description: 数据表名称
         type: string
     type: object
-  tool_handler.tablesResponse:
+  tool.tablesResponse:
     properties:
       list:
         description: 数据表列表
         items:
-          $ref: '#/definitions/tool_handler.tableData'
+          $ref: '#/definitions/tool.tableData'
         type: array
     type: object
 host: 127.0.0.1:9999
@@ -700,7 +688,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.listResponse'
+            $ref: '#/definitions/admin.listResponse'
         "400":
           description: Bad Request
           schema:
@@ -739,7 +727,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.createResponse'
+            $ref: '#/definitions/admin.createResponse'
         "400":
           description: Bad Request
           schema:
@@ -764,7 +752,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.deleteResponse'
+            $ref: '#/definitions/admin.deleteResponse'
         "400":
           description: Bad Request
           schema:
@@ -783,7 +771,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.detailResponse'
+            $ref: '#/definitions/admin.detailResponse'
         "400":
           description: Bad Request
           schema:
@@ -813,7 +801,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.loginResponse'
+            $ref: '#/definitions/admin.loginResponse'
         "400":
           description: Bad Request
           schema:
@@ -832,7 +820,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.logoutResponse'
+            $ref: '#/definitions/admin.logoutResponse'
         "400":
           description: Bad Request
           schema:
@@ -862,7 +850,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.createResponse'
+            $ref: '#/definitions/admin.createResponse'
         "400":
           description: Bad Request
           schema:
@@ -887,7 +875,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.listAdminMenuResponse'
+            $ref: '#/definitions/admin.listAdminMenuResponse'
         "400":
           description: Bad Request
           schema:
@@ -917,7 +905,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.modifyPasswordResponse'
+            $ref: '#/definitions/admin.modifyPasswordResponse'
         "400":
           description: Bad Request
           schema:
@@ -947,7 +935,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.modifyPersonalInfoResponse'
+            $ref: '#/definitions/admin.modifyPersonalInfoResponse'
         "400":
           description: Bad Request
           schema:
@@ -972,7 +960,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.offlineResponse'
+            $ref: '#/definitions/admin.offlineResponse'
         "400":
           description: Bad Request
           schema:
@@ -997,7 +985,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.resetPasswordResponse'
+            $ref: '#/definitions/admin.resetPasswordResponse'
         "400":
           description: Bad Request
           schema:
@@ -1027,7 +1015,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin_handler.updateUsedResponse'
+            $ref: '#/definitions/admin.updateUsedResponse'
         "400":
           description: Bad Request
           schema:
@@ -1071,7 +1059,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.listResponse'
+            $ref: '#/definitions/authorized.listResponse'
         "400":
           description: Bad Request
           schema:
@@ -1105,7 +1093,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.createResponse'
+            $ref: '#/definitions/authorized.createResponse'
         "400":
           description: Bad Request
           schema:
@@ -1130,7 +1118,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.deleteResponse'
+            $ref: '#/definitions/authorized.deleteResponse'
         "400":
           description: Bad Request
           schema:
@@ -1160,7 +1148,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.updateUsedResponse'
+            $ref: '#/definitions/authorized.updateUsedResponse'
         "400":
           description: Bad Request
           schema:
@@ -1185,7 +1173,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.listAPIResponse'
+            $ref: '#/definitions/authorized.listAPIResponse'
         "400":
           description: Bad Request
           schema:
@@ -1219,7 +1207,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.createAPIResponse'
+            $ref: '#/definitions/authorized.createAPIResponse'
         "400":
           description: Bad Request
           schema:
@@ -1244,7 +1232,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/authorized_handler.deleteAPIResponse'
+            $ref: '#/definitions/authorized.deleteAPIResponse'
         "400":
           description: Bad Request
           schema:
@@ -1289,7 +1277,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/config_handler.emailResponse'
+            $ref: '#/definitions/config.emailResponse'
         "400":
           description: Bad Request
           schema:
@@ -1329,7 +1317,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cron_handler.listResponse'
+            $ref: '#/definitions/cron.listResponse'
         "400":
           description: Bad Request
           schema:
@@ -1413,7 +1401,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cron_handler.createResponse'
+            $ref: '#/definitions/cron.createResponse'
         "400":
           description: Bad Request
           schema:
@@ -1438,7 +1426,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cron_handler.detailResponse'
+            $ref: '#/definitions/cron.detailResponse'
         "400":
           description: Bad Request
           schema:
@@ -1462,7 +1450,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cron_handler.detailResponse'
+            $ref: '#/definitions/cron.detailResponse'
         "400":
           description: Bad Request
           schema:
@@ -1552,7 +1540,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cron_handler.modifyResponse'
+            $ref: '#/definitions/cron.modifyResponse'
         "400":
           description: Bad Request
           schema:
@@ -1582,7 +1570,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/cron_handler.updateUsedResponse'
+            $ref: '#/definitions/cron.updateUsedResponse'
         "400":
           description: Bad Request
           schema:
@@ -1601,7 +1589,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.listResponse'
+            $ref: '#/definitions/menu.listResponse'
         "400":
           description: Bad Request
           schema:
@@ -1619,14 +1607,14 @@ paths:
         name: Request
         required: true
         schema:
-          $ref: '#/definitions/menu_handler.createRequest'
+          $ref: '#/definitions/menu.createRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.createResponse'
+            $ref: '#/definitions/menu.createResponse'
         "400":
           description: Bad Request
           schema:
@@ -1651,7 +1639,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.deleteResponse'
+            $ref: '#/definitions/menu.deleteResponse'
         "400":
           description: Bad Request
           schema:
@@ -1675,7 +1663,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.detailResponse'
+            $ref: '#/definitions/menu.detailResponse'
         "400":
           description: Bad Request
           schema:
@@ -1705,7 +1693,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.updateSortResponse'
+            $ref: '#/definitions/menu.updateSortResponse'
         "400":
           description: Bad Request
           schema:
@@ -1735,7 +1723,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.updateUsedResponse'
+            $ref: '#/definitions/menu.updateUsedResponse'
         "400":
           description: Bad Request
           schema:
@@ -1760,7 +1748,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.listActionResponse'
+            $ref: '#/definitions/menu.listActionResponse'
         "400":
           description: Bad Request
           schema:
@@ -1794,7 +1782,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.createActionResponse'
+            $ref: '#/definitions/menu.createActionResponse'
         "400":
           description: Bad Request
           schema:
@@ -1819,7 +1807,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/menu_handler.deleteActionResponse'
+            $ref: '#/definitions/menu.deleteActionResponse'
         "400":
           description: Bad Request
           schema:
@@ -1827,84 +1815,6 @@ paths:
       summary: 删除功能权限
       tags:
       - API.menu
-  /api/order/{id}:
-    get:
-      consumes:
-      - application/json
-      description: 取消订单
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/order_handler.detailRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/order_handler.detailResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 取消订单
-      tags:
-      - API.order
-  /api/order/cancel:
-    post:
-      consumes:
-      - application/json
-      description: 取消订单
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/order_handler.cancelRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/order_handler.cancelResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 取消订单
-      tags:
-      - API.order
-  /api/order/create:
-    post:
-      consumes:
-      - application/json
-      description: 创建订单
-      parameters:
-      - description: 请求信息
-        in: body
-        name: Request
-        required: true
-        schema:
-          $ref: '#/definitions/order_handler.createRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/order_handler.createResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 创建订单
-      tags:
-      - API.order
   /api/tool/cache/clear:
     patch:
       consumes:
@@ -1922,7 +1832,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.searchCacheResponse'
+            $ref: '#/definitions/tool.searchCacheResponse'
         "400":
           description: Bad Request
           schema:
@@ -1947,7 +1857,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.searchCacheResponse'
+            $ref: '#/definitions/tool.searchCacheResponse'
         "400":
           description: Bad Request
           schema:
@@ -1966,7 +1876,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.dbsResponse'
+            $ref: '#/definitions/tool.dbsResponse'
         "400":
           description: Bad Request
           schema:
@@ -2001,7 +1911,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.searchMySQLResponse'
+            $ref: '#/definitions/tool.searchMySQLResponse'
         "400":
           description: Bad Request
           schema:
@@ -2026,7 +1936,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.tablesResponse'
+            $ref: '#/definitions/tool.tablesResponse'
         "400":
           description: Bad Request
           schema:
@@ -2051,7 +1961,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.hashIdsDecodeResponse'
+            $ref: '#/definitions/tool.hashIdsDecodeResponse'
         "400":
           description: Bad Request
           schema:
@@ -2076,7 +1986,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.hashIdsEncodeResponse'
+            $ref: '#/definitions/tool.hashIdsEncodeResponse'
         "400":
           description: Bad Request
           schema:
@@ -2101,7 +2011,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/tool_handler.sendMessageResponse'
+            $ref: '#/definitions/tool.sendMessageResponse'
         "400":
           description: Bad Request
           schema:

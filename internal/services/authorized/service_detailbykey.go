@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized_api"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 )
 
 // CacheAuthorizedData 缓存结构
@@ -31,9 +31,9 @@ func (s *service) DetailByKey(ctx core.Context, key string) (cacheData *CacheAut
 
 	if !s.cache.Exists(cacheKey) {
 		// 查询调用方信息
-		authorizedInfo, err := authorized_repo.NewQueryBuilder().
-			WhereIsDeleted(db_repo.EqualPredicate, -1).
-			WhereBusinessKey(db_repo.EqualPredicate, key).
+		authorizedInfo, err := authorized.NewQueryBuilder().
+			WhereIsDeleted(mysql.EqualPredicate, -1).
+			WhereBusinessKey(mysql.EqualPredicate, key).
 			First(s.db.GetDbR().WithContext(ctx.RequestContext()))
 
 		if err != nil {
@@ -41,9 +41,9 @@ func (s *service) DetailByKey(ctx core.Context, key string) (cacheData *CacheAut
 		}
 
 		// 查询调用方授权 API 信息
-		authorizedApiInfo, err := authorized_api_repo.NewQueryBuilder().
-			WhereIsDeleted(db_repo.EqualPredicate, -1).
-			WhereBusinessKey(db_repo.EqualPredicate, key).
+		authorizedApiInfo, err := authorized_api.NewQueryBuilder().
+			WhereIsDeleted(mysql.EqualPredicate, -1).
+			WhereBusinessKey(mysql.EqualPredicate, key).
 			OrderById(false).
 			QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
 

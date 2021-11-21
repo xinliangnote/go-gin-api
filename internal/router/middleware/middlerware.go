@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
-	admin2 "github.com/xinliangnote/go-gin-api/internal/services/admin"
-	authorized2 "github.com/xinliangnote/go-gin-api/internal/services/authorized"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
+	"github.com/xinliangnote/go-gin-api/internal/services/admin"
+	"github.com/xinliangnote/go-gin-api/internal/services/authorized"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"go.uber.org/zap"
@@ -33,18 +33,18 @@ type Middleware interface {
 type middleware struct {
 	logger            *zap.Logger
 	cache             redis.Repo
-	db                db.Repo
-	authorizedService authorized2.Service
-	adminService      admin2.Service
+	db                mysql.Repo
+	authorizedService authorized.Service
+	adminService      admin.Service
 }
 
-func New(logger *zap.Logger, cache redis.Repo, db db.Repo) Middleware {
+func New(logger *zap.Logger, cache redis.Repo, db mysql.Repo) Middleware {
 	return &middleware{
 		logger:            logger,
 		cache:             cache,
 		db:                db,
-		authorizedService: authorized2.New(db, cache),
-		adminService:      admin2.New(db, cache),
+		authorizedService: authorized.New(db, cache),
+		adminService:      admin.New(db, cache),
 	}
 }
 

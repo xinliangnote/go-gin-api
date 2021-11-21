@@ -1,9 +1,9 @@
 package menu
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/menu"
 )
 
 type UpdateMenuData struct {
@@ -20,8 +20,8 @@ func (s *service) Modify(ctx core.Context, id int32, menuData *UpdateMenuData) (
 		"updated_user": ctx.UserName(),
 	}
 
-	qb := menu_repo.NewQueryBuilder()
-	qb.WhereId(db_repo.EqualPredicate, id)
+	qb := menu.NewQueryBuilder()
+	qb.WhereId(mysql.EqualPredicate, id)
 	err = qb.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
 	if err != nil {
 		return err

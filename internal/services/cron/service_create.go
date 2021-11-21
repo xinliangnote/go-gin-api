@@ -1,8 +1,8 @@
 package cron
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/cron_task"
 )
 
 type CreateCronTaskData struct {
@@ -23,7 +23,7 @@ type CreateCronTaskData struct {
 }
 
 func (s *service) Create(ctx core.Context, createData *CreateCronTaskData) (id int32, err error) {
-	model := cron_task_repo.NewModel()
+	model := cron_task.NewModel()
 	model.Name = createData.Name
 	model.Spec = createData.Spec
 	model.Command = createData.Command

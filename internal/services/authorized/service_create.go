@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 	"io"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized"
 )
 
 type CreateAuthorizedData struct {
@@ -20,7 +20,7 @@ func (s *service) Create(ctx core.Context, authorizedData *CreateAuthorizedData)
 	io.ReadFull(rand.Reader, buf)
 	secret := hex.EncodeToString(buf)
 
-	model := authorized_repo.NewModel()
+	model := authorized.NewModel()
 	model.BusinessKey = authorizedData.BusinessKey
 	model.BusinessSecret = secret
 	model.BusinessDeveloper = authorizedData.BusinessDeveloper

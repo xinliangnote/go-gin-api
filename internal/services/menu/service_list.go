@@ -1,22 +1,22 @@
 package menu
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/menu"
 )
 
 type SearchData struct {
 	Pid int32 // 父类ID
 }
 
-func (s *service) List(ctx core.Context, searchData *SearchData) (listData []*menu_repo.Menu, err error) {
+func (s *service) List(ctx core.Context, searchData *SearchData) (listData []*menu.Menu, err error) {
 
-	qb := menu_repo.NewQueryBuilder()
-	qb.WhereIsDeleted(db_repo.EqualPredicate, -1)
+	qb := menu.NewQueryBuilder()
+	qb.WhereIsDeleted(mysql.EqualPredicate, -1)
 
 	if searchData.Pid != 0 {
-		qb.WherePid(db_repo.EqualPredicate, searchData.Pid)
+		qb.WherePid(mysql.EqualPredicate, searchData.Pid)
 	}
 
 	listData, err = qb.

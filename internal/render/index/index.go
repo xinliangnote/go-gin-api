@@ -1,9 +1,9 @@
 package index
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 
 	"go.uber.org/zap"
 )
@@ -11,10 +11,10 @@ import (
 type handler struct {
 	logger *zap.Logger
 	cache  redis.Repo
-	db     db.Repo
+	db     mysql.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo) *handler {
+func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) *handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,

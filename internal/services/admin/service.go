@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 )
 
 var _ Service = (*service)(nil)
@@ -13,11 +13,11 @@ type Service interface {
 	i()
 
 	Create(ctx core.Context, adminData *CreateAdminData) (id int32, err error)
-	PageList(ctx core.Context, searchData *SearchData) (listData []*admin_repo.Admin, err error)
+	PageList(ctx core.Context, searchData *SearchData) (listData []*admin.Admin, err error)
 	PageListCount(ctx core.Context, searchData *SearchData) (total int64, err error)
 	UpdateUsed(ctx core.Context, id int32, used int32) (err error)
 	Delete(ctx core.Context, id int32) (err error)
-	Detail(ctx core.Context, searchOneData *SearchOneData) (info *admin_repo.Admin, err error)
+	Detail(ctx core.Context, searchOneData *SearchOneData) (info *admin.Admin, err error)
 	ResetPassword(ctx core.Context, id int32) (err error)
 	ModifyPassword(ctx core.Context, id int32, newPassword string) (err error)
 	ModifyPersonalInfo(ctx core.Context, id int32, modifyData *ModifyData) (err error)
@@ -29,11 +29,11 @@ type Service interface {
 }
 
 type service struct {
-	db    db.Repo
+	db    mysql.Repo
 	cache redis.Repo
 }
 
-func New(db db.Repo, cache redis.Repo) Service {
+func New(db mysql.Repo, cache redis.Repo) Service {
 	return &service{
 		db:    db,
 		cache: cache,

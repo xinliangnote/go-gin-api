@@ -76,7 +76,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.listResponse"
+                            "$ref": "#/definitions/admin.listResponse"
                         }
                     },
                     "400": {
@@ -133,7 +133,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.createResponse"
+                            "$ref": "#/definitions/admin.createResponse"
                         }
                     },
                     "400": {
@@ -162,7 +162,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.detailResponse"
+                            "$ref": "#/definitions/admin.detailResponse"
                         }
                     },
                     "400": {
@@ -207,7 +207,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.loginResponse"
+                            "$ref": "#/definitions/admin.loginResponse"
                         }
                     },
                     "400": {
@@ -236,7 +236,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.logoutResponse"
+                            "$ref": "#/definitions/admin.logoutResponse"
                         }
                     },
                     "400": {
@@ -281,7 +281,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.createResponse"
+                            "$ref": "#/definitions/admin.createResponse"
                         }
                     },
                     "400": {
@@ -319,7 +319,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.listAdminMenuResponse"
+                            "$ref": "#/definitions/admin.listAdminMenuResponse"
                         }
                     },
                     "400": {
@@ -364,7 +364,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.modifyPasswordResponse"
+                            "$ref": "#/definitions/admin.modifyPasswordResponse"
                         }
                     },
                     "400": {
@@ -409,7 +409,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.modifyPersonalInfoResponse"
+                            "$ref": "#/definitions/admin.modifyPersonalInfoResponse"
                         }
                     },
                     "400": {
@@ -447,7 +447,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.offlineResponse"
+                            "$ref": "#/definitions/admin.offlineResponse"
                         }
                     },
                     "400": {
@@ -485,7 +485,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.resetPasswordResponse"
+                            "$ref": "#/definitions/admin.resetPasswordResponse"
                         }
                     },
                     "400": {
@@ -530,7 +530,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.updateUsedResponse"
+                            "$ref": "#/definitions/admin.updateUsedResponse"
                         }
                     },
                     "400": {
@@ -568,7 +568,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin_handler.deleteResponse"
+                            "$ref": "#/definitions/admin.deleteResponse"
                         }
                     },
                     "400": {
@@ -635,7 +635,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.listResponse"
+                            "$ref": "#/definitions/authorized.listResponse"
                         }
                     },
                     "400": {
@@ -685,7 +685,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.createResponse"
+                            "$ref": "#/definitions/authorized.createResponse"
                         }
                     },
                     "400": {
@@ -730,7 +730,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.updateUsedResponse"
+                            "$ref": "#/definitions/authorized.updateUsedResponse"
                         }
                     },
                     "400": {
@@ -768,7 +768,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.deleteResponse"
+                            "$ref": "#/definitions/authorized.deleteResponse"
                         }
                     },
                     "400": {
@@ -806,7 +806,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.listAPIResponse"
+                            "$ref": "#/definitions/authorized.listAPIResponse"
                         }
                     },
                     "400": {
@@ -856,7 +856,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.createAPIResponse"
+                            "$ref": "#/definitions/authorized.createAPIResponse"
                         }
                     },
                     "400": {
@@ -894,7 +894,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/authorized_handler.deleteAPIResponse"
+                            "$ref": "#/definitions/authorized.deleteAPIResponse"
                         }
                     },
                     "400": {
@@ -960,7 +960,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/config_handler.emailResponse"
+                            "$ref": "#/definitions/config.emailResponse"
                         }
                     },
                     "400": {
@@ -1021,7 +1021,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cron_handler.listResponse"
+                            "$ref": "#/definitions/cron.listResponse"
                         }
                     },
                     "400": {
@@ -1143,7 +1143,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cron_handler.createResponse"
+                            "$ref": "#/definitions/cron.createResponse"
                         }
                     },
                     "400": {
@@ -1181,7 +1181,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cron_handler.detailResponse"
+                            "$ref": "#/definitions/cron.detailResponse"
                         }
                     },
                     "400": {
@@ -1217,7 +1217,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cron_handler.detailResponse"
+                            "$ref": "#/definitions/cron.detailResponse"
                         }
                     },
                     "400": {
@@ -1262,7 +1262,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cron_handler.updateUsedResponse"
+                            "$ref": "#/definitions/cron.updateUsedResponse"
                         }
                     },
                     "400": {
@@ -1393,7 +1393,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/cron_handler.modifyResponse"
+                            "$ref": "#/definitions/cron.modifyResponse"
                         }
                     },
                     "400": {
@@ -1422,7 +1422,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.listResponse"
+                            "$ref": "#/definitions/menu.listResponse"
                         }
                     },
                     "400": {
@@ -1452,7 +1452,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.createRequest"
+                            "$ref": "#/definitions/menu.createRequest"
                         }
                     }
                 ],
@@ -1460,7 +1460,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.createResponse"
+                            "$ref": "#/definitions/menu.createResponse"
                         }
                     },
                     "400": {
@@ -1505,7 +1505,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.updateSortResponse"
+                            "$ref": "#/definitions/menu.updateSortResponse"
                         }
                     },
                     "400": {
@@ -1550,7 +1550,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.updateUsedResponse"
+                            "$ref": "#/definitions/menu.updateUsedResponse"
                         }
                     },
                     "400": {
@@ -1588,7 +1588,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.detailResponse"
+                            "$ref": "#/definitions/menu.detailResponse"
                         }
                     },
                     "400": {
@@ -1624,7 +1624,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.deleteResponse"
+                            "$ref": "#/definitions/menu.deleteResponse"
                         }
                     },
                     "400": {
@@ -1662,7 +1662,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.listActionResponse"
+                            "$ref": "#/definitions/menu.listActionResponse"
                         }
                     },
                     "400": {
@@ -1712,7 +1712,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.createActionResponse"
+                            "$ref": "#/definitions/menu.createActionResponse"
                         }
                     },
                     "400": {
@@ -1750,127 +1750,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/menu_handler.deleteActionResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/order/cancel": {
-            "post": {
-                "description": "取消订单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.order"
-                ],
-                "summary": "取消订单",
-                "parameters": [
-                    {
-                        "description": "请求信息",
-                        "name": "Request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order_handler.cancelRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/order_handler.cancelResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/order/create": {
-            "post": {
-                "description": "创建订单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.order"
-                ],
-                "summary": "创建订单",
-                "parameters": [
-                    {
-                        "description": "请求信息",
-                        "name": "Request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order_handler.createRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/order_handler.createResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/order/{id}": {
-            "get": {
-                "description": "取消订单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.order"
-                ],
-                "summary": "取消订单",
-                "parameters": [
-                    {
-                        "description": "请求信息",
-                        "name": "Request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order_handler.detailRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/order_handler.detailResponse"
+                            "$ref": "#/definitions/menu.deleteActionResponse"
                         }
                     },
                     "400": {
@@ -1908,7 +1788,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.searchCacheResponse"
+                            "$ref": "#/definitions/tool.searchCacheResponse"
                         }
                     },
                     "400": {
@@ -1946,7 +1826,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.searchCacheResponse"
+                            "$ref": "#/definitions/tool.searchCacheResponse"
                         }
                     },
                     "400": {
@@ -1975,7 +1855,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.dbsResponse"
+                            "$ref": "#/definitions/tool.dbsResponse"
                         }
                     },
                     "400": {
@@ -2027,7 +1907,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.searchMySQLResponse"
+                            "$ref": "#/definitions/tool.searchMySQLResponse"
                         }
                     },
                     "400": {
@@ -2065,7 +1945,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.tablesResponse"
+                            "$ref": "#/definitions/tool.tablesResponse"
                         }
                     },
                     "400": {
@@ -2103,7 +1983,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.hashIdsDecodeResponse"
+                            "$ref": "#/definitions/tool.hashIdsDecodeResponse"
                         }
                     },
                     "400": {
@@ -2141,7 +2021,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.hashIdsEncodeResponse"
+                            "$ref": "#/definitions/tool.hashIdsEncodeResponse"
                         }
                     },
                     "400": {
@@ -2179,7 +2059,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/tool_handler.sendMessageResponse"
+                            "$ref": "#/definitions/tool.sendMessageResponse"
                         }
                     },
                     "400": {
@@ -2239,7 +2119,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.createResponse": {
+        "admin.createResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2248,7 +2128,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.deleteResponse": {
+        "admin.deleteResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2257,7 +2137,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.detailResponse": {
+        "admin.detailResponse": {
             "type": "object",
             "properties": {
                 "menu": {
@@ -2281,7 +2161,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.listAdminMenuResponse": {
+        "admin.listAdminMenuResponse": {
             "type": "object",
             "properties": {
                 "list": {
@@ -2295,7 +2175,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.listData": {
+        "admin.listData": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -2344,13 +2224,13 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.listResponse": {
+        "admin.listResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/admin_handler.listData"
+                        "$ref": "#/definitions/admin.listData"
                     }
                 },
                 "pagination": {
@@ -2369,7 +2249,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.loginResponse": {
+        "admin.loginResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -2378,7 +2258,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.logoutResponse": {
+        "admin.logoutResponse": {
             "type": "object",
             "properties": {
                 "username": {
@@ -2387,7 +2267,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.modifyPasswordResponse": {
+        "admin.modifyPasswordResponse": {
             "type": "object",
             "properties": {
                 "username": {
@@ -2396,7 +2276,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.modifyPersonalInfoResponse": {
+        "admin.modifyPersonalInfoResponse": {
             "type": "object",
             "properties": {
                 "username": {
@@ -2405,7 +2285,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.offlineResponse": {
+        "admin.offlineResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2414,7 +2294,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.resetPasswordResponse": {
+        "admin.resetPasswordResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2423,7 +2303,7 @@ var doc = `{
                 }
             }
         },
-        "admin_handler.updateUsedResponse": {
+        "admin.updateUsedResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2432,7 +2312,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.createAPIResponse": {
+        "authorized.createAPIResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2441,7 +2321,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.createResponse": {
+        "authorized.createResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2450,7 +2330,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.deleteAPIResponse": {
+        "authorized.deleteAPIResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2459,7 +2339,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.deleteResponse": {
+        "authorized.deleteResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2468,7 +2348,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.listAPIData": {
+        "authorized.listAPIData": {
             "type": "object",
             "properties": {
                 "api": {
@@ -2489,7 +2369,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.listAPIResponse": {
+        "authorized.listAPIResponse": {
             "type": "object",
             "properties": {
                 "business_key": {
@@ -2499,12 +2379,12 @@ var doc = `{
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/authorized_handler.listAPIData"
+                        "$ref": "#/definitions/authorized.listAPIData"
                     }
                 }
             }
         },
-        "authorized_handler.listData": {
+        "authorized.listData": {
             "type": "object",
             "properties": {
                 "business_developer": {
@@ -2553,13 +2433,13 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.listResponse": {
+        "authorized.listResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/authorized_handler.listData"
+                        "$ref": "#/definitions/authorized.listData"
                     }
                 },
                 "pagination": {
@@ -2578,7 +2458,7 @@ var doc = `{
                 }
             }
         },
-        "authorized_handler.updateUsedResponse": {
+        "authorized.updateUsedResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2600,7 +2480,7 @@ var doc = `{
                 }
             }
         },
-        "config_handler.emailResponse": {
+        "config.emailResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -2609,7 +2489,7 @@ var doc = `{
                 }
             }
         },
-        "cron_handler.createResponse": {
+        "cron.createResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2618,7 +2498,7 @@ var doc = `{
                 }
             }
         },
-        "cron_handler.detailResponse": {
+        "cron.detailResponse": {
             "type": "object",
             "properties": {
                 "command": {
@@ -2679,7 +2559,7 @@ var doc = `{
                 }
             }
         },
-        "cron_handler.listData": {
+        "cron.listData": {
             "type": "object",
             "properties": {
                 "command": {
@@ -2764,13 +2644,13 @@ var doc = `{
                 }
             }
         },
-        "cron_handler.listResponse": {
+        "cron.listResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/cron_handler.listData"
+                        "$ref": "#/definitions/cron.listData"
                     }
                 },
                 "pagination": {
@@ -2789,7 +2669,7 @@ var doc = `{
                 }
             }
         },
-        "cron_handler.modifyResponse": {
+        "cron.modifyResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2798,7 +2678,7 @@ var doc = `{
                 }
             }
         },
-        "cron_handler.updateUsedResponse": {
+        "cron.updateUsedResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2807,7 +2687,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.createActionResponse": {
+        "menu.createActionResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2816,7 +2696,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.createRequest": {
+        "menu.createRequest": {
             "type": "object",
             "properties": {
                 "icon": {
@@ -2845,7 +2725,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.createResponse": {
+        "menu.createResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2854,7 +2734,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.deleteActionResponse": {
+        "menu.deleteActionResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2863,7 +2743,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.deleteResponse": {
+        "menu.deleteResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2872,7 +2752,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.detailResponse": {
+        "menu.detailResponse": {
             "type": "object",
             "properties": {
                 "icon": {
@@ -2897,7 +2777,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.listActionData": {
+        "menu.listActionData": {
             "type": "object",
             "properties": {
                 "api": {
@@ -2918,13 +2798,13 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.listActionResponse": {
+        "menu.listActionResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/menu_handler.listActionData"
+                        "$ref": "#/definitions/menu.listActionData"
                     }
                 },
                 "menu_name": {
@@ -2932,7 +2812,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.listData": {
+        "menu.listData": {
             "type": "object",
             "properties": {
                 "hashid": {
@@ -2969,18 +2849,18 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.listResponse": {
+        "menu.listResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/menu_handler.listData"
+                        "$ref": "#/definitions/menu.listData"
                     }
                 }
             }
         },
-        "menu_handler.updateSortResponse": {
+        "menu.updateSortResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2989,7 +2869,7 @@ var doc = `{
                 }
             }
         },
-        "menu_handler.updateUsedResponse": {
+        "menu.updateUsedResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2998,25 +2878,7 @@ var doc = `{
                 }
             }
         },
-        "order_handler.cancelRequest": {
-            "type": "object"
-        },
-        "order_handler.cancelResponse": {
-            "type": "object"
-        },
-        "order_handler.createRequest": {
-            "type": "object"
-        },
-        "order_handler.createResponse": {
-            "type": "object"
-        },
-        "order_handler.detailRequest": {
-            "type": "object"
-        },
-        "order_handler.detailResponse": {
-            "type": "object"
-        },
-        "tool_handler.dbData": {
+        "tool.dbData": {
             "type": "object",
             "properties": {
                 "db_name": {
@@ -3025,19 +2887,19 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.dbsResponse": {
+        "tool.dbsResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "数据库列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/tool_handler.dbData"
+                        "$ref": "#/definitions/tool.dbData"
                     }
                 }
             }
         },
-        "tool_handler.hashIdsDecodeResponse": {
+        "tool.hashIdsDecodeResponse": {
             "type": "object",
             "properties": {
                 "val": {
@@ -3046,7 +2908,7 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.hashIdsEncodeResponse": {
+        "tool.hashIdsEncodeResponse": {
             "type": "object",
             "properties": {
                 "val": {
@@ -3055,7 +2917,7 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.searchCacheResponse": {
+        "tool.searchCacheResponse": {
             "type": "object",
             "properties": {
                 "ttl": {
@@ -3068,7 +2930,7 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.searchMySQLResponse": {
+        "tool.searchMySQLResponse": {
             "type": "object",
             "properties": {
                 "cols": {
@@ -3082,7 +2944,7 @@ var doc = `{
                     "description": "行信息",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/tool_handler.tableColumn"
+                        "$ref": "#/definitions/tool.tableColumn"
                     }
                 },
                 "list": {
@@ -3095,7 +2957,7 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.sendMessageResponse": {
+        "tool.sendMessageResponse": {
             "type": "object",
             "properties": {
                 "status": {
@@ -3104,7 +2966,7 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.tableColumn": {
+        "tool.tableColumn": {
             "type": "object",
             "properties": {
                 "column_comment": {
@@ -3117,7 +2979,7 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.tableData": {
+        "tool.tableData": {
             "type": "object",
             "properties": {
                 "table_comment": {
@@ -3130,14 +2992,14 @@ var doc = `{
                 }
             }
         },
-        "tool_handler.tablesResponse": {
+        "tool.tablesResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "数据表列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/tool_handler.tableData"
+                        "$ref": "#/definitions/tool.tableData"
                     }
                 }
             }

@@ -1,9 +1,9 @@
 package menu
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/menu"
 )
 
 func (s *service) UpdateUsed(ctx core.Context, id int32, used int32) (err error) {
@@ -12,8 +12,8 @@ func (s *service) UpdateUsed(ctx core.Context, id int32, used int32) (err error)
 		"updated_user": ctx.UserName(),
 	}
 
-	qb := menu_repo.NewQueryBuilder()
-	qb.WhereId(db_repo.EqualPredicate, id)
+	qb := menu.NewQueryBuilder()
+	qb.WhereId(mysql.EqualPredicate, id)
 	err = qb.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
 	if err != nil {
 		return err

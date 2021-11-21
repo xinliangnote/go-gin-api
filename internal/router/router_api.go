@@ -1,19 +1,19 @@
 package router
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/admin_handler"
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/authorized_handler"
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/config_handler"
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/cron_handler"
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/menu_handler"
-	"github.com/xinliangnote/go-gin-api/internal/api/controller/tool_handler"
+	"github.com/xinliangnote/go-gin-api/internal/api/admin"
+	"github.com/xinliangnote/go-gin-api/internal/api/authorized"
+	"github.com/xinliangnote/go-gin-api/internal/api/config"
+	"github.com/xinliangnote/go-gin-api/internal/api/cron"
+	"github.com/xinliangnote/go-gin-api/internal/api/menu"
+	"github.com/xinliangnote/go-gin-api/internal/api/tool"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 )
 
 func setApiRouter(r *resource) {
 
 	// admin
-	adminHandler := admin_handler.New(r.logger, r.db, r.cache)
+	adminHandler := admin.New(r.logger, r.db, r.cache)
 
 	// 需要签名验证，无需登录验证，无需 RBAC 权限验证
 	login := r.mux.Group("/api", r.middles.Signature())
@@ -34,7 +34,7 @@ func setApiRouter(r *resource) {
 	api := r.mux.Group("/api", core.WrapAuthHandler(r.middles.Token), r.middles.Signature(), r.middles.RBAC())
 	{
 		// authorized
-		authorizedHandler := authorized_handler.New(r.logger, r.db, r.cache)
+		authorizedHandler := authorized.New(r.logger, r.db, r.cache)
 		api.POST("/authorized", authorizedHandler.Create())
 		api.GET("/authorized", authorizedHandler.List())
 		api.PATCH("/authorized/used", authorizedHandler.UpdateUsed())
@@ -55,7 +55,7 @@ func setApiRouter(r *resource) {
 		api.GET("/admin/menu/:id", core.AliasForRecordMetrics("/api/admin/menu"), adminHandler.ListAdminMenu())
 
 		// menu
-		menuHandler := menu_handler.New(r.logger, r.db, r.cache)
+		menuHandler := menu.New(r.logger, r.db, r.cache)
 		api.POST("/menu", menuHandler.Create())
 		api.GET("/menu", menuHandler.List())
 		api.GET("/menu/:id", core.AliasForRecordMetrics("/api/menu"), menuHandler.Detail())
@@ -67,7 +67,7 @@ func setApiRouter(r *resource) {
 		api.DELETE("/menu_action/:id", core.AliasForRecordMetrics("/api/menu_action"), menuHandler.DeleteAction())
 
 		// tool
-		toolHandler := tool_handler.New(r.logger, r.db, r.cache)
+		toolHandler := tool.New(r.logger, r.db, r.cache)
 		api.GET("/tool/hashids/encode/:id", core.AliasForRecordMetrics("/api/tool/hashids/encode"), toolHandler.HashIdsEncode())
 		api.GET("/tool/hashids/decode/:id", core.AliasForRecordMetrics("/api/tool/hashids/decode"), toolHandler.HashIdsDecode())
 		api.POST("/tool/cache/search", toolHandler.SearchCache())
@@ -78,11 +78,11 @@ func setApiRouter(r *resource) {
 		api.POST("/tool/send_message", toolHandler.SendMessage())
 
 		// config
-		configHandler := config_handler.New(r.logger, r.db, r.cache)
+		configHandler := config.New(r.logger, r.db, r.cache)
 		api.PATCH("/config/email", configHandler.Email())
 
 		// cron
-		cronHandler := cron_handler.New(r.logger, r.db, r.cache, r.cronServer)
+		cronHandler := cron.New(r.logger, r.db, r.cache, r.cronServer)
 		api.POST("/cron", cronHandler.Create())
 		api.GET("/cron", cronHandler.List())
 		api.GET("/cron/:id", core.AliasForRecordMetrics("/api/cron/detail"), cronHandler.Detail())

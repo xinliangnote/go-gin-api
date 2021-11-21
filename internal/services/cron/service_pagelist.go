@@ -1,9 +1,9 @@
 package cron
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/cron_task_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/cron_task"
 )
 
 type SearchData struct {
@@ -14,7 +14,7 @@ type SearchData struct {
 	IsUsed   int32  // 是否启用
 }
 
-func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData []*cron_task_repo.CronTask, err error) {
+func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData []*cron_task.CronTask, err error) {
 	page := searchData.Page
 	if page == 0 {
 		page = 1
@@ -27,18 +27,18 @@ func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData [
 
 	offset := (page - 1) * pageSize
 
-	qb := cron_task_repo.NewQueryBuilder()
+	qb := cron_task.NewQueryBuilder()
 
 	if searchData.Name != "" {
-		qb.WhereName(db_repo.EqualPredicate, searchData.Name)
+		qb.WhereName(mysql.EqualPredicate, searchData.Name)
 	}
 
 	if searchData.Protocol != 0 {
-		qb.WhereProtocol(db_repo.EqualPredicate, searchData.Protocol)
+		qb.WhereProtocol(mysql.EqualPredicate, searchData.Protocol)
 	}
 
 	if searchData.IsUsed != 0 {
-		qb.WhereIsUsed(db_repo.EqualPredicate, searchData.IsUsed)
+		qb.WhereIsUsed(mysql.EqualPredicate, searchData.IsUsed)
 	}
 
 	listData, err = qb.

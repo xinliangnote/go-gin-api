@@ -1,22 +1,22 @@
 package authorized
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized_api"
 )
 
 type SearchAPIData struct {
 	BusinessKey string `json:"business_key"` // 调用方key
 }
 
-func (s *service) ListAPI(ctx core.Context, searchAPIData *SearchAPIData) (listData []*authorized_api_repo.AuthorizedApi, err error) {
+func (s *service) ListAPI(ctx core.Context, searchAPIData *SearchAPIData) (listData []*authorized_api.AuthorizedApi, err error) {
 
-	qb := authorized_api_repo.NewQueryBuilder()
-	qb = qb.WhereIsDeleted(db_repo.EqualPredicate, -1)
+	qb := authorized_api.NewQueryBuilder()
+	qb = qb.WhereIsDeleted(mysql.EqualPredicate, -1)
 
 	if searchAPIData.BusinessKey != "" {
-		qb.WhereBusinessKey(db_repo.EqualPredicate, searchAPIData.BusinessKey)
+		qb.WhereBusinessKey(mysql.EqualPredicate, searchAPIData.BusinessKey)
 	}
 
 	listData, err = qb.

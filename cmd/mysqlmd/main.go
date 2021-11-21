@@ -75,7 +75,7 @@ func main() {
 
 	for _, table := range tables {
 
-		filepath := "./internal/api/repository/db_repo/" + table.Name + "_repo"
+		filepath := "./internal/repository/mysql/" + table.Name
 		_ = os.Mkdir(filepath, 0766)
 		fmt.Println("create dir : ", filepath)
 
@@ -85,7 +85,7 @@ func main() {
 			fmt.Printf("markdown file error %v\n", err.Error())
 			return
 		}
-		fmt.Println("  └── file : ", table.Name+"_repo/gen_table.md")
+		fmt.Println("  └── file : ", table.Name+"/gen_table.md")
 
 		modelName := fmt.Sprintf("%s/gen_model.go", filepath)
 		modelFile, err := os.OpenFile(modelName, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0766)
@@ -93,9 +93,9 @@ func main() {
 			fmt.Printf("create and open model file error %v\n", err.Error())
 			return
 		}
-		fmt.Println("  └── file : ", table.Name+"_repo/gen_model.go")
+		fmt.Println("  └── file : ", table.Name+"/gen_model.go")
 
-		modelContent := fmt.Sprintf("package %s%s\n", table.Name, "_repo")
+		modelContent := fmt.Sprintf("package %s\n", table.Name)
 		modelContent += fmt.Sprintf(`import "time"`)
 		modelContent += fmt.Sprintf("\n\n// %s %s \n", capitalize(table.Name), table.Comment.String)
 		modelContent += fmt.Sprintf("//go:generate gormgen -structs %s -input . \n", capitalize(table.Name))

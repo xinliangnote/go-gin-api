@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin"
 )
 
 type ModifyData struct {
@@ -18,8 +18,8 @@ func (s *service) ModifyPersonalInfo(ctx core.Context, id int32, modifyData *Mod
 		"updated_user": ctx.UserName(),
 	}
 
-	qb := admin_repo.NewQueryBuilder()
-	qb.WhereId(db_repo.EqualPredicate, id)
+	qb := admin.NewQueryBuilder()
+	qb.WhereId(mysql.EqualPredicate, id)
 	err = qb.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
 	if err != nil {
 		return err

@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"fmt"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"os"
 	"runtime"
 	"strconv"
@@ -9,9 +10,8 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -24,10 +24,10 @@ import (
 type handler struct {
 	logger *zap.Logger
 	cache  redis.Repo
-	db     db.Repo
+	db     mysql.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo) *handler {
+func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) *handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,

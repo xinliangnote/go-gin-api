@@ -2,13 +2,13 @@ package handler
 
 import (
 	"context"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/graph/generated"
 	"github.com/xinliangnote/go-gin-api/internal/graph/resolvers"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -29,11 +29,11 @@ type Gql interface {
 
 type gql struct {
 	logger *zap.Logger
-	db     db.Repo
+	db     mysql.Repo
 	cache  redis.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo) Gql {
+func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) Gql {
 	return &gql{
 		logger: logger,
 		cache:  cache,

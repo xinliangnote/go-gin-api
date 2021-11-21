@@ -1,24 +1,24 @@
 package authorized
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"go.uber.org/zap"
 )
 
 type handler struct {
-	db     db.Repo
+	db     mysql.Repo
 	logger *zap.Logger
 	cache  redis.Repo
 }
 
-func New(logger *zap.Logger, db db.Repo, cache redis.Repo) *handler {
+func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) *handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,

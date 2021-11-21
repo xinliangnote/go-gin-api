@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -135,7 +135,7 @@ func (qb *{{.QueryBuilderName}}) Offset(offset int) *{{.QueryBuilderName}} {
 
 {{$queryBuilderName := .QueryBuilderName}}
 {{range .OptionFields}}
-func (qb *{{$queryBuilderName}}) Where{{call $.Helpers.Titelize .FieldName}}(p db_repo.Predicate, value {{.FieldType}}) *{{$queryBuilderName}} {
+func (qb *{{$queryBuilderName}}) Where{{call $.Helpers.Titelize .FieldName}}(p mysql.Predicate, value {{.FieldType}}) *{{$queryBuilderName}} {
 	 qb.where = append(qb.where, struct {
 		prefix string
 		value interface{}

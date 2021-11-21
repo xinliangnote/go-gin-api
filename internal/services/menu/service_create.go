@@ -1,8 +1,8 @@
 package menu
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/menu"
 )
 
 type CreateMenuData struct {
@@ -14,7 +14,7 @@ type CreateMenuData struct {
 }
 
 func (s *service) Create(ctx core.Context, menuData *CreateMenuData) (id int32, err error) {
-	model := menu_repo.NewModel()
+	model := menu.NewModel()
 	model.Pid = menuData.Pid
 	model.Name = menuData.Name
 	model.Link = menuData.Link

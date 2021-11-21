@@ -25,7 +25,7 @@ func init() {
 
 func main() {
 	fs := token.NewFileSet()
-	filePath := fmt.Sprintf("./internal/api/controller/%s", handlerName)
+	filePath := fmt.Sprintf("./internal/api/%s", handlerName)
 	parsedFile, err := decorator.ParseFile(fs, filePath+"/handler.go", nil, 0)
 	if err != nil {
 		log.Fatalf("parsing package: %s: %s\n", filePath, err)
@@ -59,7 +59,7 @@ func main() {
 						continue
 					}
 
-					filepath := "./internal/api/controller/" + handlerName
+					filepath := "./internal/api/" + handlerName
 					filename := fmt.Sprintf("%s/func_%s.go", filepath, strings.ToLower(v.Names[0].String()))
 					funcFile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0766)
 					if err != nil {
@@ -89,7 +89,7 @@ func main() {
 					funcContent += fmt.Sprintf("// @Description%s \n", nameArr[1])
 					// Tags
 					funcContent += fmt.Sprintf("%s \n", v.Decorations().Start.All()[1])
-					funcContent += fmt.Sprintf("// @Accept json \n")
+					funcContent += fmt.Sprintf("// @Accept multipart/form-data \n")
 					funcContent += fmt.Sprintf("// @Produce json \n")
 					funcContent += fmt.Sprintf("// @Param Request body %sRequest true \"请求信息\" \n", Lcfirst(v.Names[0].String()))
 					funcContent += fmt.Sprintf("// @Success 200 {object} %sResponse \n", Lcfirst(v.Names[0].String()))

@@ -2,12 +2,12 @@ package router
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/cron"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/db"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
+	"github.com/xinliangnote/go-gin-api/internal/repository/cron"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/router/middleware"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/file"
@@ -18,7 +18,7 @@ import (
 type resource struct {
 	mux        core.Mux
 	logger     *zap.Logger
-	db         db.Repo
+	db         mysql.Repo
 	cache      redis.Repo
 	middles    middleware.Middleware
 	cronServer cron.Server
@@ -26,7 +26,7 @@ type resource struct {
 
 type Server struct {
 	Mux        core.Mux
-	Db         db.Repo
+	Db         mysql.Repo
 	Cache      redis.Repo
 	CronServer cron.Server
 }
@@ -47,7 +47,7 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	} else { // 已安装
 
 		// 初始化 DB
-		dbRepo, err := db.New()
+		dbRepo, err := mysql.New()
 		if err != nil {
 			logger.Fatal("new db err", zap.Error(err))
 		}

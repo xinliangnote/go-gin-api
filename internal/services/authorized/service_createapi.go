@@ -2,9 +2,9 @@ package authorized
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_api_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized_api"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 )
 
 type CreateAuthorizedAPIData struct {
@@ -14,7 +14,7 @@ type CreateAuthorizedAPIData struct {
 }
 
 func (s *service) CreateAPI(ctx core.Context, authorizedAPIData *CreateAuthorizedAPIData) (id int32, err error) {
-	model := authorized_api_repo.NewModel()
+	model := authorized_api.NewModel()
 	model.BusinessKey = authorizedAPIData.BusinessKey
 	model.Method = authorizedAPIData.Method
 	model.Api = authorizedAPIData.API

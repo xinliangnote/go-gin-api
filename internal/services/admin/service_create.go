@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin"
 )
 
 type CreateAdminData struct {
@@ -14,7 +14,7 @@ type CreateAdminData struct {
 }
 
 func (s *service) Create(ctx core.Context, adminData *CreateAdminData) (id int32, err error) {
-	model := admin_repo.NewModel()
+	model := admin.NewModel()
 	model.Username = adminData.Username
 	model.Password = password.GeneratePassword(adminData.Password)
 	model.Nickname = adminData.Nickname

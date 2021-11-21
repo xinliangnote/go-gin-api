@@ -1,9 +1,9 @@
 package authorized
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/authorized_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized"
 )
 
 type SearchData struct {
@@ -15,7 +15,7 @@ type SearchData struct {
 	Remark            string `json:"remark"`             // 备注
 }
 
-func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData []*authorized_repo.Authorized, err error) {
+func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData []*authorized.Authorized, err error) {
 
 	page := searchData.Page
 	if page == 0 {
@@ -29,19 +29,19 @@ func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData [
 
 	offset := (page - 1) * pageSize
 
-	qb := authorized_repo.NewQueryBuilder()
-	qb = qb.WhereIsDeleted(db_repo.EqualPredicate, -1)
+	qb := authorized.NewQueryBuilder()
+	qb = qb.WhereIsDeleted(mysql.EqualPredicate, -1)
 
 	if searchData.BusinessKey != "" {
-		qb.WhereBusinessKey(db_repo.EqualPredicate, searchData.BusinessKey)
+		qb.WhereBusinessKey(mysql.EqualPredicate, searchData.BusinessKey)
 	}
 
 	if searchData.BusinessSecret != "" {
-		qb.WhereBusinessSecret(db_repo.EqualPredicate, searchData.BusinessSecret)
+		qb.WhereBusinessSecret(mysql.EqualPredicate, searchData.BusinessSecret)
 	}
 
 	if searchData.BusinessDeveloper != "" {
-		qb.WhereBusinessDeveloper(db_repo.EqualPredicate, searchData.BusinessDeveloper)
+		qb.WhereBusinessDeveloper(mysql.EqualPredicate, searchData.BusinessDeveloper)
 	}
 
 	listData, err = qb.

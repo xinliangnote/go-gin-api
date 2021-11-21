@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/admin_menu_repo"
-	"github.com/xinliangnote/go-gin-api/internal/api/repository/db_repo/menu_repo"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin_menu"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/menu"
 )
 
 type SearchListMenuData struct {
@@ -19,8 +19,8 @@ type ListMenuData struct {
 }
 
 func (s *service) ListMenu(ctx core.Context, searchData *SearchListMenuData) (menuData []ListMenuData, err error) {
-	menuQb := menu_repo.NewQueryBuilder()
-	menuQb.WhereIsDeleted(db_repo.EqualPredicate, -1)
+	menuQb := menu.NewQueryBuilder()
+	menuQb.WhereIsDeleted(mysql.EqualPredicate, -1)
 	menuListData, err := menuQb.
 		OrderBySort(true).
 		QueryAll(s.db.GetDbR().WithContext(ctx.RequestContext()))
@@ -44,9 +44,9 @@ func (s *service) ListMenu(ctx core.Context, searchData *SearchListMenuData) (me
 		menuData[k] = data
 	}
 
-	adminMenuQb := admin_menu_repo.NewQueryBuilder()
+	adminMenuQb := admin_menu.NewQueryBuilder()
 	if searchData.AdminId != 0 {
-		adminMenuQb.WhereAdminId(db_repo.EqualPredicate, searchData.AdminId)
+		adminMenuQb.WhereAdminId(mysql.EqualPredicate, searchData.AdminId)
 	}
 
 	adminMenuListData, err := adminMenuQb.
