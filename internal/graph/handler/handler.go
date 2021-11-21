@@ -2,12 +2,12 @@ package handler
 
 import (
 	"context"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/internal/graph/generated"
 	"github.com/xinliangnote/go-gin-api/internal/graph/resolvers"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 
 	"github.com/99designs/gqlgen/graphql"

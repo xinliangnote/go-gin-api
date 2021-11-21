@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"go/token"
 	"log"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 
 	"github.com/dave/dst"
