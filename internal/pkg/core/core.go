@@ -388,7 +388,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 						traceId = x.ID()
 					}
 
-					ctx.JSON(err.GetHttpCode(), &code.Failure{
+					ctx.JSONP(err.GetHttpCode(), &code.Failure{
 						Code:    businessCode,
 						Message: businessCodeMsg,
 					})
@@ -400,7 +400,7 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 						context.SetHeader(trace.Header, x.ID())
 						traceId = x.ID()
 					}
-					ctx.JSON(http.StatusOK, response)
+					ctx.JSONP(http.StatusOK, response)
 				}
 			}
 
