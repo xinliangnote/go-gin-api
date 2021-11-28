@@ -41,7 +41,7 @@ func (s *service) Modify(ctx core.Context, id int32, modifyData *ModifyCronTaskD
 		"notify_keyword":        modifyData.NotifyKeyword,
 		"remark":                modifyData.Remark,
 		"is_used":               modifyData.IsUsed,
-		"updated_user":          ctx.UserName(),
+		"updated_user":          ctx.SessionUserInfo().UserName,
 	}
 
 	qb := cron_task.NewQueryBuilder()

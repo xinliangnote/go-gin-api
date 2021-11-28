@@ -7,9 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
-
-	"github.com/spf13/cast"
 )
 
 type modifyPasswordRequest struct {
@@ -25,53 +22,52 @@ type modifyPasswordResponse struct {
 // @Summary 修改密码
 // @Description 修改密码
 // @Tags API.admin
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param old_password formData string true "旧密码"
 // @Param new_password formData string true "新密码"
 // @Success 200 {object} modifyPasswordResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/admin/modify_password [patch]
+// @Security LoginToken
 func (h *handler) ModifyPassword() core.HandlerFunc {
-	return func(c core.Context) {
+	return func(ctx core.Context) {
 		req := new(modifyPasswordRequest)
 		res := new(modifyPasswordResponse)
-		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+		if err := ctx.ShouldBindForm(req); err != nil {
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
-		userId := cast.ToInt32(c.UserID())
-
 		searchOneData := new(admin.SearchOneData)
-		searchOneData.Id = userId
+		searchOneData.Id = ctx.SessionUserInfo().UserID
 		searchOneData.Password = password.GeneratePassword(req.OldPassword)
 		searchOneData.IsUsed = 1
 
-		info, err := h.adminService.Detail(c, searchOneData)
+		info, err := h.adminService.Detail(ctx, searchOneData)
 		if err != nil || info == nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminModifyPasswordError,
-				code.Text(code.AdminModifyPasswordError)).WithErr(err),
+				code.Text(code.AdminModifyPasswordError)).WithError(err),
 			)
 			return
 		}
 
-		if err := h.adminService.ModifyPassword(c, userId, req.NewPassword); err != nil {
-			c.AbortWithError(errno.NewError(
+		if err := h.adminService.ModifyPassword(ctx, ctx.SessionUserInfo().UserID, req.NewPassword); err != nil {
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminModifyPasswordError,
-				code.Text(code.AdminModifyPasswordError)).WithErr(err),
+				code.Text(code.AdminModifyPasswordError)).WithError(err),
 			)
 			return
 		}
 
-		res.Username = c.UserName()
-		c.Payload(res)
+		res.Username = ctx.SessionUserInfo().UserName
+		ctx.Payload(res)
 	}
 }

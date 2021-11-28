@@ -20,7 +20,7 @@ func (s *service) Create(ctx core.Context, menuData *CreateMenuData) (id int32, 
 	model.Link = menuData.Link
 	model.Icon = menuData.Icon
 	model.Level = menuData.Level
-	model.CreatedUser = ctx.UserName()
+	model.CreatedUser = ctx.SessionUserInfo().UserName
 	model.IsUsed = 1
 	model.IsDeleted = -1
 

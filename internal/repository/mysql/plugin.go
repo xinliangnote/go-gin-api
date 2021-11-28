@@ -74,7 +74,10 @@ func after(db *gorm.DB) {
 	sqlInfo.Stack = utils.FileWithLineNum()
 	sqlInfo.Rows = db.Statement.RowsAffected
 	sqlInfo.CostSeconds = time.Since(ts).Seconds()
-	ctx.Trace.AppendSQL(sqlInfo)
+
+	if ctx.Trace != nil {
+		ctx.Trace.AppendSQL(sqlInfo)
+	}
 
 	return
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type resetPasswordRequest struct {
@@ -26,25 +25,26 @@ type resetPasswordResponse struct {
 // @Success 200 {object} resetPasswordResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/admin/reset_password/{id} [patch]
+// @Security LoginToken
 func (h *handler) ResetPassword() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(resetPasswordRequest)
 		res := new(resetPasswordResponse)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -53,10 +53,10 @@ func (h *handler) ResetPassword() core.HandlerFunc {
 
 		err = h.adminService.ResetPassword(c, id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminResetPasswordError,
-				code.Text(code.AdminResetPasswordError)).WithErr(err),
+				code.Text(code.AdminResetPasswordError)).WithError(err),
 			)
 			return
 		}

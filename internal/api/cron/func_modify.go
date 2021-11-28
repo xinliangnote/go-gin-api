@@ -7,7 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/internal/services/cron"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type modifyRequest struct {
@@ -36,9 +35,9 @@ type modifyResponse struct {
 // @Summary 编辑任务
 // @Description 编辑任务
 // @Tags API.cron
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
-// @Param id formData string true "Hashid"
+// @Param id formData string true "hashID"
 // @Param name formData string true "任务名称"
 // @Param spec formData string true "crontab 表达式"
 // @Param command formData string true "执行命令"
@@ -56,25 +55,26 @@ type modifyResponse struct {
 // @Success 200 {object} modifyResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/cron/{id} [post]
+// @Security LoginToken
 func (h *handler) Modify() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(modifyRequest)
 		res := new(modifyResponse)
 		if err := ctx.ShouldBindForm(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				validation.Error(err)).WithErr(err),
+				validation.Error(err)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -98,10 +98,10 @@ func (h *handler) Modify() core.HandlerFunc {
 		modifyData.IsUsed = req.IsUsed
 
 		if err := h.cronService.Modify(ctx, id, modifyData); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CronUpdateError,
-				code.Text(code.CronUpdateError)).WithErr(err),
+				code.Text(code.CronUpdateError)).WithError(err),
 			)
 			return
 		}

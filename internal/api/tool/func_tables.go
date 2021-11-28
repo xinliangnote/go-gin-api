@@ -6,7 +6,6 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type tablesRequest struct {
@@ -26,21 +25,22 @@ type tableData struct {
 // @Summary 查询 Table
 // @Description 查询 Table
 // @Tags API.tool
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param db_name formData string true "数据库名称"
 // @Success 200 {object} tablesResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/tool/data/tables [post]
+// @Security LoginToken
 func (h *handler) Tables() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(tablesRequest)
 		res := new(tablesResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -50,10 +50,10 @@ func (h *handler) Tables() core.HandlerFunc {
 		// TODO 后期支持查询多个数据库
 		rows, err := h.db.GetDbR().Raw(sqlTables).Rows()
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
-				code.Text(code.MySQLExecError)).WithErr(err),
+				code.Text(code.MySQLExecError)).WithError(err),
 			)
 			return
 		}

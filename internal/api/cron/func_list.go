@@ -8,7 +8,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/cron_task"
 	"github.com/xinliangnote/go-gin-api/internal/services/cron"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
 	"github.com/spf13/cast"
@@ -58,25 +57,26 @@ type listResponse struct {
 // @Summary 任务列表
 // @Description 任务列表
 // @Tags API.cron
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
-// @Param page query int false "第几页"
-// @Param page_size query string false "每页显示条数"
+// @Param page query int true "第几页" default(1)
+// @Param page_size query int true "每页显示条数" default(10)
 // @Param name query string false "任务名称"
 // @Param protocol query int false "执行方式 1:shell 2:http"
 // @Param is_used query int false "是否启用 1:是  -1:否"
 // @Success 200 {object} listResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/cron [get]
+// @Security LoginToken
 func (h *handler) List() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(listRequest)
 		res := new(listResponse)
 		if err := ctx.ShouldBindForm(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				validation.Error(err)).WithErr(err),
+				validation.Error(err)).WithError(err),
 			)
 			return
 		}
@@ -100,20 +100,20 @@ func (h *handler) List() core.HandlerFunc {
 
 		resListData, err := h.cronService.PageList(ctx, searchData)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CronListError,
-				code.Text(code.CronListError)).WithErr(err),
+				code.Text(code.CronListError)).WithError(err),
 			)
 			return
 		}
 
 		resCountData, err := h.cronService.PageListCount(ctx, searchData)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CronListError,
-				code.Text(code.CronListError)).WithErr(err),
+				code.Text(code.CronListError)).WithError(err),
 			)
 			return
 		}
@@ -126,10 +126,10 @@ func (h *handler) List() core.HandlerFunc {
 		for k, v := range resListData {
 			hashId, err := h.hashids.HashidsEncode([]int{cast.ToInt(v.Id)})
 			if err != nil {
-				ctx.AbortWithError(errno.NewError(
+				ctx.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.HashIdsEncodeError,
-					code.Text(code.HashIdsEncodeError)).WithErr(err),
+					code.Text(code.HashIdsEncodeError)).WithError(err),
 				)
 				return
 			}

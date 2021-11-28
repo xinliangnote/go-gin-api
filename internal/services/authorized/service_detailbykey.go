@@ -2,7 +2,6 @@ package authorized
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
@@ -68,7 +67,7 @@ func (s *service) DetailByKey(ctx core.Context, key string) (cacheData *CacheAut
 
 		cacheDataByte, _ := json.Marshal(cacheData)
 
-		err = s.cache.Set(cacheKey, string(cacheDataByte), time.Hour*24, redis.WithTrace(ctx.Trace()))
+		err = s.cache.Set(cacheKey, string(cacheDataByte), configs.LoginSessionTTL, redis.WithTrace(ctx.Trace()))
 		if err != nil {
 			return nil, err
 		}

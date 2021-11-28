@@ -5,7 +5,6 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type deleteActionRequest struct {
@@ -26,25 +25,26 @@ type deleteActionResponse struct {
 // @Success 200 {object} deleteActionResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/menu_action/{id} [delete]
+// @Security LoginToken
 func (h *handler) DeleteAction() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(deleteActionRequest)
 		res := new(deleteActionResponse)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -53,10 +53,10 @@ func (h *handler) DeleteAction() core.HandlerFunc {
 
 		err = h.menuService.DeleteAction(c, id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MenuDeleteActionError,
-				code.Text(code.MenuDeleteActionError)).WithErr(err),
+				code.Text(code.MenuDeleteActionError)).WithError(err),
 			)
 			return
 		}

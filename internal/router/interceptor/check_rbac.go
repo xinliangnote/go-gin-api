@@ -1,4 +1,4 @@
-package middleware
+package interceptor
 
 import (
 	"encoding/json"
@@ -9,47 +9,46 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/urltable"
 )
 
-func (m *middleware) RBAC() core.HandlerFunc {
+func (i *interceptor) CheckRBAC() core.HandlerFunc {
 	return func(c core.Context) {
 		token := c.GetHeader("Token")
 		if token == "" {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusUnauthorized,
 				code.AuthorizationError,
-				code.Text(code.AuthorizationError)).WithErr(errors.New("Header 中缺少 Token 参数")),
+				code.Text(code.AuthorizationError)).WithError(errors.New("Header 中缺少 Token 参数")),
 			)
 			return
 		}
 
-		if !m.cache.Exists(configs.RedisKeyPrefixLoginUser + token) {
-			c.AbortWithError(errno.NewError(
+		if !i.cache.Exists(configs.RedisKeyPrefixLoginUser + token) {
+			c.AbortWithError(core.Error(
 				http.StatusUnauthorized,
 				code.CacheGetError,
-				code.Text(code.CacheGetError)).WithErr(errors.New("请先登录 1")),
+				code.Text(code.CacheGetError)).WithError(errors.New("请先登录")),
 			)
 			return
 		}
 
-		if !m.cache.Exists(configs.RedisKeyPrefixLoginUser + token + ":action") {
-			c.AbortWithError(errno.NewError(
+		if !i.cache.Exists(configs.RedisKeyPrefixLoginUser + token + ":action") {
+			c.AbortWithError(core.Error(
 				http.StatusUnauthorized,
 				code.CacheGetError,
-				code.Text(code.CacheGetError)).WithErr(errors.New("请先登录 2")),
+				code.Text(code.CacheGetError)).WithError(errors.New("当前账号未配置 RBAC 权限")),
 			)
 			return
 		}
 
-		actionData, err := m.cache.Get(configs.RedisKeyPrefixLoginUser+token+":action", redis.WithTrace(c.Trace()))
+		actionData, err := i.cache.Get(configs.RedisKeyPrefixLoginUser+token+":action", redis.WithTrace(c.Trace()))
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusUnauthorized,
 				code.CacheGetError,
-				code.Text(code.CacheGetError)).WithErr(err),
+				code.Text(code.CacheGetError)).WithError(err),
 			)
 			return
 		}
@@ -57,10 +56,10 @@ func (m *middleware) RBAC() core.HandlerFunc {
 		var actions []admin.MyActionData
 		err = json.Unmarshal([]byte(actionData), &actions)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusUnauthorized,
 				code.AuthorizationError,
-				code.Text(code.AuthorizationError)).WithErr(err),
+				code.Text(code.AuthorizationError)).WithError(err),
 			)
 			return
 		}
@@ -72,10 +71,10 @@ func (m *middleware) RBAC() core.HandlerFunc {
 			}
 
 			if pattern, _ := table.Mapping(c.Method() + c.Path()); pattern == "" {
-				c.AbortWithError(errno.NewError(
+				c.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.RBACError,
-					code.Text(code.RBACError)).WithErr(errors.New(c.Method() + c.Path() + " 未进行 RBAC 授权")),
+					code.Text(code.RBACError)).WithError(errors.New(c.Method() + c.Path() + " 未进行 RBAC 授权")),
 				)
 				return
 			}

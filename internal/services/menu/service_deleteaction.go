@@ -21,7 +21,7 @@ func (s *service) DeleteAction(ctx core.Context, id int32) (err error) {
 
 	data := map[string]interface{}{
 		"is_deleted":   1,
-		"updated_user": ctx.UserName(),
+		"updated_user": ctx.SessionUserInfo().UserName,
 	}
 
 	qb := menu_action.NewQueryBuilder()

@@ -37,15 +37,15 @@ func init() {
 }
 
 // RecordMetrics 记录指标
-func RecordMetrics(method, uri string, success bool, httpCode, businessCode int, costSeconds float64, traceId string) {
+func RecordMetrics(method, path string, success bool, httpCode, businessCode int, costSeconds float64, traceId string) {
 	metricsRequestsTotal.With(prometheus.Labels{
 		"method": method,
-		"path":   uri,
+		"path":   path,
 	}).Inc()
 
 	metricsRequestsCost.With(prometheus.Labels{
 		"method":            method,
-		"path":              uri,
+		"path":              path,
 		"success":           cast.ToString(success),
 		"http_code":         cast.ToString(httpCode),
 		"business_code":     cast.ToString(businessCode),

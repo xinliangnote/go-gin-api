@@ -18,7 +18,7 @@ func (s *service) CreateAPI(ctx core.Context, authorizedAPIData *CreateAuthorize
 	model.BusinessKey = authorizedAPIData.BusinessKey
 	model.Method = authorizedAPIData.Method
 	model.Api = authorizedAPIData.API
-	model.CreatedUser = ctx.UserName()
+	model.CreatedUser = ctx.SessionUserInfo().UserName
 	model.IsDeleted = -1
 
 	id, err = model.Create(s.db.GetDbW().WithContext(ctx.RequestContext()))

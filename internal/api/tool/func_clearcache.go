@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type clearCacheRequest struct {
@@ -21,27 +20,28 @@ type clearCacheResponse struct {
 // @Summary 清空缓存
 // @Description 清空缓存
 // @Tags API.tool
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param redis_key formData string true "Redis Key"
 // @Success 200 {object} searchCacheResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/tool/cache/clear [patch]
+// @Security LoginToken
 func (h *handler) ClearCache() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(clearCacheRequest)
 		res := new(clearCacheResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		if b := h.cache.Exists(req.RedisKey); b != true {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CacheNotExist,
 				code.Text(code.CacheNotExist)),
@@ -51,7 +51,7 @@ func (h *handler) ClearCache() core.HandlerFunc {
 
 		b := h.cache.Del(req.RedisKey, redis.WithTrace(c.Trace()))
 		if b != true {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CacheDelError,
 				code.Text(code.CacheDelError)),

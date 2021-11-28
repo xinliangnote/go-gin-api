@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/services/menu"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
@@ -30,20 +29,21 @@ type listResponse struct {
 // @Summary 菜单列表
 // @Description 菜单列表
 // @Tags API.menu
-// @Accept json
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Success 200 {object} listResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/menu [get]
+// @Security LoginToken
 func (h *handler) List() core.HandlerFunc {
 	return func(c core.Context) {
 		res := new(listResponse)
 		resListData, err := h.menuService.List(c, new(menu.SearchData))
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MenuListError,
-				code.Text(code.MenuListError)).WithErr(err),
+				code.Text(code.MenuListError)).WithError(err),
 			)
 			return
 		}
@@ -53,10 +53,10 @@ func (h *handler) List() core.HandlerFunc {
 		for k, v := range resListData {
 			hashId, err := h.hashids.HashidsEncode([]int{cast.ToInt(v.Id)})
 			if err != nil {
-				c.AbortWithError(errno.NewError(
+				c.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.HashIdsEncodeError,
-					code.Text(code.HashIdsEncodeError)).WithErr(err),
+					code.Text(code.HashIdsEncodeError)).WithError(err),
 				)
 				return
 			}

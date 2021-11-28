@@ -3,15 +3,14 @@ package admin
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
+	"github.com/xinliangnote/go-gin-api/internal/proposal"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 )
 
@@ -28,22 +27,23 @@ type loginResponse struct {
 // @Summary 管理员登录
 // @Description 管理员登录
 // @Tags API.admin
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param username formData string true "用户名"
-// @Param password formData string true "密码"
+// @Param password formData string true "MD5后的密码"
 // @Success 200 {object} loginResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/admin/login [post]
+// @Router /api/login [post]
+// @Security LoginToken
 func (h *handler) Login() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(loginRequest)
 		res := new(loginResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -55,47 +55,38 @@ func (h *handler) Login() core.HandlerFunc {
 
 		info, err := h.adminService.Detail(c, searchOneData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.Text(code.AdminLoginError)).WithError(err),
 			)
 			return
 		}
 
 		if info == nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(errors.New("未查询出符合条件的用户")),
+				code.Text(code.AdminLoginError)).WithError(errors.New("未查询出符合条件的用户")),
 			)
 			return
 		}
 
 		token := password.GenerateLoginToken(info.Id)
 
-		adminCacheData := &struct {
-			Id       int32  `json:"id"`       // 主键ID
-			Username string `json:"username"` // 用户名
-			Nickname string `json:"nickname"` // 昵称
-			Mobile   string `json:"mobile"`   // 手机号
-		}{
-			Id:       info.Id,
-			Username: info.Username,
-			Nickname: info.Nickname,
-			Mobile:   info.Mobile,
+		// 用户信息
+		sessionUserInfo := &proposal.SessionUserInfo{
+			UserID:   info.Id,
+			UserName: info.Username,
 		}
 
-		// 用户信息
-		adminJsonInfo, _ := json.Marshal(adminCacheData)
-
 		// 将用户信息记录到 Redis 中
-		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token, string(adminJsonInfo), time.Hour*24, redis.WithTrace(c.Trace()))
+		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token, string(sessionUserInfo.Marshal()), configs.LoginSessionTTL, redis.WithTrace(c.Trace()))
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.Text(code.AdminLoginError)).WithError(err),
 			)
 			return
 		}
@@ -104,10 +95,10 @@ func (h *handler) Login() core.HandlerFunc {
 		searchMenuData.AdminId = info.Id
 		menu, err := h.adminService.MyMenu(c, searchMenuData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.Text(code.AdminLoginError)).WithError(err),
 			)
 			return
 		}
@@ -116,12 +107,12 @@ func (h *handler) Login() core.HandlerFunc {
 		menuJsonInfo, _ := json.Marshal(menu)
 
 		// 将菜单栏信息记录到 Redis 中
-		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":menu", string(menuJsonInfo), time.Hour*24, redis.WithTrace(c.Trace()))
+		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":menu", string(menuJsonInfo), configs.LoginSessionTTL, redis.WithTrace(c.Trace()))
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.Text(code.AdminLoginError)).WithError(err),
 			)
 			return
 		}
@@ -130,10 +121,10 @@ func (h *handler) Login() core.HandlerFunc {
 		searchActionData.AdminId = info.Id
 		action, err := h.adminService.MyAction(c, searchActionData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.Text(code.AdminLoginError)).WithError(err),
 			)
 			return
 		}
@@ -142,12 +133,12 @@ func (h *handler) Login() core.HandlerFunc {
 		actionJsonInfo, _ := json.Marshal(action)
 
 		// 将可访问接口信息记录到 Redis 中
-		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":action", string(actionJsonInfo), time.Hour*24, redis.WithTrace(c.Trace()))
+		err = h.cache.Set(configs.RedisKeyPrefixLoginUser+token+":action", string(actionJsonInfo), configs.LoginSessionTTL, redis.WithTrace(c.Trace()))
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLoginError,
-				code.Text(code.AdminLoginError)).WithErr(err),
+				code.Text(code.AdminLoginError)).WithError(err),
 			)
 			return
 		}

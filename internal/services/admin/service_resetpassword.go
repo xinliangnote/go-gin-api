@@ -12,7 +12,7 @@ import (
 func (s *service) ResetPassword(ctx core.Context, id int32) (err error) {
 	data := map[string]interface{}{
 		"password":     password.ResetPassword(),
-		"updated_user": ctx.UserName(),
+		"updated_user": ctx.SessionUserInfo().UserName,
 	}
 
 	qb := admin.NewQueryBuilder()

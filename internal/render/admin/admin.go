@@ -7,7 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"go.uber.org/zap"
 )
@@ -62,10 +61,10 @@ func (h *handler) AdminMenu() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(adminMenuRequest)
 		if err := ctx.ShouldBindURI(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -89,10 +88,10 @@ func (h *handler) MenuAction() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(menuActionRequest)
 		if err := ctx.ShouldBindURI(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}

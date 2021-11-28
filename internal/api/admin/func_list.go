@@ -8,7 +8,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 
 	"github.com/spf13/cast"
@@ -49,25 +48,26 @@ type listResponse struct {
 // @Summary 管理员列表
 // @Description 管理员列表
 // @Tags API.admin
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
-// @Param page query int false "第几页"
-// @Param page_size query string false "每页显示条数"
+// @Param page query int true "第几页" default(1)
+// @Param page_size query int true "每页显示条数" default(10)
 // @Param username query string false "用户名"
 // @Param nickname query string false "昵称"
 // @Param mobile query string false "手机号"
 // @Success 200 {object} listResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/admin [get]
+// @Security LoginToken
 func (h *handler) List() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(listRequest)
 		res := new(listResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -91,20 +91,20 @@ func (h *handler) List() core.HandlerFunc {
 
 		resListData, err := h.adminService.PageList(c, searchData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminListError,
-				code.Text(code.AdminListError)).WithErr(err),
+				code.Text(code.AdminListError)).WithError(err),
 			)
 			return
 		}
 
 		resCountData, err := h.adminService.PageListCount(c, searchData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminListError,
-				code.Text(code.AdminListError)).WithErr(err),
+				code.Text(code.AdminListError)).WithError(err),
 			)
 			return
 		}
@@ -116,10 +116,10 @@ func (h *handler) List() core.HandlerFunc {
 		for k, v := range resListData {
 			hashId, err := h.hashids.HashidsEncode([]int{cast.ToInt(v.Id)})
 			if err != nil {
-				c.AbortWithError(errno.NewError(
+				c.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.HashIdsEncodeError,
-					code.Text(code.HashIdsEncodeError)).WithErr(err),
+					code.Text(code.HashIdsEncodeError)).WithError(err),
 				)
 				return
 			}

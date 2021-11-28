@@ -2,13 +2,13 @@ package router
 
 import (
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/alert"
+	"github.com/xinliangnote/go-gin-api/internal/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/metrics"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/notify"
 	"github.com/xinliangnote/go-gin-api/internal/repository/cron"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/internal/router/middleware"
+	"github.com/xinliangnote/go-gin-api/internal/router/interceptor"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/file"
 
@@ -16,12 +16,12 @@ import (
 )
 
 type resource struct {
-	mux        core.Mux
-	logger     *zap.Logger
-	db         mysql.Repo
-	cache      redis.Repo
-	middles    middleware.Middleware
-	cronServer cron.Server
+	mux          core.Mux
+	logger       *zap.Logger
+	db           mysql.Repo
+	cache        redis.Repo
+	interceptors interceptor.Interceptor
+	cronServer   cron.Server
 }
 
 type Server struct {
@@ -73,8 +73,8 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 		core.WithEnableOpenBrowser(openBrowserUri),
 		core.WithEnableCors(),
 		core.WithEnableRate(),
-		core.WithPanicNotify(notify.Email),
-		core.WithRecordMetrics(metrics.RecordMetrics),
+		core.WithAlertNotify(alert.NotifyHandler(logger)),
+		core.WithRecordMetrics(metrics.RecordHandler(logger)),
 	)
 
 	if err != nil {
@@ -82,7 +82,7 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	}
 
 	r.mux = mux
-	r.middles = middleware.New(logger, r.cache, r.db)
+	r.interceptors = interceptor.New(logger, r.cache, r.db)
 
 	// 设置 Render 路由
 	setRenderRouter(r)

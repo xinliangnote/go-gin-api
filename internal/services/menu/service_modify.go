@@ -17,7 +17,7 @@ func (s *service) Modify(ctx core.Context, id int32, menuData *UpdateMenuData) (
 		"name":         menuData.Name,
 		"link":         menuData.Link,
 		"icon":         menuData.Icon,
-		"updated_user": ctx.UserName(),
+		"updated_user": ctx.SessionUserInfo().UserName,
 	}
 
 	qb := menu.NewQueryBuilder()

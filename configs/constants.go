@@ -1,5 +1,7 @@
 package configs
 
+import "time"
+
 const (
 	// MinGoVersion 最小 Go 版本
 	MinGoVersion = 1.16
@@ -28,11 +30,14 @@ const (
 	// HeaderLoginToken 登录验证 Token，Header 中传递的参数
 	HeaderLoginToken = "Token"
 
-	// HeaderSignToken 签名验证 Token，Header 中传递的参数
+	// HeaderSignToken 签名验证 Authorization，Header 中传递的参数
 	HeaderSignToken = "Authorization"
 
 	// HeaderSignTokenDate 签名验证 Date，Header 中传递的参数
 	HeaderSignTokenDate = "Authorization-Date"
+
+	// HeaderSignTokenTimeout 签名有效期为 2 分钟
+	HeaderSignTokenTimeout = time.Minute * 2
 
 	// RedisKeyPrefixLoginUser Redis Key 前缀 - 登录用户信息
 	RedisKeyPrefixLoginUser = ProjectName + ":login-user:"
@@ -48,4 +53,7 @@ const (
 
 	// MaxRequestsPerSecond 每秒最大请求量
 	MaxRequestsPerSecond = 10000
+
+	// LoginSessionTTL 登录有效期为 24 小时
+	LoginSessionTTL = time.Hour * 24
 )

@@ -5,7 +5,6 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
@@ -22,31 +21,32 @@ type hashIdsEncodeResponse struct {
 // @Summary HashIds 加密
 // @Description HashIds 加密
 // @Tags API.tool
-// @Accept json
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param id path string true "需加密的数字"
 // @Success 200 {object} hashIdsEncodeResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/tool/hashids/encode/{id} [get]
+// @Security LoginToken
 func (h *handler) HashIdsEncode() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(hashIdsEncodeRequest)
 		res := new(hashIdsEncodeResponse)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		hashId, err := h.hashids.HashidsEncode([]int{cast.ToInt(req.Id)})
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsEncodeError,
-				code.Text(code.HashIdsEncodeError)).WithErr(err),
+				code.Text(code.HashIdsEncodeError)).WithError(err),
 			)
 			return
 		}

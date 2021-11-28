@@ -18,7 +18,7 @@ type Handler interface {
 
 	// Login 管理员登录
 	// @Tags API.admin
-	// @Router /api/admin/login [post]
+	// @Router /api/login [post]
 	Login() core.HandlerFunc
 
 	// Logout 管理员登出
@@ -78,7 +78,7 @@ type Handler interface {
 
 	// ListAdminMenu 菜单授权列表
 	// @Tags API.admin
-	// @Router /api/admin/menu/:id [get]
+	// @Router /api/admin/menu/{id} [get]
 	ListAdminMenu() core.HandlerFunc
 }
 

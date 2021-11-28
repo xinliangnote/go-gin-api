@@ -16,7 +16,7 @@ func (s *service) CreateAction(ctx core.Context, menuActionData *CreateMenuActio
 	model.MenuId = menuActionData.MenuId
 	model.Method = menuActionData.Method
 	model.Api = menuActionData.API
-	model.CreatedUser = ctx.UserName()
+	model.CreatedUser = ctx.SessionUserInfo().UserName
 	model.IsDeleted = -1
 
 	id, err = model.Create(s.db.GetDbW().WithContext(ctx.RequestContext()))

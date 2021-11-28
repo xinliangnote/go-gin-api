@@ -17,11 +17,12 @@ type dbData struct {
 // @Summary 查询 DB
 // @Description 查询 DB
 // @Tags API.tool
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Success 200 {object} dbsResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/tool/data/dbs [get]
+// @Security LoginToken
 func (h *handler) Dbs() core.HandlerFunc {
 	return func(c core.Context) {
 		res := new(dbsResponse)

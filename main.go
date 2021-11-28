@@ -27,8 +27,11 @@ import (
 // @license.name MIT
 // @license.url https://github.com/xinliangnote/go-gin-api/blob/master/LICENSE
 
-// @host 127.0.0.1:9999
-// @BasePath
+// @securityDefinitions.apikey  LoginToken
+// @in                          header
+// @name                        token
+
+// @BasePath /
 func main() {
 	// 初始化 access logger
 	accessLogger, err := logger.NewJSONLogger(

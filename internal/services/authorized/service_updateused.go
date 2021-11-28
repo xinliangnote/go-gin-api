@@ -22,7 +22,7 @@ func (s *service) UpdateUsed(ctx core.Context, id int32, used int32) (err error)
 
 	data := map[string]interface{}{
 		"is_used":      used,
-		"updated_user": ctx.UserName(),
+		"updated_user": ctx.SessionUserInfo().UserName,
 	}
 
 	qb := authorized.NewQueryBuilder()

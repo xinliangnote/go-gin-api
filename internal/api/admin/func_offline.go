@@ -8,7 +8,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type offlineRequest struct {
@@ -23,31 +22,32 @@ type offlineResponse struct {
 // @Summary 下线管理员
 // @Description 下线管理员
 // @Tags API.admin
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param id formData string true "Hashid"
 // @Success 200 {object} offlineResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/admin/offline [patch]
+// @Security LoginToken
 func (h *handler) Offline() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(offlineRequest)
 		res := new(offlineResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -56,7 +56,7 @@ func (h *handler) Offline() core.HandlerFunc {
 
 		b := h.cache.Del(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(id), redis.WithTrace(c.Trace()))
 		if !b {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminOfflineError,
 				code.Text(code.AdminOfflineError)),

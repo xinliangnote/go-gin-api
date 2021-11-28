@@ -10,7 +10,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/proposal/tablesqls"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/go-redis/redis/v7"
 	"github.com/spf13/cast"
@@ -68,10 +67,10 @@ func (h *handler) Execute() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(initExecuteRequest)
 		if err := ctx.ShouldBindForm(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -80,7 +79,7 @@ func (h *handler) Execute() core.HandlerFunc {
 		versionStr := runtime.Version()
 		version := cast.ToFloat32(versionStr[2:6])
 		if version < configs.MinGoVersion {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.GoVersionError,
 				code.Text(code.GoVersionError)),
@@ -101,10 +100,10 @@ func (h *handler) Execute() core.HandlerFunc {
 		})
 
 		if err := redisClient.Ping().Err(); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.RedisConnectError,
-				code.Text(code.RedisConnectError)).WithErr(err),
+				code.Text(code.RedisConnectError)).WithError(err),
 			)
 			return
 		}
@@ -131,10 +130,10 @@ func (h *handler) Execute() core.HandlerFunc {
 		})
 
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLConnectError,
-				code.Text(code.MySQLConnectError)).WithErr(err),
+				code.Text(code.MySQLConnectError)).WithError(err),
 			)
 			return
 		}
@@ -165,10 +164,10 @@ func (h *handler) Execute() core.HandlerFunc {
 		viper.Set("mysql.write.name", req.MySQLName)
 
 		if viper.WriteConfig() != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.WriteConfigError,
-				code.Text(code.WriteConfigError)).WithErr(err),
+				code.Text(code.WriteConfigError)).WithError(err),
 			)
 			return
 		}
@@ -182,10 +181,10 @@ func (h *handler) Execute() core.HandlerFunc {
 			if v["table_sql"] != "" {
 				// region 初始化表结构
 				if err = db.Exec(v["table_sql"]).Error; err != nil {
-					ctx.AbortWithError(errno.NewError(
+					ctx.AbortWithError(core.Error(
 						http.StatusBadRequest,
 						code.MySQLExecError,
-						code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+						code.Text(code.MySQLExecError)+" "+err.Error()).WithError(err),
 					)
 					return
 				}
@@ -196,10 +195,10 @@ func (h *handler) Execute() core.HandlerFunc {
 				// region 初始化默认数据
 				if v["table_data_sql"] != "" {
 					if err = db.Exec(v["table_data_sql"]).Error; err != nil {
-						ctx.AbortWithError(errno.NewError(
+						ctx.AbortWithError(core.Error(
 							http.StatusBadRequest,
 							code.MySQLExecError,
-							code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+							code.Text(code.MySQLExecError)+" "+err.Error()).WithError(err),
 						)
 						return
 					}
@@ -214,10 +213,10 @@ func (h *handler) Execute() core.HandlerFunc {
 		// region 生成 install 完成标识
 		f, err := os.Create(configs.ProjectInstallMark)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
-				code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+				code.Text(code.MySQLExecError)+" "+err.Error()).WithError(err),
 			)
 			return
 		}

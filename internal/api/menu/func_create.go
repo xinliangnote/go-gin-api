@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/services/menu"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
@@ -28,21 +27,22 @@ type createResponse struct {
 // @Summary 创建/编辑菜单
 // @Description 创建/编辑菜单
 // @Tags API.menu
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param Request body createRequest true "请求信息"
 // @Success 200 {object} createResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/menu [post]
+// @Security LoginToken
 func (h *handler) Create() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(createRequest)
 		res := new(createResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -50,10 +50,10 @@ func (h *handler) Create() core.HandlerFunc {
 		if req.Id != "" { // 编辑功能
 			ids, err := h.hashids.HashidsDecode(req.Id)
 			if err != nil {
-				c.AbortWithError(errno.NewError(
+				c.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.HashIdsDecodeError,
-					code.Text(code.HashIdsDecodeError)).WithErr(err),
+					code.Text(code.HashIdsDecodeError)).WithError(err),
 				)
 				return
 			}
@@ -67,10 +67,10 @@ func (h *handler) Create() core.HandlerFunc {
 
 			err = h.menuService.Modify(c, id, updateData)
 			if err != nil {
-				c.AbortWithError(errno.NewError(
+				c.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.MenuUpdateError,
-					code.Text(code.MenuUpdateError)).WithErr(err),
+					code.Text(code.MenuUpdateError)).WithError(err),
 				)
 				return
 			}
@@ -97,10 +97,10 @@ func (h *handler) Create() core.HandlerFunc {
 
 			id, err := h.menuService.Create(c, createData)
 			if err != nil {
-				c.AbortWithError(errno.NewError(
+				c.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.MenuCreateError,
-					code.Text(code.MenuCreateError)).WithErr(err),
+					code.Text(code.MenuCreateError)).WithError(err),
 				)
 				return
 			}

@@ -8,7 +8,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/internal/websocket/sysmessage"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 )
 
@@ -24,12 +23,13 @@ type sendMessageResponse struct {
 // @Summary 发送消息
 // @Description 发送消息
 // @Tags API.tool
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param message formData string true "消息内容"
 // @Success 200 {object} sendMessageResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/tool/send_message [post]
+// @Security LoginToken
 func (h *handler) SendMessage() core.HandlerFunc {
 	type messageBody struct {
 		Username string `json:"username"`
@@ -41,45 +41,45 @@ func (h *handler) SendMessage() core.HandlerFunc {
 		req := new(sendMessageRequest)
 		res := new(sendMessageResponse)
 		if err := ctx.ShouldBindForm(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				validation.Error(err)).WithErr(err),
+				validation.Error(err)).WithError(err),
 			)
 			return
 		}
 
 		conn, err := sysmessage.GetConn()
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.SocketConnectError,
-				code.Text(code.SocketConnectError)).WithErr(err),
+				code.Text(code.SocketConnectError)).WithError(err),
 			)
 			return
 		}
 
 		messageData := new(messageBody)
-		messageData.Username = ctx.UserName()
+		messageData.Username = ctx.SessionUserInfo().UserName
 		messageData.Message = req.Message
 		messageData.Time = timeutil.CSTLayoutString()
 
 		messageJsonData, err := json.Marshal(messageData)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.SocketSendError,
-				code.Text(code.SocketSendError)).WithErr(err),
+				code.Text(code.SocketSendError)).WithError(err),
 			)
 			return
 		}
 
 		err = conn.OnSend(messageJsonData)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.SocketSendError,
-				code.Text(code.SocketSendError)).WithErr(err),
+				code.Text(code.SocketSendError)).WithError(err),
 			)
 			return
 		}

@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/services/authorized"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type createRequest struct {
@@ -23,7 +22,7 @@ type createResponse struct {
 // @Summary 新增调用方
 // @Description 新增调用方
 // @Tags API.authorized
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param business_key formData string true "调用方key"
 // @Param business_developer formData string true "调用方对接人"
@@ -31,15 +30,16 @@ type createResponse struct {
 // @Success 200 {object} createResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized [post]
+// @Security LoginToken
 func (h *handler) Create() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(createRequest)
 		res := new(createResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -51,10 +51,10 @@ func (h *handler) Create() core.HandlerFunc {
 
 		id, err := h.authorizedService.Create(c, createData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AuthorizedCreateError,
-				code.Text(code.AuthorizedCreateError)).WithErr(err),
+				code.Text(code.AuthorizedCreateError)).WithError(err),
 			)
 			return
 		}

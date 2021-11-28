@@ -7,7 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/internal/services/cron"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
@@ -42,26 +41,27 @@ type detailResponse struct {
 // @Param id path string true "hashId"
 // @Success 200 {object} detailResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/cron/:id [get]
+// @Router /api/cron/{id} [get]
+// @Security LoginToken
 func (h *handler) Detail() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(detailRequest)
 		res := new(detailResponse)
 		if err := ctx.ShouldBindURI(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				validation.Error(err)).WithErr(err),
+				validation.Error(err)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -71,10 +71,10 @@ func (h *handler) Detail() core.HandlerFunc {
 
 		info, err := h.cronService.Detail(ctx, searchOneData)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CronDetailError,
-				code.Text(code.CronDetailError)).WithErr(err),
+				code.Text(code.CronDetailError)).WithError(err),
 			)
 			return
 		}

@@ -9,7 +9,7 @@ import (
 func (s *service) UpdateSort(ctx core.Context, id int32, sort int32) (err error) {
 	data := map[string]interface{}{
 		"sort":         sort,
-		"updated_user": ctx.UserName(),
+		"updated_user": ctx.SessionUserInfo().UserName,
 	}
 
 	qb := menu.NewQueryBuilder()

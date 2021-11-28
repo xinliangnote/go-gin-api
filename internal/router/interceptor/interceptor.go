@@ -1,36 +1,33 @@
-package middleware
+package interceptor
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/xinliangnote/go-gin-api/internal/proposal"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/internal/services/authorized"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"go.uber.org/zap"
 )
 
-var _ Middleware = (*middleware)(nil)
+var _ Interceptor = (*interceptor)(nil)
 
-type Middleware interface {
+type Interceptor interface {
+	// CheckLogin 验证是否登录
+	CheckLogin(ctx core.Context) (info proposal.SessionUserInfo, err core.BusinessError)
+
+	// CheckRBAC 验证 RBAC 权限是否合法
+	CheckRBAC() core.HandlerFunc
+
+	// CheckSignature 验证签名是否合法，对用签名算法 pkg/signature
+	CheckSignature() core.HandlerFunc
+
 	// i 为了避免被其他包实现
 	i()
-
-	// DisableLog 不记录日志
-	DisableLog() core.HandlerFunc
-
-	// Signature 签名验证，对用签名算法 pkg/signature
-	Signature() core.HandlerFunc
-
-	// Token 签名验证，对登录用户的验证
-	Token(ctx core.Context) (userId int64, userName string, err errno.Error)
-
-	// RBAC 权限验证
-	RBAC() core.HandlerFunc
 }
 
-type middleware struct {
+type interceptor struct {
 	logger            *zap.Logger
 	cache             redis.Repo
 	db                mysql.Repo
@@ -38,8 +35,8 @@ type middleware struct {
 	adminService      admin.Service
 }
 
-func New(logger *zap.Logger, cache redis.Repo, db mysql.Repo) Middleware {
-	return &middleware{
+func New(logger *zap.Logger, cache redis.Repo, db mysql.Repo) Interceptor {
+	return &interceptor{
 		logger:            logger,
 		cache:             cache,
 		db:                db,
@@ -48,4 +45,4 @@ func New(logger *zap.Logger, cache redis.Repo, db mysql.Repo) Middleware {
 	}
 }
 
-func (m *middleware) i() {}
+func (i *interceptor) i() {}

@@ -29,9 +29,14 @@ var doc = `{
     "paths": {
         "/api/admin": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "管理员列表",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -43,15 +48,19 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "第几页",
                         "name": "page",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
+                        "default": 10,
                         "description": "每页显示条数",
                         "name": "page_size",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -88,9 +97,14 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "新增管理员",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -123,7 +137,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "密码",
+                        "description": "MD5后的密码",
                         "name": "password",
                         "in": "formData",
                         "required": true
@@ -147,9 +161,14 @@ var doc = `{
         },
         "/api/admin/info": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "管理员详情",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -174,56 +193,16 @@ var doc = `{
                 }
             }
         },
-        "/api/admin/login": {
-            "post": {
-                "description": "管理员登录",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.admin"
-                ],
-                "summary": "管理员登录",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户名",
-                        "name": "username",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "密码",
-                        "name": "password",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/admin.loginResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/logout": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "管理员登出",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -250,9 +229,14 @@ var doc = `{
         },
         "/api/admin/menu": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "提交菜单授权",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -293,11 +277,16 @@ var doc = `{
                 }
             }
         },
-        "/api/admin/menu/:id": {
+        "/api/admin/menu/{id}": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "菜单授权列表",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -333,9 +322,14 @@ var doc = `{
         },
         "/api/admin/modify_password": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "修改密码",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -378,9 +372,14 @@ var doc = `{
         },
         "/api/admin/modify_personal_info": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "修改个人信息",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -423,9 +422,14 @@ var doc = `{
         },
         "/api/admin/offline": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "下线管理员",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -461,6 +465,11 @@ var doc = `{
         },
         "/api/admin/reset_password/{id}": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "重置密码",
                 "consumes": [
                     "application/json"
@@ -499,9 +508,14 @@ var doc = `{
         },
         "/api/admin/used": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "更新管理员为启用/禁用",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -544,6 +558,11 @@ var doc = `{
         },
         "/api/admin/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "删除管理员",
                 "consumes": [
                     "application/json"
@@ -582,9 +601,14 @@ var doc = `{
         },
         "/api/authorized": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "调用方列表",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -596,15 +620,19 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "第几页",
                         "name": "page",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
+                        "default": 10,
                         "description": "每页显示条数",
                         "name": "page_size",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -647,9 +675,14 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "新增调用方",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -699,9 +732,14 @@ var doc = `{
         },
         "/api/authorized/used": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "更新调用方为启用/禁用",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -713,7 +751,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Hashid",
+                        "description": "hashID",
                         "name": "id",
                         "in": "formData",
                         "required": true
@@ -744,6 +782,11 @@ var doc = `{
         },
         "/api/authorized/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "删除调用方",
                 "consumes": [
                     "application/json"
@@ -782,9 +825,14 @@ var doc = `{
         },
         "/api/authorized_api": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "调用方接口地址列表",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -818,9 +866,14 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "授权调用方接口地址",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -870,6 +923,11 @@ var doc = `{
         },
         "/api/authorized_api/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "删除调用方接口地址",
                 "consumes": [
                     "application/json"
@@ -908,9 +966,14 @@ var doc = `{
         },
         "/api/config/email": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "修改邮件配置",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -974,9 +1037,14 @@ var doc = `{
         },
         "/api/cron": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "任务列表",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -988,15 +1056,19 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "default": 1,
                         "description": "第几页",
                         "name": "page",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
+                        "default": 10,
                         "description": "每页显示条数",
                         "name": "page_size",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -1033,9 +1105,14 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "创建任务",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1155,8 +1232,63 @@ var doc = `{
                 }
             }
         },
-        "/api/cron/:id": {
+        "/api/cron/used": {
+            "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
+                "description": "更新任务为启用/禁用",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "更新任务为启用/禁用",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashID",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "是否启用 1:是 -1:否",
+                        "name": "used",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron.updateUsedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cron/{id}": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "获取单条任务详情",
                 "consumes": [
                     "application/json"
@@ -1192,93 +1324,15 @@ var doc = `{
                     }
                 }
             },
-            "patch": {
-                "description": "手动执行单条任务",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.cron"
-                ],
-                "summary": "手动执行单条任务",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "hashId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/cron.detailResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cron/used": {
-            "patch": {
-                "description": "更新任务为启用/禁用",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.cron"
-                ],
-                "summary": "更新任务为启用/禁用",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Hashid",
-                        "name": "id",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "是否启用 1:是 -1:否",
-                        "name": "used",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/cron.updateUsedResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cron/{id}": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "编辑任务",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1290,7 +1344,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Hashid",
+                        "description": "hashID",
                         "name": "id",
                         "in": "formData",
                         "required": true
@@ -1403,13 +1457,109 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
+                "description": "手动执行单条任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "手动执行单条任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
+                "description": "管理员登录",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.admin"
+                ],
+                "summary": "管理员登录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "MD5后的密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.loginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
             }
         },
         "/api/menu": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "菜单列表",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1434,9 +1584,14 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "创建/编辑菜单",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1474,9 +1629,14 @@ var doc = `{
         },
         "/api/menu/sort": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "更新菜单排序",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1488,7 +1648,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Hashid",
+                        "description": "hashId",
                         "name": "id",
                         "in": "formData",
                         "required": true
@@ -1519,9 +1679,14 @@ var doc = `{
         },
         "/api/menu/used": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "更新菜单为启用/禁用",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1533,7 +1698,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Hashid",
+                        "description": "hashId",
                         "name": "id",
                         "in": "formData",
                         "required": true
@@ -1564,9 +1729,14 @@ var doc = `{
         },
         "/api/menu/{id}": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "菜单详情",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1600,6 +1770,11 @@ var doc = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "删除菜单",
                 "consumes": [
                     "application/json"
@@ -1638,9 +1813,14 @@ var doc = `{
         },
         "/api/menu_action": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "功能权限列表",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1674,9 +1854,14 @@ var doc = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "创建功能权限",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1726,6 +1911,11 @@ var doc = `{
         },
         "/api/menu_action/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "删除功能权限",
                 "consumes": [
                     "application/json"
@@ -1764,9 +1954,14 @@ var doc = `{
         },
         "/api/tool/cache/clear": {
             "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "清空缓存",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1802,9 +1997,14 @@ var doc = `{
         },
         "/api/tool/cache/search": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "查询缓存",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1840,9 +2040,14 @@ var doc = `{
         },
         "/api/tool/data/dbs": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "查询 DB",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1869,9 +2074,14 @@ var doc = `{
         },
         "/api/tool/data/mysql": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "执行 SQL 语句",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1921,9 +2131,14 @@ var doc = `{
         },
         "/api/tool/data/tables": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "查询 Table",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1959,9 +2174,14 @@ var doc = `{
         },
         "/api/tool/hashids/decode/{id}": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "HashIds 解密",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -1997,9 +2217,14 @@ var doc = `{
         },
         "/api/tool/hashids/encode/{id}": {
             "get": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "HashIds 加密",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -2035,9 +2260,14 @@ var doc = `{
         },
         "/api/tool/send_message": {
             "post": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
                 "description": "发送消息",
                 "consumes": [
-                    "multipart/form-data"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -2060,6 +2290,103 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/tool.sendMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/helper/md5/{str}": {
+            "get": {
+                "description": "加密",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Helper"
+                ],
+                "summary": "加密",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "需要加密的字符串",
+                        "name": "str",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.md5Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
+        "/helper/sign": {
+            "post": {
+                "description": "签名",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Helper"
+                ],
+                "summary": "签名",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "调用方 KEY",
+                        "name": "key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "请求路径 (不附带 querystring)，例如：/api/login",
+                        "name": "path",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "请求方式，例如：POST",
+                        "name": "method",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "请求参数，例如：username=tom\u0026password=123456",
+                        "name": "params",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.signResponse"
                         }
                     },
                     "400": {
@@ -2687,6 +3014,28 @@ var doc = `{
                 }
             }
         },
+        "helper.md5Response": {
+            "type": "object",
+            "properties": {
+                "md5_str": {
+                    "description": "MD5后的字符串",
+                    "type": "string"
+                }
+            }
+        },
+        "helper.signResponse": {
+            "type": "object",
+            "properties": {
+                "authorization": {
+                    "description": "签名信息-Authorization",
+                    "type": "string"
+                },
+                "authorization_date": {
+                    "description": "签名信息-Authorization-Date",
+                    "type": "string"
+                }
+            }
+        },
         "menu.createActionResponse": {
             "type": "object",
             "properties": {
@@ -3004,6 +3353,13 @@ var doc = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "LoginToken": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
     }
 }`
 
@@ -3019,8 +3375,8 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "2.0",
-	Host:        "127.0.0.1:9999",
-	BasePath:    "",
+	Host:        "",
+	BasePath:    "/",
 	Schemes:     []string{},
 	Title:       "swagger 接口文档",
 	Description: "",

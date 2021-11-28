@@ -39,12 +39,12 @@ type Handler interface {
 
 	// Detail 获取单条任务详情
 	// @Tags API.cron
-	// @Router /api/cron/:id [get]
+	// @Router /api/cron/{id} [get]
 	Detail() core.HandlerFunc
 
 	// Execute 手动执行任务
 	// @Tags API.cron
-	// @Router /api/cron/:id [patch]
+	// @Router /api/cron/{id} [patch]
 	Execute() core.HandlerFunc
 }
 

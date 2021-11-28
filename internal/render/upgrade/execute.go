@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/proposal/tablesqls"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 )
 
@@ -56,10 +55,10 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(upgradeExecuteRequest)
 		if err := ctx.ShouldBindForm(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -68,29 +67,29 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 		db := h.db.GetDbW()
 
 		if upgradeTableList[req.TableName] == nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
-				code.Text(code.MySQLExecError)).WithErr(errors.New("数据表不存在")),
+				code.Text(code.MySQLExecError)).WithError(errors.New("数据表不存在")),
 			)
 			return
 		}
 
 		if !upgradeTableOp[req.Op] {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
-				code.Text(code.MySQLExecError)).WithErr(errors.New("非法操作")),
+				code.Text(code.MySQLExecError)).WithError(errors.New("非法操作")),
 			)
 			return
 		}
 
 		if req.Op == "table" {
 			if err := db.Exec(upgradeTableList[req.TableName]["table_sql"]).Error; err != nil {
-				ctx.AbortWithError(errno.NewError(
+				ctx.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.MySQLExecError,
-					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithError(err),
 				)
 				return
 			}
@@ -98,10 +97,10 @@ func (h *handler) UpgradeExecute() core.HandlerFunc {
 			outPutString = "初始化 MySQL 数据表：" + req.TableName + " 成功。"
 		} else if req.Op == "table_data" {
 			if err := db.Exec(upgradeTableList[req.TableName]["table_data_sql"]).Error; err != nil {
-				ctx.AbortWithError(errno.NewError(
+				ctx.AbortWithError(core.Error(
 					http.StatusBadRequest,
 					code.MySQLExecError,
-					code.Text(code.MySQLExecError)+" "+err.Error()).WithErr(err),
+					code.Text(code.MySQLExecError)+" "+err.Error()).WithError(err),
 				)
 				return
 			}

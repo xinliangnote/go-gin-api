@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/render/admin"
 	"github.com/xinliangnote/go-gin-api/internal/render/authorized"
 	"github.com/xinliangnote/go-gin-api/internal/render/config"
@@ -27,7 +28,7 @@ func setRenderRouter(r *resource) {
 	renderCron := cron.New(r.logger, r.db, r.cache)
 
 	// 无需记录日志，无需 RBAC 权限验证
-	notRBAC := r.mux.Group("", r.middles.DisableLog())
+	notRBAC := r.mux.Group("", core.DisableTraceLog, core.DisableRecordMetrics)
 	{
 		// 首页
 		notRBAC.GET("", renderIndex.Index())
@@ -46,7 +47,7 @@ func setRenderRouter(r *resource) {
 	}
 
 	// 无需记录日志，需要 RBAC 权限验证
-	render := r.mux.Group("", r.middles.DisableLog())
+	render := r.mux.Group("", core.DisableTraceLog, core.DisableRecordMetrics)
 	{
 		// 配置信息
 		render.GET("/config/email", renderConfig.Email())

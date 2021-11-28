@@ -19,7 +19,7 @@ func (s *service) Create(ctx core.Context, adminData *CreateAdminData) (id int32
 	model.Password = password.GeneratePassword(adminData.Password)
 	model.Nickname = adminData.Nickname
 	model.Mobile = adminData.Mobile
-	model.CreatedUser = ctx.UserName()
+	model.CreatedUser = ctx.SessionUserInfo().UserName
 	model.IsUsed = 1
 	model.IsDeleted = -1
 

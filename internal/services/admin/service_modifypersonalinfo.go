@@ -15,7 +15,7 @@ func (s *service) ModifyPersonalInfo(ctx core.Context, id int32, modifyData *Mod
 	data := map[string]interface{}{
 		"nickname":     modifyData.Nickname,
 		"mobile":       modifyData.Mobile,
-		"updated_user": ctx.UserName(),
+		"updated_user": ctx.SessionUserInfo().UserName,
 	}
 
 	qb := admin.NewQueryBuilder()

@@ -10,9 +10,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/password"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
-
-	"github.com/spf13/cast"
 )
 
 type detailResponse struct {
@@ -26,35 +23,36 @@ type detailResponse struct {
 // @Summary 管理员详情
 // @Description 管理员详情
 // @Tags API.admin
-// @Accept json
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Success 200 {object} detailResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/admin/info [get]
+// @Security LoginToken
 func (h *handler) Detail() core.HandlerFunc {
-	return func(c core.Context) {
+	return func(ctx core.Context) {
 		res := new(detailResponse)
 
 		searchOneData := new(admin.SearchOneData)
-		searchOneData.Id = cast.ToInt32(c.UserID())
+		searchOneData.Id = ctx.SessionUserInfo().UserID
 		searchOneData.IsUsed = 1
 
-		info, err := h.adminService.Detail(c, searchOneData)
+		info, err := h.adminService.Detail(ctx, searchOneData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminDetailError,
-				code.Text(code.AdminDetailError)).WithErr(err),
+				code.Text(code.AdminDetailError)).WithError(err),
 			)
 			return
 		}
 
-		menuCacheData, err := h.cache.Get(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(searchOneData.Id)+":menu", redis.WithTrace(c.Trace()))
+		menuCacheData, err := h.cache.Get(configs.RedisKeyPrefixLoginUser+password.GenerateLoginToken(searchOneData.Id)+":menu", redis.WithTrace(ctx.Trace()))
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminDetailError,
-				code.Text(code.AdminDetailError)).WithErr(err),
+				code.Text(code.AdminDetailError)).WithError(err),
 			)
 			return
 		}
@@ -62,10 +60,10 @@ func (h *handler) Detail() core.HandlerFunc {
 		var menuData []admin.ListMyMenuData
 		err = json.Unmarshal([]byte(menuCacheData), &menuData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminDetailError,
-				code.Text(code.AdminDetailError)).WithErr(err),
+				code.Text(code.AdminDetailError)).WithError(err),
 			)
 			return
 		}
@@ -74,6 +72,6 @@ func (h *handler) Detail() core.HandlerFunc {
 		res.Nickname = info.Nickname
 		res.Mobile = info.Mobile
 		res.Menu = menuData
-		c.Payload(res)
+		ctx.Payload(res)
 	}
 }

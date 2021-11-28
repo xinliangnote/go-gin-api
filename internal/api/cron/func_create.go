@@ -7,7 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/validation"
 	"github.com/xinliangnote/go-gin-api/internal/services/cron"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type createRequest struct {
@@ -35,7 +34,7 @@ type createResponse struct {
 // @Summary 创建任务
 // @Description 创建任务
 // @Tags API.cron
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param name formData string true "任务名称"
 // @Param spec formData string true "crontab 表达式"
@@ -54,15 +53,16 @@ type createResponse struct {
 // @Success 200 {object} createResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/cron [post]
+// @Security LoginToken
 func (h *handler) Create() core.HandlerFunc {
 	return func(ctx core.Context) {
 		req := new(createRequest)
 		res := new(createResponse)
 		if err := ctx.ShouldBindForm(req); err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				validation.Error(err)).WithErr(err),
+				validation.Error(err)).WithError(err),
 			)
 			return
 		}
@@ -85,10 +85,10 @@ func (h *handler) Create() core.HandlerFunc {
 
 		id, err := h.cronService.Create(ctx, createData)
 		if err != nil {
-			ctx.AbortWithError(errno.NewError(
+			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.CronCreateError,
-				code.Text(code.CronCreateError)).WithErr(err),
+				code.Text(code.CronCreateError)).WithError(err),
 			)
 			return
 		}

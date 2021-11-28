@@ -8,7 +8,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/mail"
 
 	"github.com/spf13/cast"
@@ -31,7 +30,7 @@ type emailResponse struct {
 // @Summary 修改邮件配置
 // @Description 修改邮件配置
 // @Tags API.config
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param host formData string true "邮箱服务器"
 // @Param port formData string true "端口"
@@ -41,15 +40,16 @@ type emailResponse struct {
 // @Success 200 {object} emailResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/config/email [patch]
+// @Security LoginToken
 func (h *handler) Email() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(emailRequest)
 		res := new(emailResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
@@ -64,10 +64,10 @@ func (h *handler) Email() core.HandlerFunc {
 			Body:     fmt.Sprintf("%s[%s] 已添加您为系统告警通知人。", configs.ProjectName, env.Active().Value()),
 		}
 		if err := mail.Send(options); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.SendEmailError,
-				code.Text(code.SendEmailError)+err.Error()).WithErr(err),
+				code.Text(code.SendEmailError)+err.Error()).WithError(err),
 			)
 			return
 		}
@@ -80,10 +80,10 @@ func (h *handler) Email() core.HandlerFunc {
 
 		err := viper.WriteConfig()
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.WriteConfigError,
-				code.Text(code.WriteConfigError)).WithErr(err),
+				code.Text(code.WriteConfigError)).WithError(err),
 			)
 			return
 		}

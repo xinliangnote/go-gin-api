@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   admin.ListMenuData:
     properties:
@@ -428,6 +429,21 @@ definitions:
         description: 主键ID
         type: integer
     type: object
+  helper.md5Response:
+    properties:
+      md5_str:
+        description: MD5后的字符串
+        type: string
+    type: object
+  helper.signResponse:
+    properties:
+      authorization:
+        description: 签名信息-Authorization
+        type: string
+      authorization_date:
+        description: 签名信息-Authorization-Date
+        type: string
+    type: object
   menu.createActionResponse:
     properties:
       id:
@@ -647,7 +663,6 @@ definitions:
           $ref: '#/definitions/tool.tableData'
         type: array
     type: object
-host: 127.0.0.1:9999
 info:
   contact: {}
   license:
@@ -659,17 +674,21 @@ paths:
   /api/admin:
     get:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 管理员列表
       parameters:
-      - description: 第几页
+      - default: 1
+        description: 第几页
         in: query
         name: page
+        required: true
         type: integer
-      - description: 每页显示条数
+      - default: 10
+        description: 每页显示条数
         in: query
         name: page_size
-        type: string
+        required: true
+        type: integer
       - description: 用户名
         in: query
         name: username
@@ -693,12 +712,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 管理员列表
       tags:
       - API.admin
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 新增管理员
       parameters:
       - description: 用户名
@@ -716,7 +737,7 @@ paths:
         name: mobile
         required: true
         type: string
-      - description: 密码
+      - description: MD5后的密码
         in: formData
         name: password
         required: true
@@ -732,6 +753,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 新增管理员
       tags:
       - API.admin
@@ -757,13 +780,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 删除管理员
       tags:
       - API.admin
   /api/admin/info:
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 管理员详情
       produces:
       - application/json
@@ -776,43 +801,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 管理员详情
-      tags:
-      - API.admin
-  /api/admin/login:
-    post:
-      consumes:
-      - multipart/form-data
-      description: 管理员登录
-      parameters:
-      - description: 用户名
-        in: formData
-        name: username
-        required: true
-        type: string
-      - description: 密码
-        in: formData
-        name: password
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/admin.loginResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      summary: 管理员登录
       tags:
       - API.admin
   /api/admin/logout:
     post:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 管理员登出
       produces:
       - application/json
@@ -825,13 +822,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 管理员登出
       tags:
       - API.admin
   /api/admin/menu:
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 提交菜单授权
       parameters:
       - description: Hashid
@@ -855,13 +854,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 提交菜单授权
       tags:
       - API.admin
-  /api/admin/menu/:id:
+  /api/admin/menu/{id}:
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 菜单授权列表
       parameters:
       - description: hashId
@@ -880,13 +881,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 菜单授权列表
       tags:
       - API.admin
   /api/admin/modify_password:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 修改密码
       parameters:
       - description: 旧密码
@@ -910,13 +913,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 修改密码
       tags:
       - API.admin
   /api/admin/modify_personal_info:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 修改个人信息
       parameters:
       - description: 昵称
@@ -940,13 +945,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 修改个人信息
       tags:
       - API.admin
   /api/admin/offline:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 下线管理员
       parameters:
       - description: Hashid
@@ -965,6 +972,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 下线管理员
       tags:
       - API.admin
@@ -990,13 +999,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 重置密码
       tags:
       - API.admin
   /api/admin/used:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 更新管理员为启用/禁用
       parameters:
       - description: Hashid
@@ -1020,23 +1031,29 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 更新管理员为启用/禁用
       tags:
       - API.admin
   /api/authorized:
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 调用方列表
       parameters:
-      - description: 第几页
+      - default: 1
+        description: 第几页
         in: query
         name: page
+        required: true
         type: integer
-      - description: 每页显示条数
+      - default: 10
+        description: 每页显示条数
         in: query
         name: page_size
-        type: string
+        required: true
+        type: integer
       - description: 调用方key
         in: query
         name: business_key
@@ -1064,12 +1081,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 调用方列表
       tags:
       - API.authorized
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 新增调用方
       parameters:
       - description: 调用方key
@@ -1098,6 +1117,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 新增调用方
       tags:
       - API.authorized
@@ -1123,16 +1144,18 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 删除调用方
       tags:
       - API.authorized
   /api/authorized/used:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 更新调用方为启用/禁用
       parameters:
-      - description: Hashid
+      - description: hashID
         in: formData
         name: id
         required: true
@@ -1153,13 +1176,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 更新调用方为启用/禁用
       tags:
       - API.authorized
   /api/authorized_api:
     get:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 调用方接口地址列表
       parameters:
       - description: hashID
@@ -1178,12 +1203,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 调用方接口地址列表
       tags:
       - API.authorized
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 授权调用方接口地址
       parameters:
       - description: HashID
@@ -1212,6 +1239,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 授权调用方接口地址
       tags:
       - API.authorized
@@ -1237,13 +1266,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 删除调用方接口地址
       tags:
       - API.authorized
   /api/config/email:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 修改邮件配置
       parameters:
       - description: 邮箱服务器
@@ -1282,23 +1313,29 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 修改邮件配置
       tags:
       - API.config
   /api/cron:
     get:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 任务列表
       parameters:
-      - description: 第几页
+      - default: 1
+        description: 第几页
         in: query
         name: page
+        required: true
         type: integer
-      - description: 每页显示条数
+      - default: 10
+        description: 每页显示条数
         in: query
         name: page_size
-        type: string
+        required: true
+        type: integer
       - description: 任务名称
         in: query
         name: name
@@ -1322,12 +1359,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 任务列表
       tags:
       - API.cron
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 创建任务
       parameters:
       - description: 任务名称
@@ -1406,10 +1445,12 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 创建任务
       tags:
       - API.cron
-  /api/cron/:id:
+  /api/cron/{id}:
     get:
       consumes:
       - application/json
@@ -1431,6 +1472,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 获取单条任务详情
       tags:
       - API.cron
@@ -1455,16 +1498,17 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 手动执行单条任务
       tags:
       - API.cron
-  /api/cron/{id}:
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 编辑任务
       parameters:
-      - description: Hashid
+      - description: hashID
         in: formData
         name: id
         required: true
@@ -1545,16 +1589,18 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 编辑任务
       tags:
       - API.cron
   /api/cron/used:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 更新任务为启用/禁用
       parameters:
-      - description: Hashid
+      - description: hashID
         in: formData
         name: id
         required: true
@@ -1575,13 +1621,47 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 更新任务为启用/禁用
       tags:
       - API.cron
+  /api/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 管理员登录
+      parameters:
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: MD5后的密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
+      summary: 管理员登录
+      tags:
+      - API.admin
   /api/menu:
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 菜单列表
       produces:
       - application/json
@@ -1594,12 +1674,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 菜单列表
       tags:
       - API.menu
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 创建/编辑菜单
       parameters:
       - description: 请求信息
@@ -1619,6 +1701,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 创建/编辑菜单
       tags:
       - API.menu
@@ -1644,12 +1728,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 删除菜单
       tags:
       - API.menu
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: 菜单详情
       parameters:
       - description: hashId
@@ -1668,16 +1754,18 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 菜单详情
       tags:
       - API.menu
   /api/menu/sort:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 更新菜单排序
       parameters:
-      - description: Hashid
+      - description: hashId
         in: formData
         name: id
         required: true
@@ -1698,16 +1786,18 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 更新菜单排序
       tags:
       - API.menu
   /api/menu/used:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 更新菜单为启用/禁用
       parameters:
-      - description: Hashid
+      - description: hashId
         in: formData
         name: id
         required: true
@@ -1728,13 +1818,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 更新菜单为启用/禁用
       tags:
       - API.menu
   /api/menu_action:
     get:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 功能权限列表
       parameters:
       - description: hashID
@@ -1753,12 +1845,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 功能权限列表
       tags:
       - API.menu
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 创建功能权限
       parameters:
       - description: HashID
@@ -1787,6 +1881,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 创建功能权限
       tags:
       - API.menu
@@ -1812,13 +1908,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 删除功能权限
       tags:
       - API.menu
   /api/tool/cache/clear:
     patch:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 清空缓存
       parameters:
       - description: Redis Key
@@ -1837,13 +1935,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 清空缓存
       tags:
       - API.tool
   /api/tool/cache/search:
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 查询缓存
       parameters:
       - description: Redis Key
@@ -1862,13 +1962,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 查询缓存
       tags:
       - API.tool
   /api/tool/data/dbs:
     get:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 查询 DB
       produces:
       - application/json
@@ -1881,13 +1983,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 查询 DB
       tags:
       - API.tool
   /api/tool/data/mysql:
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 执行 SQL 语句
       parameters:
       - description: 数据库名称
@@ -1916,13 +2020,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 执行 SQL 语句
       tags:
       - API.tool
   /api/tool/data/tables:
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 查询 Table
       parameters:
       - description: 数据库名称
@@ -1941,13 +2047,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 查询 Table
       tags:
       - API.tool
   /api/tool/hashids/decode/{id}:
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: HashIds 解密
       parameters:
       - description: 需解密的密文
@@ -1966,13 +2074,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: HashIds 解密
       tags:
       - API.tool
   /api/tool/hashids/encode/{id}:
     get:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: HashIds 加密
       parameters:
       - description: 需加密的数字
@@ -1991,13 +2101,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: HashIds 加密
       tags:
       - API.tool
   /api/tool/send_message:
     post:
       consumes:
-      - multipart/form-data
+      - application/x-www-form-urlencoded
       description: 发送消息
       parameters:
       - description: 消息内容
@@ -2016,7 +2128,79 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
       summary: 发送消息
       tags:
       - API.tool
+  /helper/md5/{str}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 加密
+      parameters:
+      - description: 需要加密的字符串
+        in: path
+        name: str
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helper.md5Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 加密
+      tags:
+      - Helper
+  /helper/sign:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 签名
+      parameters:
+      - description: 调用方 KEY
+        in: formData
+        name: key
+        required: true
+        type: string
+      - description: 请求路径 (不附带 querystring)，例如：/api/login
+        in: formData
+        name: path
+        required: true
+        type: string
+      - description: 请求方式，例如：POST
+        in: formData
+        name: method
+        required: true
+        type: string
+      - description: 请求参数，例如：username=tom&password=123456
+        in: formData
+        name: params
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helper.signResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      summary: 签名
+      tags:
+      - Helper
+securityDefinitions:
+  LoginToken:
+    in: header
+    name: token
+    type: apiKey
 swagger: "2.0"

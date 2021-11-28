@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/services/menu"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type createActionRequest struct {
@@ -23,7 +22,7 @@ type createActionResponse struct {
 // @Summary 创建功能权限
 // @Description 创建功能权限
 // @Tags API.menu
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param id formData string true "HashID"
 // @Param method formData string true "请求方法"
@@ -31,25 +30,26 @@ type createActionResponse struct {
 // @Success 200 {object} createActionResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/menu_action [post]
+// @Security LoginToken
 func (h *handler) CreateAction() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(createActionRequest)
 		res := new(createActionResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -60,10 +60,10 @@ func (h *handler) CreateAction() core.HandlerFunc {
 		searchOneData.Id = id
 		menuInfo, err := h.menuService.Detail(c, searchOneData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MenuDetailError,
-				code.Text(code.MenuDetailError)).WithErr(err),
+				code.Text(code.MenuDetailError)).WithError(err),
 			)
 			return
 		}
@@ -75,10 +75,10 @@ func (h *handler) CreateAction() core.HandlerFunc {
 
 		createId, err := h.menuService.CreateAction(c, createActionData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MenuCreateActionError,
-				code.Text(code.MenuCreateActionError)).WithErr(err),
+				code.Text(code.MenuCreateActionError)).WithError(err),
 			)
 			return
 		}

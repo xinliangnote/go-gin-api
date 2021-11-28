@@ -1,12 +1,12 @@
-# FROM 基于 golang:1.15-alpine
-FROM golang:1.15-alpine AS builder
+# FROM 基于 golang:1.16-alpine
+FROM golang:1.16-alpine AS builder
 
 # ENV 设置环境变量
 ENV GOPATH=/opt/repo
 ENV GO111MODULE=on
 ENV GOPROXY=https://goproxy.io,direct
 
-# ADD 源路径 目标路径
+# COPY 源路径 目标路径
 COPY . $GOPATH/src/github.com/xinliangnote/go-gin-api
 
 # RUN 执行 go build .

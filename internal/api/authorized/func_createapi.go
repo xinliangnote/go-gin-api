@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/services/authorized"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type createAPIRequest struct {
@@ -23,7 +22,7 @@ type createAPIResponse struct {
 // @Summary 授权调用方接口地址
 // @Description 授权调用方接口地址
 // @Tags API.authorized
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param id formData string true "HashID"
 // @Param method formData string true "请求方法"
@@ -31,25 +30,26 @@ type createAPIResponse struct {
 // @Success 200 {object} createAPIResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/authorized_api [post]
+// @Security LoginToken
 func (h *handler) CreateAPI() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(createAPIRequest)
 		res := new(createAPIResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -59,10 +59,10 @@ func (h *handler) CreateAPI() core.HandlerFunc {
 		// 通过 id 查询出 business_key
 		authorizedInfo, err := h.authorizedService.Detail(c, id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AuthorizedDetailError,
-				code.Text(code.AuthorizedDetailError)).WithErr(err),
+				code.Text(code.AuthorizedDetailError)).WithError(err),
 			)
 			return
 		}
@@ -74,10 +74,10 @@ func (h *handler) CreateAPI() core.HandlerFunc {
 
 		createId, err := h.authorizedService.CreateAPI(c, createAPIData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AuthorizedCreateAPIError,
-				code.Text(code.AuthorizedCreateAPIError)).WithErr(err),
+				code.Text(code.AuthorizedCreateAPIError)).WithError(err),
 			)
 			return
 		}

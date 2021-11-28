@@ -25,7 +25,7 @@ func (s *service) Create(ctx core.Context, authorizedData *CreateAuthorizedData)
 	model.BusinessSecret = secret
 	model.BusinessDeveloper = authorizedData.BusinessDeveloper
 	model.Remark = authorizedData.Remark
-	model.CreatedUser = ctx.UserName()
+	model.CreatedUser = ctx.SessionUserInfo().UserName
 	model.IsUsed = 1
 	model.IsDeleted = -1
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type updateSortRequest struct {
@@ -21,32 +20,33 @@ type updateSortResponse struct {
 // @Summary 更新菜单排序
 // @Description 更新菜单排序
 // @Tags API.menu
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
-// @Param id formData string true "Hashid"
+// @Param id formData string true "hashId"
 // @Param sort formData int true "排序"
 // @Success 200 {object} updateSortResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/menu/sort [patch]
+// @Security LoginToken
 func (h *handler) UpdateSort() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(updateSortRequest)
 		res := new(updateSortResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -55,10 +55,10 @@ func (h *handler) UpdateSort() core.HandlerFunc {
 
 		err = h.menuService.UpdateSort(c, id, req.Sort)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MenuUpdateError,
-				code.Text(code.MenuUpdateError)).WithErr(err),
+				code.Text(code.MenuUpdateError)).WithError(err),
 			)
 			return
 		}

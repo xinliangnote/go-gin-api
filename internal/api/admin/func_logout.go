@@ -7,7 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 )
 
@@ -19,21 +18,22 @@ type logoutResponse struct {
 // @Summary 管理员登出
 // @Description 管理员登出
 // @Tags API.admin
-// @Accept json
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Success 200 {object} logoutResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/admin/logout [post]
+// @Security LoginToken
 func (h *handler) Logout() core.HandlerFunc {
 	return func(c core.Context) {
 		res := new(logoutResponse)
-		res.Username = c.UserName()
+		res.Username = c.SessionUserInfo().UserName
 
 		if !h.cache.Del(configs.RedisKeyPrefixLoginUser+c.GetHeader(configs.HeaderLoginToken), redis.WithTrace(c.Trace())) {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminLogOutError,
-				code.Text(code.AdminLogOutError)).WithErr(errors.New("cache del err")),
+				code.Text(code.AdminLogOutError)).WithError(errors.New("cache del err")),
 			)
 			return
 		}

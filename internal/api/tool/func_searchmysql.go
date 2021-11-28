@@ -7,7 +7,6 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 
 	"github.com/spf13/cast"
 )
@@ -72,7 +71,7 @@ var filterListKeyword = []string{
 // @Summary 执行 SQL 语句
 // @Description 执行 SQL 语句
 // @Tags API.tool
-// @Accept multipart/form-data
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param db_name formData string true "数据库名称"
 // @Param table_name formData string true "数据表名称"
@@ -80,22 +79,23 @@ var filterListKeyword = []string{
 // @Success 200 {object} searchMySQLResponse
 // @Failure 400 {object} code.Failure
 // @Router /api/tool/data/mysql [post]
+// @Security LoginToken
 func (h *handler) SearchMySQL() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(searchMySQLRequest)
 		res := new(searchMySQLResponse)
 		if err := c.ShouldBindForm(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		sql := strings.ToLower(strings.TrimSpace(req.SQL))
 		if sql == "" {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
 				"SQL 语句不能为空！"),
@@ -104,7 +104,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		}
 
 		if preFilterList[string([]byte(sql)[:6])] {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
 				"SQL 语句不能以 "+string([]byte(sql)[:6])+" 开头！"),
@@ -124,7 +124,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 				}
 
 				if !isWhiteList {
-					c.AbortWithError(errno.NewError(
+					c.AbortWithError(core.Error(
 						http.StatusBadRequest,
 						code.MySQLExecError,
 						"SQL 语句存在敏感词： "+f+"！"),
@@ -142,10 +142,10 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		// TODO 后期支持查询多个数据库
 		rows, err := h.db.GetDbR().Raw(sql).Rows()
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
-				"MySQL "+err.Error()).WithErr(err),
+				"MySQL "+err.Error()).WithError(err),
 			)
 			return
 		}
@@ -191,10 +191,10 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 
 		rows, err = h.db.GetDbR().Raw(sqlTableColumn).Rows()
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.MySQLExecError,
-				"MySQL "+err.Error()).WithErr(err),
+				"MySQL "+err.Error()).WithError(err),
 			)
 			return
 		}

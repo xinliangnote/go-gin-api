@@ -38,7 +38,7 @@ func (s *service) Create(ctx core.Context, createData *CreateCronTaskData) (id i
 	model.NotifyKeyword = createData.NotifyKeyword
 	model.Remark = createData.Remark
 	model.IsUsed = createData.IsUsed
-	model.CreatedUser = ctx.UserName()
+	model.CreatedUser = ctx.SessionUserInfo().UserName
 
 	id, err = model.Create(s.db.GetDbW().WithContext(ctx.RequestContext()))
 	if err != nil {

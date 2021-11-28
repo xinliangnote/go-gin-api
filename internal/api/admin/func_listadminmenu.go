@@ -6,7 +6,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errno"
 )
 
 type listAdminMenuRequest struct {
@@ -22,31 +21,32 @@ type listAdminMenuResponse struct {
 // @Summary 菜单授权列表
 // @Description 菜单授权列表
 // @Tags API.admin
-// @Accept json
+// @Accept application/x-www-form-urlencoded
 // @Produce json
 // @Param id path string true "hashId"
 // @Success 200 {object} listAdminMenuResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/admin/menu/:id [get]
+// @Router /api/admin/menu/{id} [get]
+// @Security LoginToken
 func (h *handler) ListAdminMenu() core.HandlerFunc {
 	return func(c core.Context) {
 		req := new(listAdminMenuRequest)
 		res := new(listAdminMenuResponse)
 		if err := c.ShouldBindURI(req); err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.ParamBindError,
-				code.Text(code.ParamBindError)).WithErr(err),
+				code.Text(code.ParamBindError)).WithError(err),
 			)
 			return
 		}
 
 		ids, err := h.hashids.HashidsDecode(req.Id)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.HashIdsDecodeError,
-				code.Text(code.HashIdsDecodeError)).WithErr(err),
+				code.Text(code.HashIdsDecodeError)).WithError(err),
 			)
 			return
 		}
@@ -57,10 +57,10 @@ func (h *handler) ListAdminMenu() core.HandlerFunc {
 
 		info, err := h.adminService.Detail(c, searchOneData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminMenuListError,
-				code.Text(code.AdminMenuListError)).WithErr(err),
+				code.Text(code.AdminMenuListError)).WithError(err),
 			)
 			return
 		}
@@ -72,10 +72,10 @@ func (h *handler) ListAdminMenu() core.HandlerFunc {
 
 		listData, err := h.adminService.ListMenu(c, searchData)
 		if err != nil {
-			c.AbortWithError(errno.NewError(
+			c.AbortWithError(core.Error(
 				http.StatusBadRequest,
 				code.AdminMenuListError,
-				code.Text(code.AdminMenuListError)).WithErr(err),
+				code.Text(code.AdminMenuListError)).WithError(err),
 			)
 			return
 		}

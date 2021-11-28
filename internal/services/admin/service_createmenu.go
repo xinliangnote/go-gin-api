@@ -27,7 +27,7 @@ func (s *service) CreateMenu(ctx core.Context, menuData *CreateMenuData) (err er
 		createModel := admin_menu.NewModel()
 		createModel.AdminId = menuData.AdminId
 		createModel.MenuId = cast.ToInt32(v)
-		createModel.CreatedUser = ctx.UserName()
+		createModel.CreatedUser = ctx.SessionUserInfo().UserName
 
 		_, err = createModel.Create(s.db.GetDbW().WithContext(ctx.RequestContext()))
 		if err != nil {
