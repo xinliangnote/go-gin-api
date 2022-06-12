@@ -46,7 +46,11 @@ function AjaxError(response) {
 
     if (errCode === 401) {
         // 跳转到登录页
-        window.open("/login",'_self');
+        if (window.frames.length !== parent.frames.length) {
+            parent.window.open("/login",'_self');
+        }else{
+            window.open("/login",'_self');
+        }
         return;
     }
 
