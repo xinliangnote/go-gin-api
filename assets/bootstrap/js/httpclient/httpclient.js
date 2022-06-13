@@ -44,10 +44,13 @@ function AjaxError(response) {
     let errCode = response.status;
     let errMsg = response.responseText;
 
-    if (errCode === 401) { // 跳转到登录页
-        // 关闭当前界面
-        parent.window.close();
-        window.open("/login");
+    if (errCode === 401) {
+        // 跳转到登录页
+        if (window.frames.length !== parent.frames.length) {
+            parent.window.open("/login",'_self');
+        }else{
+            window.open("/login",'_self');
+        }
         return;
     }
 
