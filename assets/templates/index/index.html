@@ -281,8 +281,11 @@
                     $.cookie('_nav_title_', '');
                     $.cookie('_login_token_', '');
 
-                    parent.window.close();
-                    window.open("/login");
+                    if (window.frames.length !== parent.frames.length) {
+                        parent.window.open("/login",'_self');
+                    }else{
+                        window.open("/login",'_self');
+                    }
                 },
                 function (response) {
                     AjaxError(response);
