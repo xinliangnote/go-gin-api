@@ -1477,32 +1477,6 @@ paths:
       summary: 获取单条任务详情
       tags:
       - API.cron
-    patch:
-      consumes:
-      - application/json
-      description: 手动执行单条任务
-      parameters:
-      - description: hashId
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/cron.detailResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/code.Failure'
-      security:
-      - LoginToken: []
-      summary: 手动执行单条任务
-      tags:
-      - API.cron
     post:
       consumes:
       - application/x-www-form-urlencoded
@@ -1592,6 +1566,33 @@ paths:
       security:
       - LoginToken: []
       summary: 编辑任务
+      tags:
+      - API.cron
+  /api/cron/exec/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: 手动执行单条任务
+      parameters:
+      - description: hashId
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cron.detailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/code.Failure'
+      security:
+      - LoginToken: []
+      summary: 手动执行单条任务
       tags:
       - API.cron
   /api/cron/used:

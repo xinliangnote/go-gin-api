@@ -44,7 +44,7 @@ type Handler interface {
 
 	// Execute 手动执行任务
 	// @Tags API.cron
-	// @Router /api/cron/{id} [patch]
+	// @Router /api/cron/exec/{id} [patch]
 	Execute() core.HandlerFunc
 }
 
