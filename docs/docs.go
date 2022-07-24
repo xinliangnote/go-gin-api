@@ -1232,6 +1232,49 @@ var doc = `{
                 }
             }
         },
+        "/api/cron/exec/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "LoginToken": []
+                    }
+                ],
+                "description": "手动执行单条任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API.cron"
+                ],
+                "summary": "手动执行单条任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hashId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cron.detailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/code.Failure"
+                        }
+                    }
+                }
+            }
+        },
         "/api/cron/used": {
             "patch": {
                 "security": [
@@ -1448,47 +1491,6 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/cron.modifyResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/code.Failure"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "security": [
-                    {
-                        "LoginToken": []
-                    }
-                ],
-                "description": "手动执行单条任务",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "API.cron"
-                ],
-                "summary": "手动执行单条任务",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "hashId",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/cron.detailResponse"
                         }
                     },
                     "400": {

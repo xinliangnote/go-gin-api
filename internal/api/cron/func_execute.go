@@ -27,7 +27,7 @@ type executeResponse struct {
 // @Param id path string true "hashId"
 // @Success 200 {object} detailResponse
 // @Failure 400 {object} code.Failure
-// @Router /api/cron/{id} [patch]
+// @Router /api/cron/exec/{id} [patch]
 // @Security LoginToken
 func (h *handler) Execute() core.HandlerFunc {
 	return func(ctx core.Context) {
