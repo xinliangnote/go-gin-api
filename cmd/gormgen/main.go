@@ -15,7 +15,7 @@ var (
 )
 
 func init() {
-	flagStructs := flag.String("structs", "", "[Required] The name of schema structs to generate structs for, comma seperated\n")
+	flagStructs := flag.String("structs", "", "[Required] The name of schema structs to generate structs for, comma separated\n")
 	flagInput := flag.String("input", "", "[Required] The name of the input file dir\n")
 	flag.Parse()
 
