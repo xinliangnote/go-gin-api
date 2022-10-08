@@ -3,7 +3,7 @@ package cron
 import (
 	"sync"
 
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/cron_task"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
@@ -42,7 +42,7 @@ func (tc *taskCount) Wait() {
 
 type server struct {
 	logger    *zap.Logger
-	db        mysql.Repo
+	db        iface.Repo
 	cache     redis.Repo
 	cron      *cron.Cron
 	taskCount *taskCount
@@ -67,7 +67,7 @@ type Server interface {
 	AddJob(task *cron_task.CronTask) cron.FuncJob
 }
 
-func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) (Server, error) {
+func New(logger *zap.Logger, db iface.Repo, cache redis.Repo) (Server, error) {
 	if logger == nil {
 		return nil, errors.New("logger required")
 	}

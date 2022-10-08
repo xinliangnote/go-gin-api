@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 
 	"go.uber.org/zap"
@@ -24,7 +24,7 @@ type handler struct {
 	cache  redis.Repo
 }
 
-func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) Handler {
+func New(logger *zap.Logger, db iface.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger: logger,
 		cache:  cache,

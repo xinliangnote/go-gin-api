@@ -32,6 +32,118 @@ func CreateMenuActionTableSql() (sql string) {
 	return
 }
 
+/*CREATE TABLE menu_action
+(
+    id           integer primary key ,
+    menu_id      integer NOT NULL DEFAULT '0' ,
+    method       varchar(30)  NOT NULL DEFAULT '' ,
+    api          varchar(100) NOT NULL DEFAULT '' ,
+    is_deleted   smallint NOT NULL DEFAULT '-1' ,
+    created_at   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    created_user varchar(60)  NOT NULL DEFAULT '' ,
+    updated_at   timestamp      ,
+    updated_user varchar(60)  NOT NULL DEFAULT ''
+
+);
+
+create index idx_menu_id on  menu_action(menu_id);
+
+CREATE
+OR REPLACE FUNCTION update_modified_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_at
+= now();
+RETURN NEW;
+END;
+$$
+language 'plpgsql';
+
+CREATE TRIGGER update_table_name_update_at
+    BEFORE UPDATE
+    ON menu_action
+    FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+comment
+on table menu_action is '功能权限表';
+comment
+on column menu_action.id is '主键';
+comment
+on column menu_action.menu_id is '菜单栏ID';
+comment
+on column menu_action.method is '请求方式';
+comment
+on column menu_action.api is '请求地址';
+comment
+on column menu_action.is_deleted is '是否删除 1:是  -1:否';
+comment
+on column menu_action.created_at is '创建时间';
+comment
+on column menu_action.created_user is '创建人';
+comment
+on column menu_action.updated_at is '更新时间';
+comment
+on column menu_action.updated_user is '更新人';
+
+
+*/
+
+func CreateMenuActionTablePGSql() (sql string) {
+	sql = `CREATE TABLE menu_action
+		(
+			id           integer primary key ,
+			menu_id      integer NOT NULL DEFAULT '0' ,
+			method       varchar(30)  NOT NULL DEFAULT '' ,
+			api          varchar(100) NOT NULL DEFAULT '' ,
+			is_deleted   smallint NOT NULL DEFAULT '-1' ,
+			created_at   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+			created_user varchar(60)  NOT NULL DEFAULT '' ,
+			updated_at   timestamp    ,
+			updated_user varchar(60)  NOT NULL DEFAULT ''
+		
+		);
+
+		create index idx_menu_id on  menu_action(menu_id);
+		
+		CREATE
+		OR REPLACE FUNCTION update_modified_column()
+		RETURNS TRIGGER AS $$
+		BEGIN
+			NEW.update_at
+		= now();
+		RETURN NEW;
+		END;
+		$$
+		language 'plpgsql';
+		
+		CREATE TRIGGER update_table_name_update_at
+			BEFORE UPDATE
+			ON menu_action
+			FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+		comment
+		on table menu_action is '功能权限表';
+		comment
+		on column menu_action.id is '主键';
+		comment
+		on column menu_action.menu_id is '菜单栏ID';
+		comment
+		on column menu_action.method is '请求方式';
+		comment
+		on column menu_action.api is '请求地址';
+		comment
+		on column menu_action.is_deleted is '是否删除 1:是  -1:否';
+		comment
+		on column menu_action.created_at is '创建时间';
+		comment
+		on column menu_action.created_user is '创建人';
+		comment
+		on column menu_action.updated_at is '更新时间';
+		comment
+		on column menu_action.updated_user is '更新人';`
+	return
+}
+
 func CreateMenuActionTableDataSql() (sql string) {
 	sql = "INSERT INTO `menu_action` (`id`, `menu_id`, `method`, `api`, `created_user`) VALUES"
 	sql += "(1, 17, 'GET', '/api/tool/hashids/**', 'init'),"
@@ -43,6 +155,62 @@ func CreateMenuActionTableDataSql() (sql string) {
 	sql += "(7, 2, 'PATCH', '/api/config/email', 'init'),"
 	sql += "(8, 5, 'POST', '/generator/gorm/execute', 'init'),"
 	sql += "(9, 6, 'POST', '/generator/handler/execute', 'init'),"
+	sql += "(49, 27, 'POST', '/generator/pgsql/gorm/execute', 'init'),"
+	sql += "(10, 8, 'GET', '/authorized/add', 'init'),"
+	sql += "(11, 8, 'GET', '/authorized/api/*', 'init'),"
+	sql += "(12, 8, 'GET', '/api/authorized', 'init'),"
+	sql += "(13, 8, 'PATCH', '/api/authorized/used', 'init'),"
+	sql += "(14, 8, 'DELETE', '/api/authorized/*', 'init'),"
+	sql += "(15, 8, 'POST', '/api/authorized', 'init'),"
+	sql += "(16, 8, 'GET', '/api/authorized_api', 'init'),"
+	sql += "(17, 8, 'POST', '/api/authorized_api', 'init'),"
+	sql += "(18, 8, 'DELETE', '/api/authorized_api/*', 'init'),"
+	sql += "(19, 11, 'GET', '/admin/add', 'init'),"
+	sql += "(20, 11, 'POST', '/api/admin', 'init'),"
+	sql += "(21, 11, 'GET', '/api/admin', 'init'),"
+	sql += "(22, 11, 'PATCH', '/api/admin/used', 'init'),"
+	sql += "(23, 11, 'PATCH', '/api/admin/reset_password/*', 'init'),"
+	sql += "(24, 11, 'DELETE', '/api/admin/*', 'init'),"
+	sql += "(25, 11, 'GET', '/admin/action/*', 'init'),"
+	sql += "(26, 11, 'GET', '/api/admin/menu/*', 'init'),"
+	sql += "(27, 11, 'POST', '/api/admin/menu', 'init'),"
+	sql += "(28, 12, 'GET', '/admin/menu_action/*', 'init'),"
+	sql += "(29, 12, 'GET', '/api/menu', 'init'),"
+	sql += "(30, 12, 'DELETE', '/api/menu/*', 'init'),"
+	sql += "(31, 12, 'GET', '/api/menu/*', 'init'),"
+	sql += "(32, 12, 'PATCH', '/api/menu/used', 'init'),"
+	sql += "(33, 12, 'POST', '/api/menu', 'init'),"
+	sql += "(34, 12, 'GET', '/api/menu_action', 'init'),"
+	sql += "(35, 12, 'POST', '/api/menu_action', 'init'),"
+	sql += "(36, 12, 'DELETE', '/api/menu_action/*', 'init'),"
+	sql += "(37, 22, 'POST', '/upgrade/execute', 'init'),"
+	sql += "(38, 11, 'PATCH', '/api/admin/offline', 'init'),"
+	sql += "(39, 12, 'PATCH', '/api/menu/sort', 'init'),"
+	sql += "(40, 24, 'GET', '/cron/add', 'init'),"
+	sql += "(41, 24, 'GET', '/cron/edit/*', 'init'),"
+	sql += "(42, 24, 'POST', '/api/cron', 'init'),"
+	sql += "(43, 24, 'POST', '/api/cron/*', 'init'),"
+	sql += "(44, 24, 'GET', '/api/cron', 'init'),"
+	sql += "(45, 24, 'GET', '/api/cron/*', 'init'),"
+	sql += "(46, 24, 'PATCH', '/api/cron/used', 'init'),"
+	sql += "(47, 24, 'PATCH', '/api/cron/exec/*', 'init'),"
+	sql += "(48, 25, 'POST', '/api/tool/send_message', 'init');"
+
+	return
+}
+
+func CreateMenuActionTableDataPGSql() (sql string) {
+	sql = "INSERT INTO menu_action (id, menu_id, method, api, created_user) VALUES"
+	sql += "(1, 17, 'GET', '/api/tool/hashids/**', 'init'),"
+	sql += "(2, 14, 'POST', '/api/tool/cache/search', 'init'),"
+	sql += "(3, 14, 'PATCH', '/api/tool/cache/clear', 'init'),"
+	sql += "(4, 15, 'GET', '/api/tool/data/dbs', 'init'),"
+	sql += "(5, 15, 'POST', '/api/tool/data/mysql', 'init'),"
+	sql += "(6, 15, 'POST', '/api/tool/data/tables', 'init'),"
+	sql += "(7, 2, 'PATCH', '/api/config/email', 'init'),"
+	sql += "(8, 5, 'POST', '/generator/gorm/execute', 'init'),"
+	sql += "(9, 6, 'POST', '/generator/handler/execute', 'init'),"
+	sql += "(49, 27, 'POST', '/generator/pgsql/gorm/execute', 'init'),"
 	sql += "(10, 8, 'GET', '/authorized/add', 'init'),"
 	sql += "(11, 8, 'GET', '/authorized/api/*', 'init'),"
 	sql += "(12, 8, 'GET', '/api/authorized', 'init'),"

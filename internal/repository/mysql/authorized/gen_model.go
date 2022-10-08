@@ -3,6 +3,7 @@ package authorized
 import "time"
 
 // Authorized 已授权的调用方表
+//
 //go:generate gormgen -structs Authorized -input .
 type Authorized struct {
 	Id                int32     // 主键

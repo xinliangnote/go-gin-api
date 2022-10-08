@@ -5,7 +5,7 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/internal/graph/generated"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 
 	"go.uber.org/zap"
@@ -25,7 +25,7 @@ type Resolver struct {
 	//userService user_service.UserService
 }
 
-func NewRootResolvers(logger *zap.Logger, db mysql.Repo, cache redis.Repo) generated.Config {
+func NewRootResolvers(logger *zap.Logger, db iface.Repo, cache redis.Repo) generated.Config {
 	c := generated.Config{
 		Resolvers: &Resolver{
 			logger: logger,

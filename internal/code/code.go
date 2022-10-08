@@ -37,6 +37,7 @@ const (
 	GoVersionError     = 10119
 	SocketConnectError = 10120
 	SocketSendError    = 10121
+	PgSQlConnectError  = 10122
 
 	AuthorizedCreateError    = 20101
 	AuthorizedListError      = 20102

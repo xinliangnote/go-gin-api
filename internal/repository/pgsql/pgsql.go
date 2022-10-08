@@ -1,4 +1,4 @@
-package mysql
+package pgsql
 
 import (
 	"fmt"
@@ -6,11 +6,13 @@ import (
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
+	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	//"gorm.io/gorm/schema"
 )
 
 // Predicate is a string that acts as a condition in the where clause
@@ -32,13 +34,13 @@ type dbRepo struct {
 }
 
 func New() (iface.Repo, error) {
-	cfg := configs.Get().MySQL
-	dbr, err := dbConnect(cfg.Read.User, cfg.Read.Pass, cfg.Read.Addr, cfg.Read.Name)
+	cfg := configs.Get().PgSQL
+	dbr, err := dbConnect(cfg.Read.User, cfg.Read.Pass, cfg.Read.Addr, cfg.Read.Name, cfg.Read.Port)
 	if err != nil {
 		return nil, err
 	}
 
-	dbw, err := dbConnect(cfg.Write.User, cfg.Write.Pass, cfg.Write.Addr, cfg.Write.Name)
+	dbw, err := dbConnect(cfg.Write.User, cfg.Write.Pass, cfg.Write.Addr, cfg.Write.Name, cfg.Read.Port)
 	if err != nil {
 		return nil, err
 	}
@@ -75,16 +77,18 @@ func (d *dbRepo) DbWClose() error {
 	return sqlDB.Close()
 }
 
-func dbConnect(user, pass, addr, dbName string) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=%t&loc=%s",
-		user,
-		pass,
+func dbConnect(user, pass, addr, dbName, port string) (*gorm.DB, error) {
+	//	dataSouce := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s password=%s", "localhost", "5432", "postgres", "game", "disable", "123")
+	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s password=%s",
 		addr,
+		port,
+		user,
 		dbName,
-		true,
-		"Local")
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		"disable",
+		pass,
+	)
+	//gorm.Open("postgres", dataSource)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
@@ -97,7 +101,7 @@ func dbConnect(user, pass, addr, dbName string) (*gorm.DB, error) {
 
 	db.Set("gorm:table_options", "CHARSET=utf8mb4")
 
-	cfg := configs.Get().MySQL.Base
+	cfg := configs.Get().PgSQL.Base
 
 	sqlDB, err := db.DB()
 	if err != nil {
@@ -114,7 +118,7 @@ func dbConnect(user, pass, addr, dbName string) (*gorm.DB, error) {
 	sqlDB.SetConnMaxLifetime(time.Minute * cfg.ConnMaxLifeTime)
 
 	// 使用插件
-	db.Use(&TracePlugin{})
+	db.Use(&mysql.TracePlugin{})
 
 	return db, nil
 }

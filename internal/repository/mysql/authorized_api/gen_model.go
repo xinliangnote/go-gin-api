@@ -3,6 +3,7 @@ package authorized_api
 import "time"
 
 // AuthorizedApi 已授权接口地址表
+//
 //go:generate gormgen -structs AuthorizedApi -input .
 type AuthorizedApi struct {
 	Id          int32     // 主键

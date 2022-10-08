@@ -1,4 +1,7 @@
 
+[databasetype]
+  type = "Mysql"
+
 [hashids]
   length = 12
   secret = "6ab6122836cfef95f8db"
@@ -22,14 +25,35 @@
 
   [mysql.read]
     addr = "127.0.0.1:3306"
-    name = "go_gin_api"
-    pass = "123456789"
+    name = "mydb"
+    pass = "123456"
     user = "root"
 
   [mysql.write]
     addr = "127.0.0.1:3306"
-    name = "go_gin_api"
-    pass = "123456789"
+    name = "mydb"
+    pass = "123456"
+    user = "root"
+
+[pgsql]
+
+  [pgsql.base]
+    connmaxlifetime = 60
+    maxidleconn = 60
+    maxopenconn = 10
+
+  [pgsql.read]
+    addr = "127.0.0.1"
+    name = "mydb"
+    pass = "123456"
+    port = "3306"
+    user = "root"
+
+  [pgsql.write]
+    addr = "127.0.0.1"
+    name = "mydb"
+    pass = "123456"
+    port = "3306"
     user = "root"
 
 [redis]

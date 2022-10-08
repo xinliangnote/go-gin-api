@@ -3,6 +3,7 @@ package menu_action
 import "time"
 
 // MenuAction 功能权限表
+//
 //go:generate gormgen -structs MenuAction -input .
 type MenuAction struct {
 	Id          int32     // 主键

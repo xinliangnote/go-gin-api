@@ -18,10 +18,7 @@ func (h *handler) GormView() core.HandlerFunc {
 		}
 
 		var tableCollect []tableInfo
-
-		mysqlConf := configs.Get().MySQL.Read
-		sqlTables := fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", mysqlConf.Name)
-		rows, err := h.db.GetDbR().Raw(sqlTables).Rows()
+		rows, err := h.db.GetDbR().Raw(getSqlTable()).Rows()
 		if err != nil {
 			h.logger.Error("rows err", zap.Error(err))
 
@@ -52,4 +49,16 @@ func (h *handler) GormView() core.HandlerFunc {
 
 		c.HTML("generator_gorm", tableCollect)
 	}
+}
+func getSqlTable() string {
+	var sqlTables string
+	switch configs.Get().DataBaseType.Type {
+	case "Mysql":
+		mysqlConf := configs.Get().MySQL.Read
+		sqlTables = fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", mysqlConf.Name)
+	case "Postgresql":
+		sqlTables = " select relname as tab_name,obj_description(c.oid) as table_comment from pg_class c where obj_description(c.oid) is not null"
+
+	}
+	return sqlTables
 }

@@ -36,9 +36,136 @@ func CreateAdminTableSql() (sql string) {
 	return
 }
 
+/*
+CREATE TABLE admin
+(
+    id           integer primary key ,
+    username     varchar(32)  NOT NULL DEFAULT '' ,
+    password     varchar(100) NOT NULL DEFAULT '' ,
+    nickname     varchar(60)  NOT NULL DEFAULT '' ,
+    mobile       varchar(20)  NOT NULL DEFAULT '' ,
+    is_used      smallint NOT NULL DEFAULT '1' ,
+    is_deleted   smallint NOT NULL DEFAULT '-1' ,
+    created_at   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    created_user varchar(60)  NOT NULL DEFAULT '' ,
+    updated_at   timestamp   ,
+    updated_user varchar(60)  NOT NULL DEFAULT '' ,
+    UNIQUE(username)
+);
+
+
+CREATE
+OR REPLACE FUNCTION update_modified_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_at
+= now();
+RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_table_name_update_at
+    BEFORE UPDATE
+    ON admin
+    FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+commnet
+on table admin is '管理员表';
+comment
+on column admin.id is '主键';
+comment
+on column admin.username is '用户名';
+comment
+on column admin.password is '密码';
+comment
+on column admin.nickname is '昵称';
+comment
+on column admin.mobile is '手机号';
+comment
+on column admin.is_used is '是否启用 1:是  -1:否';
+comment
+on column admin.is_deleted is '是否删除 1:是  -1:否';
+comment
+on column admin.created_at is '创建时间';
+comment
+on column admin.created_user is '创建人';
+comment
+on column admin.created_user is '创建人';
+comment
+on column admin.updated_at is '更新时间';
+comment
+on column admin.updated_user is '更新人';
+*/
+
+func CreateAdminTablePGSql() (sql string) {
+	sql = `CREATE TABLE admin
+		(
+			id           integer primary key ,
+			username     varchar(32)  NOT NULL DEFAULT '' ,
+			password     varchar(100) NOT NULL DEFAULT '' ,
+			nickname     varchar(60)  NOT NULL DEFAULT '' ,
+			mobile       varchar(20)  NOT NULL DEFAULT '' ,
+			is_used      smallint NOT NULL DEFAULT '1' ,
+			is_deleted   smallint NOT NULL DEFAULT '-1' ,
+			created_at   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+			created_user varchar(60)  NOT NULL DEFAULT '' ,
+			updated_at   timestamp   ,
+			updated_user varchar(60)  NOT NULL DEFAULT '' ,
+			UNIQUE(username)
+		);
+
+
+		CREATE
+		OR REPLACE FUNCTION update_modified_column()
+		RETURNS TRIGGER AS $$
+		BEGIN
+			NEW.update_at
+		= now();
+		RETURN NEW;
+		END;
+		$$ language 'plpgsql';
+		
+		CREATE TRIGGER update_table_name_update_at
+			BEFORE UPDATE
+			ON admin
+			FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+		
+		comment
+		on table admin is '管理员表';
+		comment
+		on column admin.id is '主键';
+		comment
+		on column admin.username is '用户名';
+		comment
+		on column admin.password is '密码';
+		comment
+		on column admin.nickname is '昵称';
+		comment
+		on column admin.mobile is '手机号';
+		comment
+		on column admin.is_used is '是否启用 1:是  -1:否';
+		comment
+		on column admin.is_deleted is '是否删除 1:是  -1:否';
+		comment
+		on column admin.created_at is '创建时间';
+		comment
+		on column admin.created_user is '创建人';
+		comment
+		on column admin.created_user is '创建人';
+		comment
+		on column admin.updated_at is '更新时间';
+		comment
+		on column admin.updated_user is '更新人';`
+
+	return
+}
 func CreateAdminTableDataSql() (sql string) {
 	sql = "INSERT INTO `admin` (`id`, `username`, `password`, `nickname`, `mobile`, `created_user`) VALUES"
 	sql += "(1, 'admin', 'f78382de80cf583cf854bbac0b6e796fbde36fe2739ca4ae072637010f179cb0', '管理员', '13888888888', 'init');"
-
+	return
+}
+func CreateAdminTableDataPGSql() (sql string) {
+	sql = "INSERT INTO admin (id, username, password, nickname, mobile, created_user) VALUES"
+	sql += "(1, 'admin', 'f78382de80cf583cf854bbac0b6e796fbde36fe2739ca4ae072637010f179cb0', '管理员', '13888888888', 'init');"
 	return
 }

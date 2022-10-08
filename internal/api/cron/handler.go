@@ -4,7 +4,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	cronRepo "github.com/xinliangnote/go-gin-api/internal/repository/cron"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/cron"
 	"github.com/xinliangnote/go-gin-api/pkg/hash"
@@ -55,7 +55,7 @@ type handler struct {
 	cronService cron.Service
 }
 
-func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo, cronServer cronRepo.Server) Handler {
+func New(logger *zap.Logger, db iface.Repo, cache redis.Repo, cronServer cronRepo.Server) Handler {
 	return &handler{
 		logger:      logger,
 		cache:       cache,

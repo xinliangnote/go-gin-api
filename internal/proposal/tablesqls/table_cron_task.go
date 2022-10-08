@@ -51,3 +51,172 @@ func CreateCronTaskTableSql() (sql string) {
 
 	return
 }
+
+/*
+CREATE TABLE cron_task
+(
+    id                    integer primary key ,
+    name                  varchar(64)  NOT NULL DEFAULT '' ,
+    spec                  varchar(64)  NOT NULL DEFAULT '' ,
+    command               varchar(255) NOT NULL DEFAULT '' ,
+    protocol              smallint NOT NULL DEFAULT '1' ,
+    http_method           smallint NOT NULL DEFAULT '1' ,
+    timeout               integer NOT NULL DEFAULT '60' ,
+    retry_times           smallint NOT NULL DEFAULT '3' ,
+    retry_interval        integer NOT NULL DEFAULT '60' ,
+    notify_status         smallint NOT NULL DEFAULT '0' ,
+    notify_type           smallint NOT NULL DEFAULT '0' ,
+    notify_receiver_email varchar(255) NOT NULL DEFAULT '' ,
+    notify_keyword        varchar(255) NOT NULL DEFAULT '' ,
+    remark                varchar(100) NOT NULL DEFAULT '' ,
+    is_used               smallint NOT NULL DEFAULT '1' ,
+    created_at            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    created_user          varchar(60)  NOT NULL DEFAULT '' ,
+    updated_at            timestamp    NOT NULL   ,
+    updated_user          varchar(60)  NOT NULL DEFAULT ''
+);
+
+create index idx_name on  cron_task(name);
+
+CREATE
+OR REPLACE FUNCTION update_modified_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_at
+= now();
+RETURN NEW;
+END;
+$$
+language 'plpgsql';
+
+CREATE TRIGGER update_table_name_update_at
+    BEFORE UPDATE
+    ON cron_task
+    FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+comment
+on table cron_task is '后台任务表';
+comment
+on column cron_task.id is '主键';
+comment
+on column cron_task.name is '任务名称';
+comment
+on column cron_task.spec is 'crontab 表达式';
+comment
+on column cron_task.command is '执行命令';
+comment
+on column cron_task.protocol is '执行方式 1:shell 2:http';
+comment
+on column cron_task.http_method is 'http 请求方式 1:get 2:post';
+comment
+on column cron_task.timeout is '超时时间(单位:秒)';
+comment
+on column cron_task.retry_times is '重试次数';
+comment
+on column cron_task.retry_interval is '重试间隔(单位:秒)';
+comment
+on column cron_task.notify_status is '执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知';
+comment
+on column cron_task.notify_type is '通知类型 1:邮件 2:webhook';
+comment
+on column cron_task.notify_receiver_email is '通知者邮箱地址(多个用,分割)';
+comment
+on column cron_task.notify_keyword is '通知匹配关键字(多个用,分割)';
+comment
+on column cron_task.remark is '备注';
+comment
+on column cron_task.is_used is '是否启用 1:是  -1:否';
+comment
+on column cron_task.created_at is '创建时间';
+comment
+on column cron_task.created_user is '创建人';
+comment
+on column cron_task.updated_at is '更新时间';
+comment
+on column cron_task.updated_user is '更新人';
+*/
+
+func CreateCronTaskTablePGSql() (sql string) {
+	sql = `CREATE TABLE cron_task
+		(
+			id                    integer primary key ,
+			name                  varchar(64)  NOT NULL DEFAULT '' ,
+			spec                  varchar(64)  NOT NULL DEFAULT '' ,
+			command               varchar(255) NOT NULL DEFAULT '' ,
+			protocol              smallint NOT NULL DEFAULT '1' ,
+			http_method           smallint NOT NULL DEFAULT '1' ,
+			timeout               integer NOT NULL DEFAULT '60' ,
+			retry_times           smallint NOT NULL DEFAULT '3' ,
+			retry_interval        integer NOT NULL DEFAULT '60' ,
+			notify_status         smallint NOT NULL DEFAULT '0' ,
+			notify_type           smallint NOT NULL DEFAULT '0' ,
+			notify_receiver_email varchar(255) NOT NULL DEFAULT '' ,
+			notify_keyword        varchar(255) NOT NULL DEFAULT '' ,
+			remark                varchar(100) NOT NULL DEFAULT '' ,
+			is_used               smallint NOT NULL DEFAULT '1' ,
+			created_at            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+			created_user          varchar(60)  NOT NULL DEFAULT '' ,
+			updated_at            timestamp    NOT NULL   ,
+			updated_user          varchar(60)  NOT NULL DEFAULT ''
+		);
+
+		create index idx_name on  cron_task(name);
+		
+		CREATE
+		OR REPLACE FUNCTION update_modified_column()
+		RETURNS TRIGGER AS $$
+		BEGIN
+			NEW.update_at
+		= now();
+		RETURN NEW;
+		END;
+		$$
+		language 'plpgsql';
+
+		CREATE TRIGGER update_table_name_update_at
+			BEFORE UPDATE
+			ON cron_task
+			FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+
+		comment
+		on table cron_task is '后台任务表';
+		comment
+		on column cron_task.id is '主键';
+		comment
+		on column cron_task.name is '任务名称';
+		comment
+		on column cron_task.spec is 'crontab 表达式';
+		comment
+		on column cron_task.command is '执行命令';
+		comment
+		on column cron_task.protocol is '执行方式 1:shell 2:http';
+		comment
+		on column cron_task.http_method is 'http 请求方式 1:get 2:post';
+		comment
+		on column cron_task.timeout is '超时时间(单位:秒)';
+		comment
+		on column cron_task.retry_times is '重试次数';
+		comment
+		on column cron_task.retry_interval is '重试间隔(单位:秒)';
+		comment
+		on column cron_task.notify_status is '执行结束是否通知 1:不通知 2:失败通知 3:结束通知 4:结果关键字匹配通知';
+		comment
+		on column cron_task.notify_type is '通知类型 1:邮件 2:webhook';
+		comment
+		on column cron_task.notify_receiver_email is '通知者邮箱地址(多个用,分割)';
+		comment
+		on column cron_task.notify_keyword is '通知匹配关键字(多个用,分割)';
+		comment
+		on column cron_task.remark is '备注';
+		comment
+		on column cron_task.is_used is '是否启用 1:是  -1:否';
+		comment
+		on column cron_task.created_at is '创建时间';
+		comment
+		on column cron_task.created_user is '创建人';
+		comment
+		on column cron_task.updated_at is '更新时间';
+		comment
+		on column cron_task.updated_user is '更新人';`
+	return
+}

@@ -17,11 +17,6 @@ type gormExecuteRequest struct {
 }
 
 func (h *handler) GormExecute() core.HandlerFunc {
-	dir, _ := os.Getwd()
-	projectPath := strings.Replace(dir, "\\", "/", -1)
-	gormgenSh := projectPath + "/scripts/gormgen.sh"
-	gormgenBat := projectPath + "/scripts/gormgen.bat"
-
 	return func(c core.Context) {
 		req := new(gormExecuteRequest)
 		if err := c.ShouldBindPostForm(req); err != nil {
@@ -29,10 +24,7 @@ func (h *handler) GormExecute() core.HandlerFunc {
 			return
 		}
 
-		mysqlConf := configs.Get().MySQL.Read
-		shellPath := fmt.Sprintf("%s %s %s %s %s %s", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
-		batPath := fmt.Sprintf("%s %s %s %s %s %s", gormgenBat, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, req.Tables)
-
+		shellPath, batPath := getCmdString(req.Tables)
 		command := new(exec.Cmd)
 
 		if runtime.GOOS == "windows" {
@@ -53,4 +45,29 @@ func (h *handler) GormExecute() core.HandlerFunc {
 
 		c.Payload(string(output))
 	}
+}
+
+func getCmdString(tables string) (string, string) {
+	dir, _ := os.Getwd()
+	projectPath := strings.Replace(dir, "\\", "/", -1)
+
+	var shellPath, batPath string
+
+	switch configs.Get().DataBaseType.Type {
+	case "Mysql":
+		gormgenSh := projectPath + "/scripts/gormgen.sh"
+		gormgenBat := projectPath + "/scripts/gormgen.bat"
+		mysqlConf := configs.Get().MySQL.Read
+		shellPath = fmt.Sprintf("%s %s %s %s %s %s %s", "mysqlmd", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, tables)
+		batPath = fmt.Sprintf("%s %s %s %s %s %s %s", "mysqlmd", gormgenBat, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, tables)
+
+	case "Postgresql":
+		gormgenSh := projectPath + "/scripts/gormgen.sh"
+		gormgenBat := projectPath + "/scripts/gormgen.bat"
+		pgsqlConf := configs.Get().PgSQL.Read
+		//shellPath = fmt.Sprintf("%s %s %s %s %s %s %s", "pgsqlcmd", gormgenSh, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables)
+		shellPath = fmt.Sprintf("%s %s %s %s %s %s %s", gormgenSh, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables, pgsqlConf.Port)
+		batPath = fmt.Sprintf("%s %s %s %s %s %s %s ", gormgenBat, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables, pgsqlConf.Port)
+	}
+	return shellPath, batPath
 }
