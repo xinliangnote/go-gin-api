@@ -6,7 +6,8 @@ import (
 )
 
 type dbsResponse struct {
-	List []dbData `json:"list"` // 数据库列表
+	List   []dbData `json:"list"`    // 数据库列表
+	DbType string   `json:"db_type"` //数据库类型
 }
 
 type dbData struct {
@@ -33,6 +34,7 @@ func (h *handler) Dbs() core.HandlerFunc {
 		}
 
 		res.List = append(res.List, data)
+		res.DbType = configs.Get().DataBaseType.Type
 		c.Payload(res)
 	}
 }

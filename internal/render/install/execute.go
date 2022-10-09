@@ -240,6 +240,18 @@ func (h *handler) Execute() core.HandlerFunc {
 			}
 
 		}
+
+		// Ppstgresql 需要初始化下查表结果function，该函数在tools使用
+		if req.DataBaseType == "Postgresql" {
+			if err = db.Exec(tablesqls.Postgresql()).Error; err != nil {
+				ctx.AbortWithError(core.Error(
+					http.StatusBadRequest,
+					code.PgSQlConnectError,
+					code.Text(code.PgSQlConnectError)+" "+err.Error()).WithError(err),
+				)
+				return
+			}
+		}
 		// endregion
 
 		// region 生成 install 完成标识

@@ -1,6 +1,6 @@
 
 [databasetype]
-  type = "Mysql"
+  type = "Postgresql"
 
 [hashids]
   length = 12
@@ -24,16 +24,16 @@
     maxopenconn = 10
 
   [mysql.read]
-    addr = "127.0.0.1:3306"
+    addr = "127.0.0.1:5432"
     name = "mydb"
     pass = "123456"
-    user = "root"
+    user = "postgres"
 
   [mysql.write]
-    addr = "127.0.0.1:3306"
+    addr = "127.0.0.1:5432"
     name = "mydb"
     pass = "123456"
-    user = "root"
+    user = "postgres"
 
 [pgsql]
 
@@ -46,15 +46,15 @@
     addr = "127.0.0.1"
     name = "mydb"
     pass = "123456"
-    port = "3306"
-    user = "root"
+    port = "5432"
+    user = "postgres"
 
   [pgsql.write]
     addr = "127.0.0.1"
     name = "mydb"
     pass = "123456"
-    port = "3306"
-    user = "root"
+    port = "5432"
+    user = "postgres"
 
 [redis]
   addr = "127.0.0.1:6379"

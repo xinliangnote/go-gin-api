@@ -2,6 +2,7 @@ package tool
 
 import (
 	"fmt"
+	"github.com/xinliangnote/go-gin-api/configs"
 	"net/http"
 
 	"github.com/xinliangnote/go-gin-api/internal/code"
@@ -45,8 +46,7 @@ func (h *handler) Tables() core.HandlerFunc {
 			return
 		}
 
-		sqlTables := fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", req.DbName)
-
+		sqlTables := getTables(req.DbName)
 		// TODO 后期支持查询多个数据库
 		rows, err := h.db.GetDbR().Raw(sqlTables).Rows()
 		if err != nil {
@@ -73,4 +73,16 @@ func (h *handler) Tables() core.HandlerFunc {
 
 		c.Payload(res)
 	}
+}
+
+func getTables(dbName string) string {
+	var sqlTables string
+	switch configs.Get().DataBaseType.Type {
+	case "Mysql":
+		sqlTables = fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", dbName)
+	case "Postgresql":
+		sqlTables = `select relname as tab_name, obj_description(c.oid) as table_comment from pg_class c where obj_description(c.oid) is not null `
+	}
+	return sqlTables
+
 }
