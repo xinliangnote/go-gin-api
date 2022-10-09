@@ -30,10 +30,10 @@ type initExecuteRequest struct {
 
 	DataBaseType string `form:"database_type"` //连接数据库类型
 
-	MySQLAddr string `form:"mysql_addr"`
-	MySQLUser string `form:"mysql_user"`
-	MySQLPass string `form:"mysql_pass"`
-	MySQLName string `form:"mysql_name"`
+	DataBaseAddr string `form:"database_addr"`
+	DataBaseUser string `form:"database_user"`
+	DataBasePass string `form:"database_pass"`
+	DataBaseName string `form:"database_name"`
 }
 
 func (h *handler) Execute() core.HandlerFunc {
@@ -170,27 +170,27 @@ func (h *handler) Execute() core.HandlerFunc {
 		viper.Set("redis.pass", req.RedisPass)
 		viper.Set("redis.db", req.RedisDb)
 
-		viper.Set("mysql.read.addr", req.MySQLAddr)
-		viper.Set("mysql.read.user", req.MySQLUser)
-		viper.Set("mysql.read.pass", req.MySQLPass)
-		viper.Set("mysql.read.name", req.MySQLName)
+		viper.Set("mysql.read.addr", req.DataBaseAddr)
+		viper.Set("mysql.read.user", req.DataBaseUser)
+		viper.Set("mysql.read.pass", req.DataBasePass)
+		viper.Set("mysql.read.name", req.DataBaseName)
 
-		viper.Set("mysql.write.addr", req.MySQLAddr)
-		viper.Set("mysql.write.user", req.MySQLUser)
-		viper.Set("mysql.write.pass", req.MySQLPass)
-		viper.Set("mysql.write.name", req.MySQLName)
+		viper.Set("mysql.write.addr", req.DataBaseAddr)
+		viper.Set("mysql.write.user", req.DataBaseUser)
+		viper.Set("mysql.write.pass", req.DataBasePass)
+		viper.Set("mysql.write.name", req.DataBaseName)
 
-		viper.Set("pgsql.read.addr", strings.Split(req.MySQLAddr, ":")[0])
-		viper.Set("pgsql.read.user", req.MySQLUser)
-		viper.Set("pgsql.read.pass", req.MySQLPass)
-		viper.Set("pgsql.read.name", req.MySQLName)
-		viper.Set("pgsql.read.port", strings.Split(req.MySQLAddr, ":")[1])
+		viper.Set("pgsql.read.addr", strings.Split(req.DataBaseAddr, ":")[0])
+		viper.Set("pgsql.read.user", req.DataBaseUser)
+		viper.Set("pgsql.read.pass", req.DataBasePass)
+		viper.Set("pgsql.read.name", req.DataBaseName)
+		viper.Set("pgsql.read.port", strings.Split(req.DataBaseAddr, ":")[1])
 
-		viper.Set("pgsql.write.addr", strings.Split(req.MySQLAddr, ":")[0])
-		viper.Set("pgsql.write.user", req.MySQLUser)
-		viper.Set("pgsql.write.pass", req.MySQLPass)
-		viper.Set("pgsql.write.name", req.MySQLName)
-		viper.Set("pgsql.write.port", strings.Split(req.MySQLAddr, ":")[1])
+		viper.Set("pgsql.write.addr", strings.Split(req.DataBaseAddr, ":")[0])
+		viper.Set("pgsql.write.user", req.DataBaseUser)
+		viper.Set("pgsql.write.pass", req.DataBasePass)
+		viper.Set("pgsql.write.name", req.DataBaseName)
+		viper.Set("pgsql.write.port", strings.Split(req.DataBaseAddr, ":")[1])
 
 		viper.Set("databasetype.type", req.DataBaseType)
 
@@ -264,10 +264,10 @@ func getDB(req initExecuteRequest) (*gorm.DB, error) {
 	case "Mysql":
 		// region 验证 MySQL 配置
 		dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=%t&loc=%s",
-			req.MySQLUser,
-			req.MySQLPass,
-			req.MySQLAddr,
-			req.MySQLName,
+			req.DataBaseUser,
+			req.DataBasePass,
+			req.DataBaseAddr,
+			req.DataBaseName,
 			true,
 			"Local")
 		return gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -279,13 +279,13 @@ func getDB(req initExecuteRequest) (*gorm.DB, error) {
 	case "Postgresql":
 		// region 验证 PgsqlSQL 配置
 		pgDsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s password=%s",
-			strings.Split(req.MySQLAddr, ":")[0],
-			strings.Split(req.MySQLAddr, ":")[1],
+			strings.Split(req.DataBaseAddr, ":")[0],
+			strings.Split(req.DataBaseAddr, ":")[1],
 			//req.PgSQLPort,
-			req.MySQLUser,
-			req.MySQLName,
+			req.DataBaseUser,
+			req.DataBaseName,
 			"disable",
-			req.MySQLPass,
+			req.DataBasePass,
 		)
 		//gorm.Open("postgres", dataSource)
 		return gorm.Open(postgres.Open(pgDsn), &gorm.Config{

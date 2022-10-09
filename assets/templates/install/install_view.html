@@ -91,7 +91,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">地址</span>
                             </div>
-                            <input type="text" class="form-control" id="mysql_addr"
+                            <input type="text" class="form-control" id="database_addr"
                                    value="{{ .Config.MySQL.Write.Addr }}"
                                    placeholder="请输入服务器地址，例如：127.0.0.1:3306">
                         </div>
@@ -100,7 +100,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">用户</span>
                             </div>
-                            <input type="text" class="form-control" id="mysql_user"
+                            <input type="text" class="form-control" id="database_user"
                                    value="{{ .Config.MySQL.Write.User }}"
                                    placeholder="请输入用户名">
                         </div>
@@ -109,7 +109,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">密码</span>
                             </div>
-                            <input type="password" class="form-control" id="mysql_pass"
+                            <input type="password" class="form-control" id="database_pass"
                                    value="{{ .Config.MySQL.Write.Pass }}"
                                    placeholder="请输入密码">
                         </div>
@@ -118,7 +118,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">DB </span>
                             </div>
-                            <input type="text" class="form-control" id="mysql_name"
+                            <input type="text" class="form-control" id="database_name"
                                    value="{{ .Config.MySQL.Write.Name }}"
                                    placeholder="请输入数据库名">
                             <div class="input-group-append">
@@ -186,8 +186,8 @@
                 });
                 return false;
             }
-                const mysql_addr = $("#mysql_addr").val();
-                if (mysql_addr === "") {
+                const database_addr = $("#database_addr").val();
+                if (database_addr === "") {
                     $.alert({
                         title: '温馨提示',
                         icon: 'mdi mdi-alert',
@@ -197,8 +197,8 @@
                     return false;
                 }
 
-                const mysql_user = $("#mysql_user").val();
-                if (mysql_user === "") {
+                const database_user = $("#database_user").val();
+                if (database_user === "") {
                     $.alert({
                         title: '温馨提示',
                         icon: 'mdi mdi-alert',
@@ -208,8 +208,8 @@
                     return false;
                 }
 
-                const mysql_pass = $("#mysql_pass").val();
-                if (mysql_pass === "") {
+                const database_pass = $("#database_pass").val();
+                if (database_pass === "") {
                     $.alert({
                         title: '温馨提示',
                         icon: 'mdi mdi-alert',
@@ -219,8 +219,8 @@
                     return false;
                 }
 
-                const mysql_name = $("#mysql_name").val();
-                if (mysql_name === "") {
+                const database_name = $("#database_name").val();
+                if (database_name === "") {
                     $.alert({
                         title: '温馨提示',
                         icon: 'mdi mdi-alert',
@@ -239,10 +239,10 @@
                 redis_db: redis_db,
                 database_type: $('#database_type').val(),
 
-                mysql_addr: mysql_addr,
-                mysql_user: mysql_user,
-                mysql_pass: mysql_pass,
-                mysql_name: mysql_name,
+                database_addr: database_addr,
+                database_user: database_user,
+                database_pass: database_pass,
+                database_name: database_name,
             };
             console.log('postData', postData);
             AjaxForm(
