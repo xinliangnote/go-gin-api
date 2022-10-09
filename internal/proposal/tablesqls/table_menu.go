@@ -181,9 +181,6 @@ func CreateMenuTableDataSql() (sql string) {
 	sql += "(4, 0, '代码生成器', '', 'mdi-code-not-equal-variant', 1, 20, 'init'),"
 	sql += "(5, 4, '生成数据表 CURD', '/generator/gorm', '', 2, 201, 'init'),"
 	sql += "(6, 4, '生成控制器方法', '/generator/handler', '', 2, 202, 'init'),"
-	sql += "(26, 4, 'PgSQL生成数据表 CURD', '/generator/pgsql/gorm', '', 2, 203, 'init'),"
-	//sql += "(27, 4, 'PgSQL生成控制器方法', '/generator/pgsql/gorm/execute', '', 2, 204, 'init'),"
-
 	sql += "(7, 0, '授权调用方', '', 'mdi-playlist-check', 1, 30, 'init'),"
 	sql += "(8, 7, '调用方', '/authorized/list', '', 2, 301, 'init'),"
 	sql += "(9, 7, '使用说明', '/authorized/demo', '', 2, 302, 'init'),"
@@ -215,9 +212,6 @@ func CreateMenuTableDataPGSql() (sql string) {
 	sql += "(4, 0, '代码生成器', '', 'mdi-code-not-equal-variant', 1, 20, 'init'),"
 	sql += "(5, 4, '生成数据表 CURD', '/generator/gorm', '', 2, 201, 'init'),"
 	sql += "(6, 4, '生成控制器方法', '/generator/handler', '', 2, 202, 'init'),"
-	sql += "(26, 4, 'PgSQL生成数据表 CURD', '/generator/pgsql/gorm', '', 2, 203, 'init'),"
-	//sql += "(27, 4, 'PgSQL生成控制器方法', '/generator/pgsql/gorm/execute', '', 2, 204, 'init'),"
-
 	sql += "(7, 0, '授权调用方', '', 'mdi-playlist-check', 1, 30, 'init'),"
 	sql += "(8, 7, '调用方', '/authorized/list', '', 2, 301, 'init'),"
 	sql += "(9, 7, '使用说明', '/authorized/demo', '', 2, 302, 'init'),"

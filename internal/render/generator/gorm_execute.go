@@ -58,15 +58,15 @@ func getCmdString(tables string) (string, string) {
 		gormgenSh := projectPath + "/scripts/gormgen.sh"
 		gormgenBat := projectPath + "/scripts/gormgen.bat"
 		mysqlConf := configs.Get().MySQL.Read
-		shellPath = fmt.Sprintf("%s %s %s %s %s %s %s", "mysqlmd", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, tables)
-		batPath = fmt.Sprintf("%s %s %s %s %s %s %s", "mysqlmd", gormgenBat, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, tables)
+		shellPath = fmt.Sprintf("%s %s %s %s %s %s  ", gormgenSh, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, tables)
+		batPath = fmt.Sprintf("%s %s %s %s %s %s  ", gormgenBat, mysqlConf.Addr, mysqlConf.User, mysqlConf.Pass, mysqlConf.Name, tables)
 
 	case "Postgresql":
-		gormgenSh := projectPath + "/scripts/gormgen.sh"
-		gormgenBat := projectPath + "/scripts/gormgen.bat"
+		gormgenSh := projectPath + "/scripts/pgsqlgormgen.sh"
+		gormgenBat := projectPath + "/scripts/pgsqlgormgen.bat"
 		pgsqlConf := configs.Get().PgSQL.Read
 		//shellPath = fmt.Sprintf("%s %s %s %s %s %s %s", "pgsqlcmd", gormgenSh, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables)
-		shellPath = fmt.Sprintf("%s %s %s %s %s %s %s", gormgenSh, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables, pgsqlConf.Port)
+		shellPath = fmt.Sprintf("%s %s %s %s %s %s %s ", gormgenSh, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables, pgsqlConf.Port)
 		batPath = fmt.Sprintf("%s %s %s %s %s %s %s ", gormgenBat, pgsqlConf.Addr, pgsqlConf.User, pgsqlConf.Pass, pgsqlConf.Name, tables, pgsqlConf.Port)
 	}
 	return shellPath, batPath

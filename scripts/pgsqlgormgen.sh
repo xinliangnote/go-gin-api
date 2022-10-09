@@ -9,7 +9,7 @@ fi
 }
 
 printf "\nRegenerating file\n\n"
-time go run -v ./cmd/pgsqlcmd/main.go  -addr $1 -user $2 -pass $3 -name $4 -port $5 -tables $6
+time go run -v ./cmd/pgsqlcmd/main.go  -addr $1 -user $2 -pass $3 -name $4  -tables $5 -port $6
 shellExit $?
 
 printf "\ncreate curd code : \n"

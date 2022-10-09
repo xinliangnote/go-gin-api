@@ -3,7 +3,7 @@ chcp 65001
 echo.
 echo Regenerating file
 echo.
-go run -v .\cmd\pgsqlcmd\main.go  -addr %1 -user %2 -pass %3 -name %4 -port %5 -tables %6
+go run -v .\cmd\pgsqlcmd\main.go  -addr %1 -user %2 -pass %3 -name %4  -tables %5 -port %6
 if %errorlevel% == 1 (
 echo.
 echo failed!!!
