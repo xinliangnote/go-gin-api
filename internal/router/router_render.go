@@ -7,7 +7,7 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/render/config"
 	"github.com/xinliangnote/go-gin-api/internal/render/cron"
 	"github.com/xinliangnote/go-gin-api/internal/render/dashboard"
-	"github.com/xinliangnote/go-gin-api/internal/render/generator"
+	generator_handler "github.com/xinliangnote/go-gin-api/internal/render/generator"
 	"github.com/xinliangnote/go-gin-api/internal/render/index"
 	"github.com/xinliangnote/go-gin-api/internal/render/install"
 	"github.com/xinliangnote/go-gin-api/internal/render/tool"
