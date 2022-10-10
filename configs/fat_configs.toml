@@ -25,13 +25,13 @@
 
   [mysql.read]
     addr = "127.0.0.1:5432"
-    name = "mydb"
+    name = "go_gin_api"
     pass = "123456"
     user = "postgres"
 
   [mysql.write]
     addr = "127.0.0.1:5432"
-    name = "mydb"
+    name = "go_gin_api"
     pass = "123456"
     user = "postgres"
 
@@ -44,14 +44,14 @@
 
   [pgsql.read]
     addr = "127.0.0.1"
-    name = "mydb"
+    name = "go_gin_api"
     pass = "123456"
     port = "5432"
     user = "postgres"
 
   [pgsql.write]
     addr = "127.0.0.1"
-    name = "mydb"
+    name = "go_gin_api"
     pass = "123456"
     port = "5432"
     user = "postgres"

@@ -3,7 +3,7 @@
 //        ANY CHANGES DONE HERE WILL BE LOST             //
 ///////////////////////////////////////////////////////////
 
-package order
+package authorized_api
 
 import (
 	"fmt"
@@ -15,22 +15,22 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewModel() *Order {
-	return new(Order)
+func NewModel() *AuthorizedApi {
+	return new(AuthorizedApi)
 }
 
-func NewQueryBuilder() *orderQueryBuilder {
-	return new(orderQueryBuilder)
+func NewQueryBuilder() *authorizedApiQueryBuilder {
+	return new(authorizedApiQueryBuilder)
 }
 
-func (t *Order) Create(db *gorm.DB) (id int32, err error) {
+func (t *AuthorizedApi) Create(db *gorm.DB) (id int32, err error) {
 	if err = db.Create(t).Error; err != nil {
 		return 0, errors.Wrap(err, "create err")
 	}
 	return t.Id, nil
 }
 
-type orderQueryBuilder struct {
+type authorizedApiQueryBuilder struct {
 	order []string
 	where []struct {
 		prefix string
@@ -40,7 +40,7 @@ type orderQueryBuilder struct {
 	offset int
 }
 
-func (qb *orderQueryBuilder) buildQuery(db *gorm.DB) *gorm.DB {
+func (qb *authorizedApiQueryBuilder) buildQuery(db *gorm.DB) *gorm.DB {
 	ret := db
 	for _, where := range qb.where {
 		ret = ret.Where(where.prefix, where.value)
@@ -52,8 +52,8 @@ func (qb *orderQueryBuilder) buildQuery(db *gorm.DB) *gorm.DB {
 	return ret
 }
 
-func (qb *orderQueryBuilder) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
-	db = db.Model(&Order{})
+func (qb *authorizedApiQueryBuilder) Updates(db *gorm.DB, m map[string]interface{}) (err error) {
+	db = db.Model(&AuthorizedApi{})
 
 	for _, where := range qb.where {
 		db.Where(where.prefix, where.value)
@@ -65,28 +65,28 @@ func (qb *orderQueryBuilder) Updates(db *gorm.DB, m map[string]interface{}) (err
 	return nil
 }
 
-func (qb *orderQueryBuilder) Delete(db *gorm.DB) (err error) {
+func (qb *authorizedApiQueryBuilder) Delete(db *gorm.DB) (err error) {
 	for _, where := range qb.where {
 		db = db.Where(where.prefix, where.value)
 	}
 
-	if err = db.Delete(&Order{}).Error; err != nil {
+	if err = db.Delete(&AuthorizedApi{}).Error; err != nil {
 		return errors.Wrap(err, "delete err")
 	}
 	return nil
 }
 
-func (qb *orderQueryBuilder) Count(db *gorm.DB) (int64, error) {
+func (qb *authorizedApiQueryBuilder) Count(db *gorm.DB) (int64, error) {
 	var c int64
-	res := qb.buildQuery(db).Model(&Order{}).Count(&c)
+	res := qb.buildQuery(db).Model(&AuthorizedApi{}).Count(&c)
 	if res.Error != nil && res.Error == gorm.ErrRecordNotFound {
 		c = 0
 	}
 	return c, res.Error
 }
 
-func (qb *orderQueryBuilder) First(db *gorm.DB) (*Order, error) {
-	ret := &Order{}
+func (qb *authorizedApiQueryBuilder) First(db *gorm.DB) (*AuthorizedApi, error) {
+	ret := &AuthorizedApi{}
 	res := qb.buildQuery(db).First(ret)
 	if res.Error != nil && res.Error == gorm.ErrRecordNotFound {
 		ret = nil
@@ -94,7 +94,7 @@ func (qb *orderQueryBuilder) First(db *gorm.DB) (*Order, error) {
 	return ret, res.Error
 }
 
-func (qb *orderQueryBuilder) QueryOne(db *gorm.DB) (*Order, error) {
+func (qb *authorizedApiQueryBuilder) QueryOne(db *gorm.DB) (*AuthorizedApi, error) {
 	qb.limit = 1
 	ret, err := qb.QueryAll(db)
 	if len(ret) > 0 {
@@ -103,23 +103,23 @@ func (qb *orderQueryBuilder) QueryOne(db *gorm.DB) (*Order, error) {
 	return nil, err
 }
 
-func (qb *orderQueryBuilder) QueryAll(db *gorm.DB) ([]*Order, error) {
-	var ret []*Order
+func (qb *authorizedApiQueryBuilder) QueryAll(db *gorm.DB) ([]*AuthorizedApi, error) {
+	var ret []*AuthorizedApi
 	err := qb.buildQuery(db).Find(&ret).Error
 	return ret, err
 }
 
-func (qb *orderQueryBuilder) Limit(limit int) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) Limit(limit int) *authorizedApiQueryBuilder {
 	qb.limit = limit
 	return qb
 }
 
-func (qb *orderQueryBuilder) Offset(offset int) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) Offset(offset int) *authorizedApiQueryBuilder {
 	qb.offset = offset
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereId(p mysql.Predicate, value int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereId(p mysql.Predicate, value int32) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -130,7 +130,7 @@ func (qb *orderQueryBuilder) WhereId(p mysql.Predicate, value int32) *orderQuery
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereIdIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereIdIn(value []int32) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -141,7 +141,7 @@ func (qb *orderQueryBuilder) WhereIdIn(value []int32) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereIdNotIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereIdNotIn(value []int32) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -152,7 +152,7 @@ func (qb *orderQueryBuilder) WhereIdNotIn(value []int32) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderById(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderById(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
@@ -162,136 +162,136 @@ func (qb *orderQueryBuilder) OrderById(asc bool) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereOrderNo(p mysql.Predicate, value string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereBusinessKey(p mysql.Predicate, value string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "order_no", p),
+		fmt.Sprintf("%v %v ?", "business_key", p),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereOrderNoIn(value []string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereBusinessKeyIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "order_no", "IN"),
+		fmt.Sprintf("%v %v ?", "business_key", "IN"),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereOrderNoNotIn(value []string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereBusinessKeyNotIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "order_no", "NOT IN"),
+		fmt.Sprintf("%v %v ?", "business_key", "NOT IN"),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByOrderNo(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByBusinessKey(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
 	}
 
-	qb.order = append(qb.order, "order_no "+order)
+	qb.order = append(qb.order, "business_key "+order)
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereOrderFee(p mysql.Predicate, value int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereMethod(p mysql.Predicate, value string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "order_fee", p),
+		fmt.Sprintf("%v %v ?", "method", p),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereOrderFeeIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereMethodIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "order_fee", "IN"),
+		fmt.Sprintf("%v %v ?", "method", "IN"),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereOrderFeeNotIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereMethodNotIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "order_fee", "NOT IN"),
+		fmt.Sprintf("%v %v ?", "method", "NOT IN"),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByOrderFee(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByMethod(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
 	}
 
-	qb.order = append(qb.order, "order_fee "+order)
+	qb.order = append(qb.order, "method "+order)
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereStatus(p mysql.Predicate, value int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereApi(p mysql.Predicate, value string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "status", p),
+		fmt.Sprintf("%v %v ?", "api", p),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereStatusIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereApiIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "status", "IN"),
+		fmt.Sprintf("%v %v ?", "api", "IN"),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereStatusNotIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereApiNotIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
 	}{
-		fmt.Sprintf("%v %v ?", "status", "NOT IN"),
+		fmt.Sprintf("%v %v ?", "api", "NOT IN"),
 		value,
 	})
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByStatus(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByApi(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
 	}
 
-	qb.order = append(qb.order, "status "+order)
+	qb.order = append(qb.order, "api "+order)
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereIsDeleted(p mysql.Predicate, value int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereIsDeleted(p mysql.Predicate, value int32) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -302,7 +302,7 @@ func (qb *orderQueryBuilder) WhereIsDeleted(p mysql.Predicate, value int32) *ord
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereIsDeletedIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereIsDeletedIn(value []int32) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -313,7 +313,7 @@ func (qb *orderQueryBuilder) WhereIsDeletedIn(value []int32) *orderQueryBuilder 
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereIsDeletedNotIn(value []int32) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereIsDeletedNotIn(value []int32) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -324,7 +324,7 @@ func (qb *orderQueryBuilder) WhereIsDeletedNotIn(value []int32) *orderQueryBuild
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByIsDeleted(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByIsDeleted(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
@@ -334,7 +334,7 @@ func (qb *orderQueryBuilder) OrderByIsDeleted(asc bool) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereCreatedAt(p mysql.Predicate, value time.Time) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereCreatedAt(p mysql.Predicate, value time.Time) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -345,7 +345,7 @@ func (qb *orderQueryBuilder) WhereCreatedAt(p mysql.Predicate, value time.Time) 
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereCreatedAtIn(value []time.Time) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereCreatedAtIn(value []time.Time) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -356,7 +356,7 @@ func (qb *orderQueryBuilder) WhereCreatedAtIn(value []time.Time) *orderQueryBuil
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereCreatedAtNotIn(value []time.Time) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereCreatedAtNotIn(value []time.Time) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -367,7 +367,7 @@ func (qb *orderQueryBuilder) WhereCreatedAtNotIn(value []time.Time) *orderQueryB
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByCreatedAt(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByCreatedAt(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
@@ -377,7 +377,7 @@ func (qb *orderQueryBuilder) OrderByCreatedAt(asc bool) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereCreatedUser(p mysql.Predicate, value string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereCreatedUser(p mysql.Predicate, value string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -388,7 +388,7 @@ func (qb *orderQueryBuilder) WhereCreatedUser(p mysql.Predicate, value string) *
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereCreatedUserIn(value []string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereCreatedUserIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -399,7 +399,7 @@ func (qb *orderQueryBuilder) WhereCreatedUserIn(value []string) *orderQueryBuild
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereCreatedUserNotIn(value []string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereCreatedUserNotIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -410,7 +410,7 @@ func (qb *orderQueryBuilder) WhereCreatedUserNotIn(value []string) *orderQueryBu
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByCreatedUser(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByCreatedUser(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
@@ -420,7 +420,7 @@ func (qb *orderQueryBuilder) OrderByCreatedUser(asc bool) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereUpdatedAt(p mysql.Predicate, value time.Time) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereUpdatedAt(p mysql.Predicate, value time.Time) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -431,7 +431,7 @@ func (qb *orderQueryBuilder) WhereUpdatedAt(p mysql.Predicate, value time.Time) 
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereUpdatedAtIn(value []time.Time) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereUpdatedAtIn(value []time.Time) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -442,7 +442,7 @@ func (qb *orderQueryBuilder) WhereUpdatedAtIn(value []time.Time) *orderQueryBuil
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereUpdatedAtNotIn(value []time.Time) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereUpdatedAtNotIn(value []time.Time) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -453,7 +453,7 @@ func (qb *orderQueryBuilder) WhereUpdatedAtNotIn(value []time.Time) *orderQueryB
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByUpdatedAt(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByUpdatedAt(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"
@@ -463,7 +463,7 @@ func (qb *orderQueryBuilder) OrderByUpdatedAt(asc bool) *orderQueryBuilder {
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereUpdatedUser(p mysql.Predicate, value string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereUpdatedUser(p mysql.Predicate, value string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -474,7 +474,7 @@ func (qb *orderQueryBuilder) WhereUpdatedUser(p mysql.Predicate, value string) *
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereUpdatedUserIn(value []string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereUpdatedUserIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -485,7 +485,7 @@ func (qb *orderQueryBuilder) WhereUpdatedUserIn(value []string) *orderQueryBuild
 	return qb
 }
 
-func (qb *orderQueryBuilder) WhereUpdatedUserNotIn(value []string) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) WhereUpdatedUserNotIn(value []string) *authorizedApiQueryBuilder {
 	qb.where = append(qb.where, struct {
 		prefix string
 		value  interface{}
@@ -496,7 +496,7 @@ func (qb *orderQueryBuilder) WhereUpdatedUserNotIn(value []string) *orderQueryBu
 	return qb
 }
 
-func (qb *orderQueryBuilder) OrderByUpdatedUser(asc bool) *orderQueryBuilder {
+func (qb *authorizedApiQueryBuilder) OrderByUpdatedUser(asc bool) *authorizedApiQueryBuilder {
 	order := "DESC"
 	if asc {
 		order = "ASC"

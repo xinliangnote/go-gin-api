@@ -1,6 +1,5 @@
 package tool
 
-import "C"
 import (
 	"fmt"
 	"net/http"

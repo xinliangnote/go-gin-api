@@ -7,7 +7,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/api/cron"
 	"github.com/xinliangnote/go-gin-api/internal/api/helper"
 	"github.com/xinliangnote/go-gin-api/internal/api/menu"
-	order_handler "github.com/xinliangnote/go-gin-api/internal/api/order"
 	"github.com/xinliangnote/go-gin-api/internal/api/tool"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 )
@@ -100,13 +99,6 @@ func setApiRouter(r *resource) {
 		api.PATCH("/cron/used", cronHandler.UpdateUsed())
 		api.PATCH("/cron/exec/:id", core.AliasForRecordMetrics("/api/cron/exec"), cronHandler.Execute())
 
-	}
-	order := r.mux.Group("/api/order", r.interceptors.CheckSignature())
-	{
-		handler := order_handler.New(r.logger, r.db, r.cache)
-		order.POST("/create", handler.Create())
-		order.POST("/cancel", handler.Cancel())
-		order.GET("/:id", handler.Detail())
 	}
 
 }

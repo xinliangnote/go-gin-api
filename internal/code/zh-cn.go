@@ -16,6 +16,7 @@ var zhCNText = map[int]string{
 	RBACError:          "暂无访问权限",
 	RedisConnectError:  "Redis 连接失败",
 	MySQLConnectError:  "MySQL 连接失败",
+	PgSQlConnectError:  "PostgreSQL 连接失败",
 	WriteConfigError:   "写入配置文件失败",
 	SendEmailError:     "发送邮件失败",
 	MySQLExecError:     "SQL 执行失败",

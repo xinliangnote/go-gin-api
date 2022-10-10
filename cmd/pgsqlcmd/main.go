@@ -339,7 +339,7 @@ func textType(s string) string {
 		if in(s, []string{"bigint", "bigserial", "big serial"}) {
 			return "int64"
 		}
-		if in(s, []string{"integer", "smallint", "serial"}) {
+		if in(s, []string{"integer", "smallint", "serial", "smallserial"}) {
 			return "int32"
 		}
 		if in(s, []string{"numeric", "decimal", "real"}) {

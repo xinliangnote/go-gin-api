@@ -30,8 +30,4 @@ printf "\nFormatting code\n\n"
 time go run -v ./cmd/mfmt/main.go
 shellExit $?
 
-printf "\ngo mod tidy\n\n"
-time go mod tidy
-shellExit $?
-
 printf "\nDone.\n\n"
