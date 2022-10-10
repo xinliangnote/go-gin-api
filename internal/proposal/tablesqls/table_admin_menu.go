@@ -101,6 +101,8 @@ func CreateAdminMenuTablePGSql() (sql string) {
 		comment
 		on table admin_menu is '管理员菜单栏表';
 		comment
+		on column admin_menu.id is '主键';
+		comment
 		on column admin_menu.admin_id is '管理员ID';
 		comment
 		on column admin_menu.menu_id is '菜单栏ID';

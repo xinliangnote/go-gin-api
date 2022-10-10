@@ -28,9 +28,7 @@ func (h *handler) UpgradeView() core.HandlerFunc {
 		}
 
 		var tableCollect []tableInfo
-
-		mysqlConf := configs.Get().MySQL.Read
-		sqlTables := fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", mysqlConf.Name)
+		sqlTables := getTableSql()
 		rows, err := h.db.GetDbR().Raw(sqlTables).Rows()
 		if err != nil {
 			c.HTML("upgrade_view", tableCollect)
@@ -72,4 +70,16 @@ func (h *handler) UpgradeView() core.HandlerFunc {
 		obj.LockFile = configs.ProjectInstallMark
 		c.HTML("upgrade_view", obj)
 	}
+}
+
+func getTableSql() string {
+	var sqlTables string
+	switch configs.Get().DataBaseType.Type {
+	case "Mysql":
+		mysqlConf := configs.Get().MySQL.Read
+		sqlTables = fmt.Sprintf("SELECT `table_name`,`table_comment` FROM `information_schema`.`tables` WHERE `table_schema`= '%s'", mysqlConf.Name)
+	case "Postgresql":
+		sqlTables = "select relname as table_name, obj_description(c.oid) as table_comment from pg_class c where obj_description(c.oid) is not null "
+	}
+	return sqlTables
 }

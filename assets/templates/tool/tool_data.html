@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#mysql" aria-selected="true">MySQL</a>
+                            <a class="nav-link active" data-toggle="tab" href="#mysql" aria-selected="true" id="SQLType">MySQL</a>
                         </li>
                     </ul>
 
@@ -126,19 +126,26 @@
                 $("#db").selectpicker('refresh');
 
                 getTables($('#db option:selected').val());
+                if (db_type==="Mysql"){
+                    console.log( $('#SQLType').html("MySQL"));
+                }
+                if (db_type==='Postgresql'){
+                    console.log($('#SQLType').html("PostgreSQL"));
+                }
             },
             function (response) {
                 AjaxError(response);
             }
         );
 
+
         $('.btn-select').on('click', function () {
             const table = $('#table option:selected').val();
 
-            if (db_type=="Mysql"){
+            if (db_type==="Mysql"){
                 $("#sql").val("SELECT * FROM `" + table + "` ORDER BY 1 DESC");
             }
-            if (db_type=="Postgresql"){
+            if (db_type==="Postgresql"){
                 $("#sql").val("SELECT * FROM \"" + table + "\" ORDER BY 1 DESC");
             }
         });
@@ -146,12 +153,11 @@
         $('.btn-show-create').on('click', function () {
             const table = $('#table option:selected').val();
 
-            if (db_type=="Mysql"){
+            if (db_type==="Mysql"){
                 $("#sql").val("SHOW CREATE TABLE `" + table + "` ");
             }
-            if (db_type=="Postgresql"){
-                "select tabledef ('public','admin');"
-                $("#sql").val("SELECT tabledef ('public','" + table + "'); ");
+            if (db_type==="Postgresql"){
+                $("#sql").val("SELECT tabledef ('public','" + table + "') ");
             }
         });
 
