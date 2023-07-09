@@ -89,11 +89,11 @@ func main() {
 					funcContent += fmt.Sprintf("// @Description%s \n", nameArr[1])
 					// Tags
 					funcContent += fmt.Sprintf("%s \n", v.Decorations().Start.All()[1])
-					funcContent += fmt.Sprintf("// @Accept application/x-www-form-urlencoded \n")
-					funcContent += fmt.Sprintf("// @Produce json \n")
+					funcContent += "// @Accept application/x-www-form-urlencoded \n"
+					funcContent += "// @Produce json \n"
 					funcContent += fmt.Sprintf("// @Param Request body %sRequest true \"请求信息\" \n", Lcfirst(v.Names[0].String()))
 					funcContent += fmt.Sprintf("// @Success 200 {object} %sResponse \n", Lcfirst(v.Names[0].String()))
-					funcContent += fmt.Sprintf("// @Failure 400 {object} code.Failure \n")
+					funcContent += "// @Failure 400 {object} code.Failure \n"
 					// Router
 					funcContent += fmt.Sprintf("%s \n", v.Decorations().Start.All()[2])
 					funcContent += fmt.Sprintf("func (h *handler) %s() core.HandlerFunc { \n return func(ctx core.Context) {\n\n}}", v.Names[0].String())
