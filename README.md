@@ -26,10 +26,18 @@
 1. 支持 web 界面，使用的 [Light Year Admin 模板](https://gitee.com/yinqi/Light-Year-Admin-Using-Iframe)
 
 
-## 文档索引
+## 文档索引（可加入交流群）
 
 - 中文文档：[go-gin-api - 语雀](https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5)
 - English Document：[en.md](https://github.com/xinliangnote/go-gin-api/blob/master/en.md)
+
+## 轻量版
+
+为了满足开发者对于简单、轻量级 API 框架的需求，开发了 gin-api-mono，旨在提供更便捷的业务开发体验。
+
+相比于 go-gin-api，首先 gin-api-mono 去掉了一些集成的功能和界面，使得整个框架更加简洁、轻量。其次 gin-api-mono 对框架代码进行了升级，以确保其在性能和稳定性方面的优势。这样，开发者就可以更灵活地选择所需的功能，并获得更好的性能和稳定性。
+
+详见链接：https://xiaobot.net/post/e9f7ef4c-81b1-4ffc-9053-bec55c3abb12
 
 ## 其他
 
