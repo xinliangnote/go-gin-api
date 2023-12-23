@@ -96,7 +96,7 @@ func main() {
 		fmt.Println("  └── file : ", table.Name+"/gen_model.go")
 
 		modelContent := fmt.Sprintf("package %s\n", table.Name)
-		modelContent += fmt.Sprintf(`import "time"`)
+		modelContent += `import "time"`
 		modelContent += fmt.Sprintf("\n\n// %s %s \n", capitalize(table.Name), table.Comment.String)
 		modelContent += fmt.Sprintf("//go:generate gormgen -structs %s -input . \n", capitalize(table.Name))
 		modelContent += fmt.Sprintf("type %s struct {\n", capitalize(table.Name))
