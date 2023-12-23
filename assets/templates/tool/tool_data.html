@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#mysql" aria-selected="true">MySQL</a>
+                            <a class="nav-link active" data-toggle="tab" href="#mysql" aria-selected="true" id="SQLType">MySQL</a>
                         </li>
                     </ul>
 
@@ -107,6 +107,7 @@
 <script type="text/javascript" src="/assets/bootstrap/js/bootstrap-select/i18n/defaults-zh_CN.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        var  db_type
         $('.select-picker').selectpicker();
 
         AjaxForm(
@@ -116,6 +117,7 @@
             function () {
             },
             function (data) {
+                db_type=data.db_type
                 $.each(data.list, function (index, value) {
                     $("#db").append("<option value='" + value.db_name + "'>" + value.db_name + "</option>");
                 });
@@ -124,20 +126,39 @@
                 $("#db").selectpicker('refresh');
 
                 getTables($('#db option:selected').val());
+                if (db_type==="Mysql"){
+                    console.log( $('#SQLType').html("MySQL"));
+                }
+                if (db_type==='Postgresql'){
+                    console.log($('#SQLType').html("PostgreSQL"));
+                }
             },
             function (response) {
                 AjaxError(response);
             }
         );
 
+
         $('.btn-select').on('click', function () {
             const table = $('#table option:selected').val();
-            $("#sql").val("SELECT * FROM `" + table + "` ORDER BY 1 DESC");
+
+            if (db_type==="Mysql"){
+                $("#sql").val("SELECT * FROM `" + table + "` ORDER BY 1 DESC");
+            }
+            if (db_type==="Postgresql"){
+                $("#sql").val("SELECT * FROM \"" + table + "\" ORDER BY 1 DESC");
+            }
         });
 
         $('.btn-show-create').on('click', function () {
             const table = $('#table option:selected').val();
-            $("#sql").val("SHOW CREATE TABLE `" + table + "` ");
+
+            if (db_type==="Mysql"){
+                $("#sql").val("SHOW CREATE TABLE `" + table + "` ");
+            }
+            if (db_type==="Postgresql"){
+                $("#sql").val("SELECT tabledef ('public','" + table + "') ");
+            }
         });
 
         $('.btn-format').on('click', function () {

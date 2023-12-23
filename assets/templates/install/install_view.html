@@ -14,6 +14,13 @@
     <link href="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
     <link href="/assets/bootstrap/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="/assets/bootstrap/css/style.min.css" rel="stylesheet">
+    <style>
+        .btn-group .active {
+            background-color: #33cabb;
+            color: white;
+            border: #33cabb;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,7 +34,8 @@
                 <div class="card-body">
                     <h5 class="card-title"><span class="badge badge-info">检测 · 环境</span></h5>
                     <div class="input-group mb-3">
-                        <p class="text-left">所需版本：<code>go{{.MinGoVersion}}+</code> (<small>当前版本 </small><code>{{.GoVersion}}</code>)</p>
+                        <p class="text-left">所需版本：<code>go{{.MinGoVersion}}+</code> (<small>当前版本 </small><code>{{.GoVersion}}</code>)
+                        </p>
                     </div>
 
                     <h5 class="card-title"><span class="badge badge-info">配置 · 语言</span></h5>
@@ -67,42 +75,57 @@
                                placeholder="请输入 DB ，序号从 0 开始，默认是 0">
                     </div>
 
-                    <h5 class="card-title"><span class="badge badge-info">配置 · MySQL</span></h5>
+                    <h5 class="card-title"><span class="badge badge-info">配置 · 数据库</span></h5>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">地址</span>
+                            <span class="input-group-text">数据库类型</span>
                         </div>
-                        <input type="text" class="form-control" id="mysql_addr" value="{{ .Config.MySQL.Write.Addr }}"
-                               placeholder="请输入服务器地址，例如：127.0.0.1:3306">
+                        <select class="form-control select-picker col-lg-3" data-width="auto"
+                                data-live-search="true" id="database_type">
+                            <option value="Mysql">MySQL</option>
+                            <option value="Postgresql">PostgreSQL</option>
+                        </select>
                     </div>
-
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">用户</span>
+                    <div class="Mysql">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">地址</span>
+                            </div>
+                            <input type="text" class="form-control" id="database_addr"
+                                   value="{{ .Config.MySQL.Write.Addr }}"
+                                   placeholder="请输入服务器地址，例如：127.0.0.1:3306">
                         </div>
-                        <input type="text" class="form-control" id="mysql_user" value="{{ .Config.MySQL.Write.User }}"
-                               placeholder="请输入用户名">
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">用户</span>
+                            </div>
+                            <input type="text" class="form-control" id="database_user"
+                                   value="{{ .Config.MySQL.Write.User }}"
+                                   placeholder="请输入用户名">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">密码</span>
+                            </div>
+                            <input type="password" class="form-control" id="database_pass"
+                                   value="{{ .Config.MySQL.Write.Pass }}"
+                                   placeholder="请输入密码">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">DB </span>
+                            </div>
+                            <input type="text" class="form-control" id="database_name"
+                                   value="{{ .Config.MySQL.Write.Name }}"
+                                   placeholder="请输入数据库名">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><code>请确保此数据库已存在！</code></span>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">密码</span>
-                        </div>
-                        <input type="password" class="form-control" id="mysql_pass" value="{{ .Config.MySQL.Write.Pass }}"
-                               placeholder="请输入密码">
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">DB </span>
-                        </div>
-                        <input type="text" class="form-control" id="mysql_name" value="{{ .Config.MySQL.Write.Name }}"
-                               placeholder="请输入数据库名">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><code>请确保此数据库已存在！</code></span>
-                        </div>
-                    </div>
-
                     <button type="button" id="btnOk" class="btn btn-primary">初始化项目</button>
                     <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
                         <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
@@ -159,50 +182,50 @@
                 });
                 return false;
             }
+                const database_addr = $("#database_addr").val();
+                if (database_addr === "") {
+                    $.alert({
+                        title: '温馨提示',
+                        icon: 'mdi mdi-alert',
+                        type: 'orange',
+                        content: '请输入 MySQL 服务器地址。',
+                    });
+                    return false;
+                }
 
-            const mysql_addr = $("#mysql_addr").val();
-            if (mysql_addr === "") {
-                $.alert({
-                    title: '温馨提示',
-                    icon: 'mdi mdi-alert',
-                    type: 'orange',
-                    content: '请输入 MySQL 服务器地址。',
-                });
-                return false;
-            }
+                const database_user = $("#database_user").val();
+                if (database_user === "") {
+                    $.alert({
+                        title: '温馨提示',
+                        icon: 'mdi mdi-alert',
+                        type: 'orange',
+                        content: '请输入 MySQL 用户名。',
+                    });
+                    return false;
+                }
 
-            const mysql_user = $("#mysql_user").val();
-            if (mysql_user === "") {
-                $.alert({
-                    title: '温馨提示',
-                    icon: 'mdi mdi-alert',
-                    type: 'orange',
-                    content: '请输入 MySQL 用户名。',
-                });
-                return false;
-            }
+                const database_pass = $("#database_pass").val();
+                if (database_pass === "") {
+                    $.alert({
+                        title: '温馨提示',
+                        icon: 'mdi mdi-alert',
+                        type: 'orange',
+                        content: '请输入 MySQL 密码。',
+                    });
+                    return false;
+                }
 
-            const mysql_pass = $("#mysql_pass").val();
-            if (mysql_pass === "") {
-                $.alert({
-                    title: '温馨提示',
-                    icon: 'mdi mdi-alert',
-                    type: 'orange',
-                    content: '请输入 MySQL 密码。',
-                });
-                return false;
-            }
+                const database_name = $("#database_name").val();
+                if (database_name === "") {
+                    $.alert({
+                        title: '温馨提示',
+                        icon: 'mdi mdi-alert',
+                        type: 'orange',
+                        content: '请输入 MySQL 数据库名。',
+                    });
+                    return false;
+                }
 
-            const mysql_name = $("#mysql_name").val();
-            if (mysql_name === "") {
-                $.alert({
-                    title: '温馨提示',
-                    icon: 'mdi mdi-alert',
-                    type: 'orange',
-                    content: '请输入 MySQL 数据库名。',
-                });
-                return false;
-            }
 
             const postData = {
                 language: $("#language").val(),
@@ -210,13 +233,14 @@
                 redis_addr: redis_addr,
                 redis_pass: $("#redis_pass").val(),
                 redis_db: redis_db,
+                database_type: $('#database_type').val(),
 
-                mysql_addr: mysql_addr,
-                mysql_user: mysql_user,
-                mysql_pass: mysql_pass,
-                mysql_name: mysql_name,
+                database_addr: database_addr,
+                database_user: database_user,
+                database_pass: database_pass,
+                database_name: database_name,
             };
-
+            console.log('postData', postData);
             AjaxForm(
                 "POST",
                 "/install/execute",

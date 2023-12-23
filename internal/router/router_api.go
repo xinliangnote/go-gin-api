@@ -100,4 +100,5 @@ func setApiRouter(r *resource) {
 		api.PATCH("/cron/exec/:id", core.AliasForRecordMetrics("/api/cron/exec"), cronHandler.Execute())
 
 	}
+
 }

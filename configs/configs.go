@@ -18,6 +18,9 @@ import (
 var config = new(Config)
 
 type Config struct {
+	DataBaseType struct {
+		Type string `toml:"type"`
+	} `toml:"databasetype"`
 	MySQL struct {
 		Read struct {
 			Addr string `toml:"addr"`
@@ -37,6 +40,28 @@ type Config struct {
 			ConnMaxLifeTime time.Duration `toml:"connMaxLifeTime"`
 		} `toml:"base"`
 	} `toml:"mysql"`
+
+	PgSQL struct {
+		Read struct {
+			Addr string `toml:"addr"`
+			User string `toml:"user"`
+			Pass string `toml:"pass"`
+			Name string `toml:"name"`
+			Port string `toml:"port"`
+		} `toml:"read"`
+		Write struct {
+			Addr string `toml:"addr"`
+			User string `toml:"user"`
+			Pass string `toml:"pass"`
+			Name string `toml:"name"`
+			Port string `toml:"port"`
+		} `toml:"write"`
+		Base struct {
+			MaxOpenConn     int           `toml:"maxOpenConn"`
+			MaxIdleConn     int           `toml:"maxIdleConn"`
+			ConnMaxLifeTime time.Duration `toml:"connMaxLifeTime"`
+		} `toml:"base"`
+	} `toml:"pgsql"`
 
 	Redis struct {
 		Addr         string `toml:"addr"`

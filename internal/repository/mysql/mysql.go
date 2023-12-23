@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 
 	"gorm.io/driver/mysql"
@@ -25,22 +26,12 @@ var (
 	LikePredicate               = Predicate("LIKE")
 )
 
-var _ Repo = (*dbRepo)(nil)
-
-type Repo interface {
-	i()
-	GetDbR() *gorm.DB
-	GetDbW() *gorm.DB
-	DbRClose() error
-	DbWClose() error
-}
-
 type dbRepo struct {
 	DbR *gorm.DB
 	DbW *gorm.DB
 }
 
-func New() (Repo, error) {
+func New() (iface.Repo, error) {
 	cfg := configs.Get().MySQL
 	dbr, err := dbConnect(cfg.Read.User, cfg.Read.Pass, cfg.Read.Addr, cfg.Read.Name)
 	if err != nil {

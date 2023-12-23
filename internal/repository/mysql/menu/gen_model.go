@@ -3,6 +3,7 @@ package menu
 import "time"
 
 // Menu 左侧菜单栏表
+//
 //go:generate gormgen -structs Menu -input .
 type Menu struct {
 	Id          int32     // 主键

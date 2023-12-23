@@ -6,7 +6,8 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/metrics"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/repository/cron"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/db"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/router/interceptor"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
@@ -18,7 +19,7 @@ import (
 type resource struct {
 	mux          core.Mux
 	logger       *zap.Logger
-	db           mysql.Repo
+	db           iface.Repo
 	cache        redis.Repo
 	interceptors interceptor.Interceptor
 	cronServer   cron.Server
@@ -26,7 +27,7 @@ type resource struct {
 
 type Server struct {
 	Mux        core.Mux
-	Db         mysql.Repo
+	Db         iface.Repo
 	Cache      redis.Repo
 	CronServer cron.Server
 }
@@ -47,7 +48,7 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	} else { // 已安装
 
 		// 初始化 DB
-		dbRepo, err := mysql.New()
+		dbRepo, err := db.New()
 		if err != nil {
 			logger.Fatal("new db err", zap.Error(err))
 		}

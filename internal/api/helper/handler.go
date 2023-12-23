@@ -2,7 +2,7 @@ package helper
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/authorized"
 
@@ -27,11 +27,11 @@ type Handler interface {
 
 type handler struct {
 	logger            *zap.Logger
-	db                mysql.Repo
+	db                iface.Repo
 	authorizedService authorized.Service
 }
 
-func New(logger *zap.Logger, db mysql.Repo, cache redis.Repo) Handler {
+func New(logger *zap.Logger, db iface.Repo, cache redis.Repo) Handler {
 	return &handler{
 		logger:            logger,
 		db:                db,

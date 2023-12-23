@@ -2,7 +2,7 @@ package authorized
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized"
 	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/authorized_api"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
@@ -28,11 +28,11 @@ type Service interface {
 }
 
 type service struct {
-	db    mysql.Repo
+	db    iface.Repo
 	cache redis.Repo
 }
 
-func New(db mysql.Repo, cache redis.Repo) Service {
+func New(db iface.Repo, cache redis.Repo) Service {
 	return &service{
 		db:    db,
 		cache: cache,

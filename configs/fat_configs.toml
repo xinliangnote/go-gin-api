@@ -1,4 +1,7 @@
 
+[databasetype]
+  type = "Postgresql"
+
 [hashids]
   length = 12
   secret = "6ab6122836cfef95f8db"
@@ -21,16 +24,37 @@
     maxopenconn = 10
 
   [mysql.read]
-    addr = "127.0.0.1:3306"
+    addr = "127.0.0.1:5432"
     name = "go_gin_api"
-    pass = "123456789"
-    user = "root"
+    pass = "123456"
+    user = "postgres"
 
   [mysql.write]
-    addr = "127.0.0.1:3306"
+    addr = "127.0.0.1:5432"
     name = "go_gin_api"
-    pass = "123456789"
-    user = "root"
+    pass = "123456"
+    user = "postgres"
+
+[pgsql]
+
+  [pgsql.base]
+    connmaxlifetime = 60
+    maxidleconn = 60
+    maxopenconn = 10
+
+  [pgsql.read]
+    addr = "127.0.0.1"
+    name = "go_gin_api"
+    pass = "123456"
+    port = "5432"
+    user = "postgres"
+
+  [pgsql.write]
+    addr = "127.0.0.1"
+    name = "go_gin_api"
+    pass = "123456"
+    port = "5432"
+    user = "postgres"
 
 [redis]
   addr = "127.0.0.1:6379"

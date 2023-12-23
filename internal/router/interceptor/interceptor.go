@@ -3,7 +3,7 @@ package interceptor
 import (
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 	"github.com/xinliangnote/go-gin-api/internal/proposal"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
+	"github.com/xinliangnote/go-gin-api/internal/repository/iface"
 	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
 	"github.com/xinliangnote/go-gin-api/internal/services/admin"
 	"github.com/xinliangnote/go-gin-api/internal/services/authorized"
@@ -30,12 +30,12 @@ type Interceptor interface {
 type interceptor struct {
 	logger            *zap.Logger
 	cache             redis.Repo
-	db                mysql.Repo
+	db                iface.Repo
 	authorizedService authorized.Service
 	adminService      admin.Service
 }
 
-func New(logger *zap.Logger, cache redis.Repo, db mysql.Repo) Interceptor {
+func New(logger *zap.Logger, cache redis.Repo, db iface.Repo) Interceptor {
 	return &interceptor{
 		logger:            logger,
 		cache:             cache,

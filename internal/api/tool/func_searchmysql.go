@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/code"
 	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
 
@@ -134,8 +135,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 
 			}
 		}
-
-		if strings.ToLower(string([]byte(sql)[:6])) == "select" {
+		if strings.ToLower(string([]byte(sql)[:6])) == "select" && strings.ToLower(string([]byte(sql)[7:15])) != "tabledef" {
 			sql += " LIMIT 100"
 		}
 
@@ -186,8 +186,7 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 		res.List = data
 		res.Cols = cols
 
-		sqlTableColumn := fmt.Sprintf("SELECT `COLUMN_NAME`, `COLUMN_COMMENT` FROM `information_schema`.`columns` WHERE `table_schema`= '%s' AND `table_name`= '%s' ORDER BY `ORDINAL_POSITION` ASC",
-			req.DbName, req.TableName)
+		sqlTableColumn := getSqlColumn(req.DbName, req.TableName)
 
 		rows, err = h.db.GetDbR().Raw(sqlTableColumn).Rows()
 		if err != nil {
@@ -220,4 +219,26 @@ func (h *handler) SearchMySQL() core.HandlerFunc {
 
 		c.Payload(res)
 	}
+}
+
+func getSqlColumn(dbName, tableName string) string {
+	var sqlTableColumn string
+	switch configs.Get().DataBaseType.Type {
+	case "Mysql":
+		sqlTableColumn = fmt.Sprintf("SELECT `COLUMN_NAME`, `COLUMN_COMMENT` FROM `information_schema`.`columns` WHERE `table_schema`= '%s' AND `table_name`= '%s' ORDER BY `ORDINAL_POSITION` ASC",
+			dbName, tableName)
+	case "Postgresql":
+		sqlTableColumn = fmt.Sprintf(`SELECT
+		A.attname AS COLUMN_NAME ,
+		col_description ( A.attrelid, A.attnum ) AS COLUMN_COMMENT
+		FROM
+		pg_class AS C,
+		pg_attribute AS A
+		WHERE
+		C.relname = '%s'
+		AND A.attrelid = C.oid
+		AND A.attnum > 0`, tableName)
+
+	}
+	return sqlTableColumn
 }
