@@ -23,6 +23,11 @@ type Handler interface {
 	// @Tags Helper
 	// @Router /helper/sign [post]
 	Sign() core.HandlerFunc
+
+	// Sha256 SHA256 加密
+	// @Tags Helper
+	// @Router /helper/sha256/{str} [get]
+	Sha256() core.HandlerFunc
 }
 
 type handler struct {

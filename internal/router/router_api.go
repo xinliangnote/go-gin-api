@@ -18,6 +18,7 @@ func setApiRouter(r *resource) {
 	helpers := r.mux.Group("/helper")
 	{
 		helpers.GET("/md5/:str", helperHandler.Md5())
+		helpers.GET("/sha256/:str", helperHandler.Sha256())
 		helpers.POST("/sign", helperHandler.Sign())
 	}
 

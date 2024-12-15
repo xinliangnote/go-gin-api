@@ -10,7 +10,7 @@ import (
 )
 
 type md5Request struct {
-	Str string `uri:"str" binding:"required"` // 需要加密的字符串
+    Str string `uri:"str" binding:"required,max=1024"` // Limit to 1024 characters
 }
 
 type md5Response struct {
