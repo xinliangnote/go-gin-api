@@ -3,6 +3,7 @@ package env
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -53,6 +54,7 @@ func (e *environment) IsPro() bool {
 func (e *environment) t() {}
 
 func init() {
+	flag.CommandLine.Init(os.Args[0], flag.ContinueOnError)
 	env := flag.String("env", "", "请输入运行环境:\n dev:开发环境\n fat:测试环境\n uat:预上线环境\n pro:正式环境\n")
 	flag.Parse()
 

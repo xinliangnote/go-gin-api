@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/pkg/env"
@@ -16,6 +17,7 @@ import (
 )
 
 var config = new(Config)
+var configLock sync.RWMutex
 
 type Config struct {
 	MySQL struct {
@@ -128,6 +130,8 @@ func init() {
 
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
+		configLock.Lock()
+		defer configLock.Unlock()
 		if err := viper.Unmarshal(config); err != nil {
 			panic(err)
 		}
@@ -135,5 +139,7 @@ func init() {
 }
 
 func Get() Config {
+	configLock.RLock()
+	defer configLock.RUnlock()
 	return *config
 }
