@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
+	"github.com/xinliangnote/go-gin-api/internal/repository/redis/options"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/timeutil"
 	"github.com/xinliangnote/go-gin-api/pkg/trace"
@@ -42,7 +43,7 @@ type Repo interface {
 }
 
 type cacheRepo struct {
-	client *redis.Client
+	client redis.UniversalClient
 }
 
 func New() (Repo, error) {
@@ -58,16 +59,19 @@ func New() (Repo, error) {
 
 func (c *cacheRepo) i() {}
 
-func redisConnect() (*redis.Client, error) {
+func redisConnect() (redis.UniversalClient, error) {
 	cfg := configs.Get().Redis
-	client := redis.NewClient(&redis.Options{
+	opts := options.BuildUniversalOptions(options.RedisConfig{
 		Addr:         cfg.Addr,
-		Password:     cfg.Pass,
-		DB:           cfg.Db,
+		Addrs:        cfg.Addrs,
+		MasterName:   cfg.MasterName,
+		Pass:         cfg.Pass,
+		Db:           cfg.Db,
 		MaxRetries:   cfg.MaxRetries,
 		PoolSize:     cfg.PoolSize,
 		MinIdleConns: cfg.MinIdleConns,
 	})
+	client := redis.NewUniversalClient(opts)
 
 	if err := client.Ping().Err(); err != nil {
 		return nil, errors.Wrap(err, "ping redis err")

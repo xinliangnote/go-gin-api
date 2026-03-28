@@ -39,12 +39,14 @@ type Config struct {
 	} `toml:"mysql"`
 
 	Redis struct {
-		Addr         string `toml:"addr"`
-		Pass         string `toml:"pass"`
-		Db           int    `toml:"db"`
-		MaxRetries   int    `toml:"maxRetries"`
-		PoolSize     int    `toml:"poolSize"`
-		MinIdleConns int    `toml:"minIdleConns"`
+		Addr         string   `toml:"addr"`
+		Addrs        []string `toml:"addrs"`
+		MasterName   string   `toml:"masterName"`
+		Pass         string   `toml:"pass"`
+		Db           int      `toml:"db"`
+		MaxRetries   int      `toml:"maxRetries"`
+		PoolSize     int      `toml:"poolSize"`
+		MinIdleConns int      `toml:"minIdleConns"`
 	} `toml:"redis"`
 
 	Mail struct {

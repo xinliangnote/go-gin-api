@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strings"
 
 	"github.com/xinliangnote/go-gin-api/configs"
 	"github.com/xinliangnote/go-gin-api/internal/code"
@@ -90,8 +91,18 @@ func (h *handler) Execute() core.HandlerFunc {
 
 		// region 验证 Redis 配置
 		cfg := configs.Get()
-		redisClient := redis.NewClient(&redis.Options{
-			Addr:         req.RedisAddr,
+
+		// 支持逗号分隔的多地址（集群模式），自动适配单机/集群/哨兵
+		var redisAddrs []string
+		for _, addr := range strings.Split(req.RedisAddr, ",") {
+			addr = strings.TrimSpace(addr)
+			if addr != "" {
+				redisAddrs = append(redisAddrs, addr)
+			}
+		}
+
+		redisClient := redis.NewUniversalClient(&redis.UniversalOptions{
+			Addrs:        redisAddrs,
 			Password:     req.RedisPass,
 			DB:           cast.ToInt(req.RedisDb),
 			MaxRetries:   cfg.Redis.MaxRetries,
@@ -150,6 +161,7 @@ func (h *handler) Execute() core.HandlerFunc {
 		viper.Set("language.local", req.Language)
 
 		viper.Set("redis.addr", req.RedisAddr)
+		viper.Set("redis.addrs", redisAddrs)
 		viper.Set("redis.pass", req.RedisPass)
 		viper.Set("redis.db", req.RedisDb)
 
