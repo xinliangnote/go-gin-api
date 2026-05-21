@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/xinliangnote/go-gin-api/internal/grpc/pb";
+
+// HealthService 健康检查服务
+service HealthService {
+  // Check 健康检查
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+}
+
+// HelloService 示例 gRPC 服务
+service HelloService {
+  // SayHello 简单的 unary RPC
+  rpc SayHello(HelloRequest) returns (HelloResponse);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+  string trace_id = 2;
+}

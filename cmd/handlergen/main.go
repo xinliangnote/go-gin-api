@@ -52,10 +52,18 @@ func main() {
 			if interfaceType, ok = typeSpec.Type.(*dst.InterfaceType); !ok {
 				continue
 			}
+			if interfaceType.Methods == nil {
+				log.Printf("skip interface %s: no method definitions", typeSpec.Name.Name)
+				continue
+			}
 
 			for _, v := range interfaceType.Methods.List {
 				if len(v.Names) > 0 {
 					if v.Names[0].String() == "i" {
+						continue
+					}
+					if len(v.Decorations().Start.All()) < 3 {
+						log.Printf("skip method %s: need 3 comments (summary/tags/router), got %d", v.Names[0].String(), len(v.Decorations().Start.All()))
 						continue
 					}
 
@@ -85,8 +93,12 @@ func main() {
 					funcContent += fmt.Sprintf("%s\n", v.Decorations().Start.All()[0])
 
 					nameArr := strings.Split(v.Decorations().Start.All()[0], v.Names[0].String())
-					funcContent += fmt.Sprintf("// @Summary%s \n", nameArr[1])
-					funcContent += fmt.Sprintf("// @Description%s \n", nameArr[1])
+					summaryDesc := " " + v.Names[0].String()
+					if len(nameArr) > 1 {
+						summaryDesc = nameArr[1]
+					}
+					funcContent += fmt.Sprintf("// @Summary%s \n", summaryDesc)
+					funcContent += fmt.Sprintf("// @Description%s \n", summaryDesc)
 					// Tags
 					funcContent += fmt.Sprintf("%s \n", v.Decorations().Start.All()[1])
 					funcContent += fmt.Sprintf("// @Accept application/x-www-form-urlencoded \n")

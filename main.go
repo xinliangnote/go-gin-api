@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/xinliangnote/go-gin-api/configs"
+	grpcServer "github.com/xinliangnote/go-gin-api/internal/grpc/server"
 	"github.com/xinliangnote/go-gin-api/internal/router"
 	"github.com/xinliangnote/go-gin-api/pkg/env"
 	"github.com/xinliangnote/go-gin-api/pkg/logger"
@@ -78,6 +79,18 @@ func main() {
 		}
 	}()
 
+	// 初始化 gRPC 服务
+	gs, err := grpcServer.New(accessLogger, configs.ProjectGRPCPort)
+	if err != nil {
+		accessLogger.Fatal("grpc server startup err", zap.Error(err))
+	}
+
+	go func() {
+		if err := gs.Serve(); err != nil {
+			accessLogger.Fatal("grpc server serve err", zap.Error(err))
+		}
+	}()
+
 	// 优雅关闭
 	shutdown.NewHook().Close(
 		// 关闭 http server
@@ -116,6 +129,13 @@ func main() {
 		func() {
 			if s.CronServer != nil {
 				s.CronServer.Stop()
+			}
+		},
+
+		// 关闭 gRPC server
+		func() {
+			if gs != nil {
+				gs.GracefulStop()
 			}
 		},
 	)

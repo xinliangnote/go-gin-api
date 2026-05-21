@@ -18,6 +18,9 @@ const (
 	// ProjectPort 项目端口
 	ProjectPort = ":9999"
 
+	// ProjectGRPCPort gRPC 服务端口
+	ProjectGRPCPort = ":9998"
+
 	// ProjectAccessLogFile 项目访问日志存放文件
 	ProjectAccessLogFile = "./logs/" + ProjectName + "-access.log"
 

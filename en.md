@@ -21,6 +21,10 @@ Features:
 1. Standard RESTful API return value
 1. CURD code generator , controller generator, etc.
 1. Web interface, supported by [Light Year Admin template](https://gitee.com/yinqi/Light-Year-Admin-Using-Iframe)
+Notes:
+- The current repository focuses on HTTP/REST, GraphQL, and WebSocket capabilities.
+- Built-in gRPC server support and `.proto` definitions are not included at this time.
+- If you need gRPC, add it as an extension module for your own service boundaries.
 
 
 
